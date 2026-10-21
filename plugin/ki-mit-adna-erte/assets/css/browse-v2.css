@@ -1,0 +1,307 @@
+/* Böngészés v2 kártyák — CSAK elrendezés, pozíció, átmenet (a dizájn később, erre a markupra épül).
+   Markup: PROJECT-MEMORY/FEATURES/BROWSE-V2.md „Markup a dizájnhoz”. Sablon: templates/browse-swipe-v2.php,
+   JS: assets/js/swipe-v2.js. Szabály: árnyék, keret, gradient, blur, filter, :has() nincs; mozgás csak transform/opacity. */
+
+.kmae-sw2 [hidden] {
+	display: none !important;
+}
+
+.kmae-sw2 {
+	width: 100%;
+	min-width: 0;
+}
+
+/* Rakás: a magasságot az aktuális kártya adja; a szomszédok fölötte/alatta, abszolút. */
+.kmae-sw2-stack {
+	position: relative;
+	touch-action: pan-y;
+}
+
+.kmae-sw2-card {
+	position: relative;
+	z-index: 2;
+	display: block;
+	min-width: 0;
+	box-sizing: border-box;
+	background-color: var(--kmae-sw2-bg, #fff);
+	touch-action: pan-y;
+	transform-origin: 50% 100%;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
+.kmae-sw2-card:not([data-role="current"]) {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 1;
+	visibility: hidden;
+}
+
+.kmae-sw2-card[data-role="idle"] {
+	display: none;
+}
+
+/* Húzás / kirepülés közben a következő (vagy előző) kártya látszik alatta. */
+.kmae-sw2-stack[data-under="next"] > [data-role="next"],
+.kmae-sw2-stack[data-under="prev"] > [data-role="prev"] {
+	visibility: visible;
+}
+
+.kmae-sw2-card.is-anim {
+	transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.kmae-sw2-end {
+	margin: 0;
+	padding: 48px 16px;
+	text-align: center;
+}
+
+/* Fotó: fix arány; amíg nincs dekódolt kép, az lqip (és a --kmae-ambient szín) a háttér. */
+.kmae-sw2-media {
+	position: relative;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	background-color: var(--kmae-ambient, transparent);
+	background-image: var(--kmae-lqip, none);
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.kmae-sw2-open {
+	position: absolute;
+	inset: 0;
+	display: block;
+}
+
+.kmae-sw2-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+	transition: opacity 0.18s ease;
+}
+
+.kmae-sw2-img[data-ready] {
+	opacity: 1;
+}
+
+/* Álló fotó melletti előző / következő kép (PC galéria, swipe-v2.js fit()); a dizájn mutatja. */
+.kmae-sw2-side {
+	display: none;
+}
+
+.kmae-sw2-nophoto {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.kmae-sw2-photo-prev,
+.kmae-sw2-photo-next {
+	position: absolute;
+	top: 50%;
+	z-index: 2;
+	min-width: 44px;
+	min-height: 44px;
+	transform: translateY(-50%);
+}
+
+.kmae-sw2-photo-prev {
+	left: 8px;
+}
+
+.kmae-sw2-photo-next {
+	right: 8px;
+}
+
+.kmae-sw2-brand {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.kmae-sw2-brand img {
+	display: block;
+	width: 44px;
+	height: 44px;
+	object-fit: contain;
+}
+
+.kmae-sw2-reserved {
+	position: absolute;
+	top: 8px;
+	left: 50%;
+	z-index: 2;
+	transform: translateX(-50%);
+}
+
+.kmae-sw2-like {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 2;
+	min-width: 44px;
+	min-height: 44px;
+}
+
+.kmae-sw2-photo-count {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.kmae-sw2-dots {
+	position: absolute;
+	bottom: 8px;
+	left: 50%;
+	z-index: 2;
+	display: flex;
+	gap: 4px;
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.kmae-sw2-dot {
+	display: block;
+	width: 6px;
+	height: 6px;
+	background-color: currentColor;
+	opacity: 0.4;
+}
+
+.kmae-sw2-dot[data-current] {
+	opacity: 1;
+}
+
+/* Adatok */
+.kmae-sw2-info {
+	display: grid;
+	gap: 8px;
+	padding: 12px;
+}
+
+.kmae-sw2-title,
+.kmae-sw2-lead,
+.kmae-sw2-seller,
+.kmae-sw2-place,
+.kmae-sw2-price,
+.kmae-sw2-chips {
+	margin: 0;
+}
+
+.kmae-sw2-head {
+	display: grid;
+	gap: 8px;
+}
+
+.kmae-sw2-lead,
+.kmae-sw2-seller,
+.kmae-sw2-place,
+.kmae-sw2-price,
+.kmae-sw2-chips {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px 10px;
+}
+
+.kmae-sw2-facts {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.kmae-sw2-fact {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.kmae-sw2-km {
+	margin-left: 6px;
+}
+
+.kmae-sw2-cta {
+	justify-self: start;
+}
+
+/* Gombok, billentyűsúgó (egyszer az oldalon) */
+.kmae-sw2-nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.kmae-sw2-next {
+	margin-left: auto;
+}
+
+/* Telefon: a bélyegkép-sáv, a karosszéria-pirula és a
+   Jelentés gomb (2026-10-18), a kiegészítő sor és a teljes képernyő gomb (2026-10-20)
+   egyelőre csak PC-n van (a telefonos dizájn később). */
+@media (max-width: 1024px) {
+	.kmae-sw2-thumbs,
+	.kmae-sw2-extras,
+	.kmae-sw2-full,
+	.kmae-sw2-msg,
+	.kmae-sw2-lead-body,
+	.kmae-sw2-report,
+	.kmae-sw2-peek {
+		display: none;
+	}
+}
+
+/* Fekvő telefon: fotó és adatok egymás mellett, hogy a kártya kiférjen. */
+@media (max-width: 1024px) and (orientation: landscape) {
+	.kmae-sw2-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: start;
+	}
+
+	.kmae-sw2-media {
+		max-height: calc(100svh - 32px);
+	}
+}
+
+/* PC: a régi kártyás elrendezés rácsa (kártya középen, eszköztár jobbra). */
+@media (min-width: 1025px) {
+	body.kmae-browse-page .kmae-swipe-browse.kmae-sw2-browse {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) min(644px, 46vw) minmax(0, 1fr);
+		align-items: start;
+		column-gap: 22px;
+	}
+
+	body.kmae-browse-page .kmae-swipe-browse.kmae-sw2-browse > .kmae-sw2 {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	body.kmae-browse-page .kmae-swipe-browse.kmae-sw2-browse > .kmae-browse-toolbar {
+		grid-column: 3;
+		grid-row: 1;
+		justify-self: start;
+	}
+
+	.kmae-sw2-facts {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}

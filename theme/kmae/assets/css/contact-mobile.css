@@ -1,0 +1,506 @@
+/* =========================================================
+   Albira — Kapcsolat oldal telefonon (álló + fekvő), app-szerű.
+   Scope: body.kmae-contact-page-view (functions.php kmae_body_classes).
+   Csak max 1024px; az asztali nézetet a contact.css adja (1025px+).
+   Betöltés: functions.php kmae_enqueue_contact_mobile().
+   ========================================================= */
+
+@media (max-width: 1024px) {
+	body.kmae-contact-page-view {
+		--ct-blue: #00c7f7;
+		--ct-blue-strong: #008fbd;
+		--ct-blue-rgb: 0, 199, 247;
+		--ct-orange: #ff6e25;
+		--ct-orange-rgb: 255, 110, 37;
+		--ct-ink: #202936;
+		--ct-copy: #465463;
+		--ct-muted: #6b7889;
+		--ct-gutter: 14px;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* ---- Vendég fejléc: logó balra, a két gomb jobbra, kisebb méretben ---- */
+	body.kmae-marketing.kmae-contact-page-view .kmae-header__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding-left: max(var(--ct-gutter), env(safe-area-inset-left, 0px)) !important;
+		padding-right: max(var(--ct-gutter), env(safe-area-inset-right, 0px)) !important;
+	}
+
+	body.kmae-marketing.kmae-contact-page-view .kmae-logo--desktop {
+		flex: 0 1 auto;
+		min-width: 0;
+	}
+
+	body.kmae-marketing.kmae-contact-page-view .kmae-logo--desktop .kmae-logo__img {
+		display: block;
+		width: auto;
+		height: 32px;
+		max-width: 100%;
+	}
+
+	body.kmae-marketing.kmae-contact-page-view .kmae-header__actions--desktop {
+		display: flex;
+		flex: 0 0 auto;
+		gap: 8px;
+	}
+
+	body.kmae-marketing.kmae-contact-page-view .kmae-header__actions .kmae-btn--login,
+	body.kmae-marketing.kmae-contact-page-view .kmae-header__actions .kmae-btn--register {
+		min-height: 36px;
+		padding: 0 13px;
+		font-size: 13.5px;
+		white-space: nowrap;
+	}
+
+	/* ---- Oldal-héj: teljes szélesség, saját gutter ---- */
+	body.kmae-contact-page-view .kmae-page {
+		box-sizing: border-box;
+		width: 100%;
+		margin: 0;
+		padding: calc(var(--kmae-header-h, 64px) + 8px) var(--ct-gutter) calc(32px + env(safe-area-inset-bottom, 0px));
+		background: transparent;
+	}
+
+	/* Belépve a fejléc a folyamban áll, alul az app-menüsor. */
+	body.kmae-app.kmae-contact-page-view .kmae-page {
+		padding-top: 14px;
+		padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+	}
+
+	body.kmae-contact-page-view .kmae-page > .kmae-container {
+		width: 100%;
+		max-width: 560px;
+		margin: 0 auto;
+		padding: 0;
+	}
+
+	body.kmae-contact-page-view .kmae-page__article,
+	body.kmae-contact-page-view .kmae-page__content {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* A saját cím a tartalomban van; a WP-cím rejtve. */
+	body.kmae-contact-page-view .kmae-page__article > .kmae-page__title {
+		display: none;
+	}
+
+	/* A WordPress automatikus bekezdései/sortörései ne nyissanak réseket. */
+	body.kmae-contact-page-view .kmae-contact-page br {
+		display: none;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-form > p:not([class]),
+	body.kmae-contact-page-view .kmae-contact-intro__faq-block > p + p {
+		display: contents;
+	}
+
+	/* =====================================================
+	   Tartalom
+	   ===================================================== */
+	body.kmae-contact-page-view .kmae-contact-page {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		width: 100%;
+	}
+
+	/* ---- Fejrész: kártya nélkül, a háttéren ---- */
+	body.kmae-contact-page-view .kmae-contact-intro {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin: 0;
+		padding: 6px 4px 0;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+		text-align: center;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-intro__eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0 0 10px;
+		padding: 5px 12px;
+		border: 1px solid rgba(var(--ct-blue-rgb), 0.6);
+		border-radius: 999px;
+		background: linear-gradient(145deg, rgba(222, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow: 0 0 14px rgba(var(--ct-blue-rgb), 0.16), inset 0 1px 0 #fff;
+		font-size: 10px;
+		font-weight: 850;
+		line-height: 1.4;
+		letter-spacing: 0.15em;
+		color: var(--ct-blue-strong);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-intro__eyebrow::before {
+		content: "";
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--ct-orange);
+		box-shadow: 0 0 8px rgba(var(--ct-orange-rgb), 0.8);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-intro h1 {
+		margin: 0;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: clamp(32px, 9.5vw, 42px);
+		font-weight: 850;
+		line-height: 1.06;
+		letter-spacing: -0.04em;
+		background: linear-gradient(100deg, #008fbd 0%, #00c7f7 40%, #e99525 78%, #ff6e25 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-intro__lead {
+		max-width: 34ch;
+		margin: 8px auto 0;
+		font-size: 14.5px;
+		font-weight: 560;
+		line-height: 1.55;
+		text-wrap: balance;
+		color: var(--ct-copy);
+	}
+
+	/* ---- GYIK-sor: ikon + szöveg + kis gomb, üveg sávban ---- */
+	body.kmae-contact-page-view .kmae-contact-intro__faq-block {
+		display: grid;
+		grid-template-columns: 38px minmax(0, 1fr);
+		column-gap: 12px;
+		row-gap: 8px;
+		align-items: center;
+		width: 100%;
+		box-sizing: border-box;
+		margin: 16px 0 0;
+		padding: 12px 14px;
+		border: 1px solid rgba(var(--ct-blue-rgb), 0.45);
+		border-radius: 18px;
+		background: linear-gradient(145deg, rgba(231, 250, 255, 0.9), rgba(255, 255, 255, 0.78));
+		box-shadow: 0 8px 22px rgba(38, 68, 90, 0.1), inset 0 1px 0 #fff;
+		text-align: left;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-intro__faq-block::before {
+		content: "?";
+		grid-row: 1 / span 2;
+		display: grid;
+		place-items: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 12px;
+		background: linear-gradient(140deg, #00c7f7, #008fbd);
+		box-shadow: 0 6px 14px rgba(var(--ct-blue-rgb), 0.35);
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 19px;
+		font-weight: 850;
+		color: #fff;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-intro__faq-block > p:first-child {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 1.45;
+		color: var(--ct-copy);
+	}
+
+	body.kmae-contact-page-view a.kmae-contact-intro__faq {
+		justify-self: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 36px;
+		padding: 0 14px;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--ct-blue-rgb), 0.7);
+		border-radius: 999px;
+		background: #fff;
+		box-shadow: 0 4px 10px rgba(var(--ct-blue-rgb), 0.16);
+		font-size: 13.5px;
+		font-weight: 800;
+		line-height: 1;
+		text-decoration: none;
+		color: var(--ct-blue-strong);
+	}
+
+	body.kmae-contact-page-view a.kmae-contact-intro__faq span {
+		display: inline;
+		margin: 0;
+		font-size: 16px;
+		line-height: 1;
+		color: var(--ct-orange);
+	}
+
+	/* ---- Űrlap-kártya ---- */
+	body.kmae-contact-page-view .kmae-contact-card {
+		position: relative;
+		box-sizing: border-box;
+		overflow: hidden;
+		margin: 0;
+		padding: 22px 16px 18px;
+		border: 1px solid rgba(var(--ct-blue-rgb), 0.45);
+		border-radius: 24px;
+		background:
+			radial-gradient(circle at 100% 0%, rgba(var(--ct-orange-rgb), 0.08), transparent 42%),
+			rgba(255, 255, 255, 0.93);
+		box-shadow: 0 14px 34px rgba(38, 68, 90, 0.14), inset 0 1px 0 #fff;
+	}
+
+	/* neon csík a kártya tetején */
+	body.kmae-contact-page-view .kmae-contact-card::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 22px;
+		right: 22px;
+		height: 3px;
+		border-radius: 0 0 3px 3px;
+		background: linear-gradient(90deg, #00c7f7, #ff6e25);
+		box-shadow: 0 0 12px rgba(var(--ct-blue-rgb), 0.45);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-card__header {
+		margin: 0 0 14px;
+		padding: 0;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-card__header p {
+		margin: 0 0 4px;
+		font-size: 10px;
+		font-weight: 850;
+		line-height: 1.4;
+		letter-spacing: 0.15em;
+		color: var(--ct-blue-strong);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-card__header h2 {
+		margin: 0;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 22px;
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: -0.025em;
+		color: var(--ct-ink);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-form {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: 0;
+		padding: 0;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-form__hp {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		margin: 0;
+		overflow: hidden;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-form__row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 12px;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-field {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 0;
+		margin: 0;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-field > span {
+		padding-left: 4px;
+		font-size: 12.5px;
+		font-weight: 800;
+		line-height: 1.3;
+		color: var(--ct-ink);
+	}
+
+	/* 16px betű: iOS ne nagyítsa be az oldalt fókuszra. */
+	body.kmae-contact-page-view .kmae-contact-field input,
+	body.kmae-contact-page-view .kmae-contact-field select,
+	body.kmae-contact-page-view .kmae-contact-field textarea {
+		display: block;
+		width: 100%;
+		min-height: 52px;
+		margin: 0;
+		padding: 0 16px;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--ct-blue-rgb), 0.45);
+		border-radius: 15px;
+		background-color: #f8fdff;
+		box-shadow: inset 0 1px 2px rgba(38, 68, 90, 0.06);
+		font-family: inherit;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--ct-ink);
+		outline: none;
+		-webkit-appearance: none;
+		appearance: none;
+		transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-field input::placeholder,
+	body.kmae-contact-page-view .kmae-contact-field textarea::placeholder {
+		font-weight: 500;
+		color: #8b97a6;
+	}
+
+	/* lenyíló: saját nyíl (az appearance:none elveszi a natívat) */
+	body.kmae-contact-page-view .kmae-contact-field select {
+		padding-right: 44px;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23008fbd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 16px center;
+		background-size: 14px 14px;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-field textarea {
+		min-height: 132px;
+		padding: 13px 16px;
+		line-height: 1.5;
+		resize: vertical;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-field input:focus,
+	body.kmae-contact-page-view .kmae-contact-field select:focus,
+	body.kmae-contact-page-view .kmae-contact-field textarea:focus {
+		border-color: rgba(var(--ct-blue-rgb), 0.95);
+		background-color: #fff;
+		box-shadow: 0 0 0 4px rgba(var(--ct-blue-rgb), 0.18);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-form__submit,
+	body.kmae-contact-page-view .kmae-contact-card__home {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		width: 100%;
+		min-height: 54px;
+		margin: 4px 0 0;
+		box-sizing: border-box;
+		border: 0;
+		border-radius: 999px;
+		background: linear-gradient(110deg, #ffad41, #ff6e25);
+		box-shadow: 0 10px 22px rgba(var(--ct-orange-rgb), 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+		font-family: inherit;
+		font-size: 16px;
+		font-weight: 800;
+		text-decoration: none;
+		color: #fff;
+		cursor: pointer;
+		touch-action: manipulation;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-form__submit:active,
+	body.kmae-contact-page-view .kmae-contact-card__home:active {
+		transform: scale(0.98);
+	}
+
+	body.kmae-contact-page-view .kmae-contact-notice {
+		margin: 0 0 12px;
+		padding: 13px 15px;
+		border-radius: 14px;
+		font-size: 14px;
+		font-weight: 650;
+		line-height: 1.5;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-notice--success {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		border: 1px solid rgba(34, 160, 90, 0.5);
+		background: rgba(232, 250, 240, 0.95);
+		color: #14653a;
+	}
+
+	body.kmae-contact-page-view .kmae-contact-notice--error {
+		border: 1px solid rgba(225, 29, 72, 0.45);
+		background: rgba(255, 238, 242, 0.95);
+		color: #a3123a;
+	}
+
+	/* =====================================================
+	   Fekvő telefon: bal oszlop = cím + GYIK, jobb = űrlap
+	   ===================================================== */
+	@media (orientation: landscape) {
+		body.kmae-contact-page-view .kmae-page > .kmae-container {
+			max-width: 980px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-page {
+			display: grid;
+			grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+			gap: 16px;
+			align-items: start;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-intro {
+			position: sticky;
+			top: 12px;
+			align-items: flex-start;
+			padding: 10px 0 0;
+			text-align: left;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-intro h1 {
+			font-size: clamp(28px, 4.6vw, 38px);
+		}
+
+		body.kmae-contact-page-view .kmae-contact-intro__lead {
+			margin-left: 0;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-card {
+			padding: 18px 16px 16px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-card__header {
+			margin-bottom: 12px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-card__header h2 {
+			font-size: 20px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-form,
+		body.kmae-contact-page-view .kmae-contact-form__row {
+			gap: 10px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-form__row {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		body.kmae-contact-page-view .kmae-contact-field input,
+		body.kmae-contact-page-view .kmae-contact-field select {
+			min-height: 46px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-field textarea {
+			min-height: 96px;
+		}
+
+		body.kmae-contact-page-view .kmae-contact-form__submit {
+			min-height: 50px;
+		}
+	}
+}

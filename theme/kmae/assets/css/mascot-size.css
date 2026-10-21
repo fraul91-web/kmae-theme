@@ -1,0 +1,79 @@
+/*
+ * Manók egységes mérete: 200 px magas (a kép saját arányával, így a manó a doboz
+ * bal szélére simul, nem lebeg egy 200 px széles keret közepén), telefonon és PC-n is.
+ * Kivétel: a szomorú manó (szomoru3 / szomorumano1) és a forgalmi-beolvasás manó
+ * (regscan) — azok nincsenek itt, a helyük változatlan.
+ *
+ * Az alsó blokkok azt igazítják az új mérethez, ami a régi (kisebb) manóhoz volt
+ * igazítva: fénykorongok, színpadok, a manó mellé tolt szövegdobozok.
+ */
+
+html body .kmae-wizard-cheer__mascot,
+html body .kmae-verify-gate__mascot,
+html body .kmae-complete-greet__mascot,
+html body .kmae-home-greeting__mascot,
+html body .kmae-home-start__mascot,
+html body .kmae-my-listings__empty-mascot,
+html body .kmae-first__mascot,
+html body .kmae-locate-dialog__mascot,
+html body .kmae-minimum-info__mascot {
+	width: auto !important;
+	height: 200px !important;
+	max-width: none !important;
+	flex-shrink: 0;
+	object-fit: contain;
+}
+
+/* Hirdetésfeladó segéd: a kép cseréjekor a hely ne ugorjon → fix, bal-alsó igazított doboz. */
+html body .kmae-wizard-assist__mascot {
+	width: 110px !important;
+	height: 200px !important;
+	max-width: none !important;
+	object-fit: contain;
+	object-position: left bottom;
+}
+
+/* Hirdetésfeladó „Gratulálunk” sor: a régi fej-lejjebb-tolás a kis manóhoz kellett. */
+html body .kmae-wizard-cheer__mascot {
+	transform: none !important;
+}
+
+/* Hírdetéseim üres állapot: a manó ne mozogjon. */
+html body .kmae-my-listings__empty-mascot {
+	animation: none !important;
+	transform: none !important;
+}
+
+/* Kezdőoldal, Step 0: a fénykorong a manó (86 px széles) közepe mögé kerül. */
+html body .kmae-home-start .kmae-home-start__hello::before {
+	left: 43px;
+	width: 190px;
+	height: 190px;
+}
+
+/* Első hirdetés utáni főoldal: a színpad a manóval együtt 200 px magas, a korong középen. */
+html body .kmae-first__stage {
+	height: 200px;
+}
+html body .kmae-first__stage::before {
+	inset: 0;
+	width: 160px;
+	height: 160px;
+	margin: auto;
+}
+
+/* Hirdetésfeladó „Mire figyelj” doboz: a szöveg a nagyobb manó mellé kerül, a doboz elég magas. */
+html body .kmae-create-page .kmae-minimum-info,
+html body .kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-info {
+	min-height: 224px;
+	padding-left: 124px;
+}
+
+/* „Merre van a hirdetés helye” ablak: a kukucskáló manó feje fölé kerül hely, a szöveg alatta indul. */
+html body .kmae-locate-dialog__card {
+	margin-top: 120px;
+	padding-top: 100px;
+}
+html body .kmae-locate-dialog__mascot {
+	top: -120px;
+}

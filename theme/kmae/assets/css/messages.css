@@ -1,0 +1,1092 @@
+/* =========================================================
+   Albira — Üzenetek (beszélgetéslista)
+   Csak ezen az oldalon töltődik be (functions.php), a megnyitott
+   beszélgetés stílusa az offer-thread.css-ben van.
+   Arculat: világoskék + narancs üveg, neon fénycsík (home-cards.css minta).
+   Vevő mindig kék, eladó mindig narancs (a kártya a MÁSIK fél szerepét mutatja).
+   ========================================================= */
+
+body.kmae-messages-page .kmae-page__title {
+	display: none;
+}
+
+body.kmae-messages-page .kmae-page > .kmae-container {
+	box-sizing: border-box;
+	width: min(1020px, calc(100vw - 48px));
+	max-width: 1020px;
+	margin-inline: auto;
+	padding-inline: 0;
+}
+
+body.kmae-messages-page .kmae-page__content {
+	max-width: none;
+	color: #34404d;
+}
+
+/* ---------- Nagy üvegpanel ---------- */
+
+.kmae-inbox {
+	--ib-blue: #00c7f7;
+	--ib-blue-rgb: 0, 199, 247;
+	--ib-blue-strong: #008fbd;
+	--ib-orange: #ff6e25;
+	--ib-orange-rgb: 255, 110, 37;
+	--ib-orange-strong: #e95e13;
+	--ib-ink: #202936;
+	--ib-ink-2: #34404d;
+	--ib-ink-3: #465463;
+	position: relative;
+	box-sizing: border-box;
+	padding: 30px 32px 30px;
+	border: 1px solid rgba(var(--ib-blue-rgb), 0.62);
+	border-radius: 24px;
+	background:
+		radial-gradient(circle at 7% 0%, rgba(var(--ib-blue-rgb), 0.24), transparent 42%),
+		radial-gradient(circle at 96% 100%, rgba(var(--ib-orange-rgb), 0.16), transparent 42%),
+		linear-gradient(135deg, rgba(238, 251, 255, 0.95), rgba(255, 246, 239, 0.93));
+	box-shadow: 0 18px 48px rgba(38, 68, 90, 0.16), 0 0 28px rgba(var(--ib-blue-rgb), 0.1), inset 0 1px 0 #fff;
+	backdrop-filter: blur(16px) saturate(130%);
+	font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+	isolation: isolate;
+}
+
+/* Neon fénycsík a tetején, lassan ide-oda úszik. */
+.kmae-inbox::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 5%;
+	width: 50%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--ib-blue), var(--ib-orange), transparent);
+	box-shadow: 0 0 16px rgba(var(--ib-blue-rgb), 0.9);
+	animation: kmae-inbox-neon 9s ease-in-out infinite alternate;
+	pointer-events: none;
+}
+
+/* Halvány hatszög-háló dísz a jobb felső sarokban. */
+.kmae-inbox::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: -1;
+	width: 320px;
+	height: 230px;
+	border-top-right-radius: 24px;
+	background-image:
+		linear-gradient(30deg, rgba(var(--ib-blue-rgb), 0.12) 12%, transparent 12.5%, transparent 87%, rgba(var(--ib-blue-rgb), 0.12) 87.5%),
+		linear-gradient(150deg, rgba(var(--ib-blue-rgb), 0.12) 12%, transparent 12.5%, transparent 87%, rgba(var(--ib-blue-rgb), 0.12) 87.5%),
+		linear-gradient(90deg, rgba(var(--ib-blue-rgb), 0.08) 2%, transparent 2.5%, transparent 97%, rgba(var(--ib-blue-rgb), 0.08) 97.5%);
+	background-size: 36px 62px;
+	-webkit-mask-image: radial-gradient(circle at 80% 20%, #000, transparent 70%);
+	mask-image: radial-gradient(circle at 80% 20%, #000, transparent 70%);
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+@keyframes kmae-inbox-neon {
+	from {
+		left: 5%;
+	}
+	to {
+		left: 45%;
+	}
+}
+
+/* ---------- Fejléc ---------- */
+
+.kmae-inbox__hero {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	margin: 0 0 24px;
+	padding-bottom: 22px;
+	border-bottom: 1px solid transparent;
+	border-image: linear-gradient(90deg, transparent, rgba(var(--ib-blue-rgb), 0.7), rgba(var(--ib-orange-rgb), 0.5), transparent) 1;
+}
+
+.kmae-inbox__hero-icon {
+	position: relative;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+	border-radius: 18px;
+	background: linear-gradient(145deg, #82edff, var(--ib-blue) 55%, var(--ib-blue-strong));
+	box-shadow: 0 10px 26px rgba(var(--ib-blue-rgb), 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	color: #fff;
+}
+
+/* Kis narancs „értesítés” pötty a buborékikonon. */
+.kmae-inbox__hero-icon::after {
+	content: "";
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	width: 14px;
+	height: 14px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: linear-gradient(145deg, #ffc36b, var(--ib-orange));
+	box-shadow: 0 0 12px rgba(var(--ib-orange-rgb), 0.7);
+	animation: kmae-inbox-pulse 2.4s ease-in-out infinite;
+}
+
+.kmae-inbox__hero-text {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.kmae-inbox__eyebrow {
+	color: var(--ib-blue-strong);
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.17em;
+	text-transform: uppercase;
+}
+
+.kmae-inbox .kmae-inbox__title {
+	margin: 0;
+	background: linear-gradient(100deg, #008fbd, #00c7f7 38%, #e99525 70%, #ff6e25);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	font-size: 2.4rem;
+	font-weight: 850;
+	letter-spacing: -0.045em;
+	line-height: 1.05;
+}
+
+.kmae-inbox__stats {
+	display: flex;
+	flex: none;
+	gap: 10px;
+}
+
+.kmae-inbox__stat {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 92px;
+	padding: 10px 14px 9px;
+	border: 1px solid rgba(var(--ib-blue-rgb), 0.45);
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.78);
+	box-shadow: 0 0 18px rgba(var(--ib-blue-rgb), 0.14), inset 0 1px 0 #fff;
+	line-height: 1.1;
+}
+
+.kmae-inbox__stat strong {
+	color: var(--ib-blue-strong);
+	font-size: 1.55rem;
+	font-weight: 850;
+	letter-spacing: -0.03em;
+}
+
+.kmae-inbox__stat span {
+	margin-top: 2px;
+	color: var(--ib-ink-3);
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.kmae-inbox__stat--unread strong {
+	color: #9aa6b2;
+}
+
+.kmae-inbox__stat--unread.is-active {
+	border-color: rgba(var(--ib-orange-rgb), 0.7);
+	background: linear-gradient(145deg, rgba(255, 236, 222, 0.95), rgba(255, 255, 255, 0.85));
+	box-shadow: 0 0 22px rgba(var(--ib-orange-rgb), 0.22), inset 0 1px 0 #fff;
+}
+
+.kmae-inbox__stat--unread.is-active strong {
+	color: var(--ib-orange-strong);
+}
+
+/* ---------- Üres állapot ---------- */
+
+.kmae-inbox__empty {
+	position: relative;
+	display: grid;
+	grid-template-columns: 210px minmax(0, 1fr);
+	align-items: center;
+	gap: 8px 26px;
+	margin: 4px 0;
+	padding: 26px 32px 26px 16px;
+	overflow: hidden;
+	border: 1px solid rgba(var(--ib-blue-rgb), 0.45);
+	border-radius: 22px;
+	background:
+		radial-gradient(circle at 0 0, rgba(var(--ib-blue-rgb), 0.18), transparent 44%),
+		radial-gradient(circle at 100% 100%, rgba(var(--ib-orange-rgb), 0.16), transparent 42%),
+		linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(244, 251, 255, 0.94));
+	box-shadow: 0 14px 34px rgba(38, 68, 90, 0.13), 0 0 24px rgba(var(--ib-blue-rgb), 0.1), inset 0 1px 0 #fff;
+	text-align: left;
+	animation: kmae-inbox-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.kmae-inbox__empty-mascot {
+	position: relative;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+/* Lágy talapzat-fény a manó alatt. */
+.kmae-inbox__empty-mascot::before {
+	content: "";
+	position: absolute;
+	bottom: 2px;
+	left: 50%;
+	width: 150px;
+	height: 26px;
+	border-radius: 50%;
+	background: radial-gradient(ellipse, rgba(var(--ib-blue-rgb), 0.35), transparent 70%);
+	transform: translateX(-50%);
+}
+
+.kmae-inbox__empty-mascot img {
+	position: relative;
+	display: block;
+	width: 196px;
+	height: auto;
+	object-fit: contain;
+}
+
+.kmae-inbox__empty-badge {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border: 1px solid rgba(var(--ib-blue-rgb), 0.6);
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 0 18px rgba(var(--ib-blue-rgb), 0.3), 0 6px 16px rgba(38, 68, 90, 0.12);
+	color: var(--ib-blue-strong);
+	animation: kmae-inbox-wiggle 3.2s ease-in-out infinite;
+}
+
+.kmae-inbox__empty-body {
+	min-width: 0;
+}
+
+.kmae-inbox .kmae-inbox__empty-title {
+	margin: 0;
+	color: #17324a;
+	font-size: 2.2rem;
+	font-weight: 850;
+	letter-spacing: -0.035em;
+	line-height: 1.1;
+}
+
+.kmae-inbox .kmae-inbox__empty-title span {
+	background: linear-gradient(100deg, #e99525, var(--ib-orange));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.kmae-inbox .kmae-inbox__empty-text {
+	max-width: 34rem;
+	margin: 12px 0 0;
+	color: #5b6b7c;
+	font-size: 1.02rem;
+	line-height: 1.55;
+}
+
+.kmae-inbox a.kmae-inbox__empty-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 9px;
+	min-height: 48px;
+	margin-top: 20px;
+	padding: 0 22px;
+	border: 0;
+	border-radius: 999px;
+	background: linear-gradient(110deg, #007fb8, var(--ib-blue));
+	box-shadow: 0 8px 24px rgba(var(--ib-blue-rgb), 0.32);
+	color: #fff;
+	font-size: 0.98rem;
+	font-weight: 800;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kmae-inbox a.kmae-inbox__empty-btn svg:last-child {
+	transition: transform 0.2s ease;
+}
+
+.kmae-inbox a.kmae-inbox__empty-btn:hover,
+.kmae-inbox a.kmae-inbox__empty-btn:focus-visible {
+	color: #fff;
+	box-shadow: 0 12px 30px rgba(var(--ib-blue-rgb), 0.45);
+	transform: translateY(-2px);
+}
+
+.kmae-inbox a.kmae-inbox__empty-btn:hover svg:last-child,
+.kmae-inbox a.kmae-inbox__empty-btn:focus-visible svg:last-child {
+	transform: translateX(4px);
+}
+
+/* ---------- Lista ---------- */
+
+.kmae-inbox__list {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Kártya: a szín a másik fél szerepe (vevő kék, eladó narancs). */
+.kmae-inbox__item {
+	--ib-c: var(--ib-blue);
+	--ib-c-rgb: var(--ib-blue-rgb);
+	--ib-c-strong: var(--ib-blue-strong);
+	--ib-c-soft: rgba(222, 248, 255, 0.94);
+	position: relative;
+	margin: 0;
+	animation: kmae-inbox-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.kmae-inbox__item--seller {
+	--ib-c: var(--ib-orange);
+	--ib-c-rgb: var(--ib-orange-rgb);
+	--ib-c-strong: var(--ib-orange-strong);
+	--ib-c-soft: rgba(255, 236, 222, 0.95);
+}
+
+/* Lépcsőzetes beúszás (az első 10 kártya). */
+.kmae-inbox__item:nth-child(2) { animation-delay: 0.05s; }
+.kmae-inbox__item:nth-child(3) { animation-delay: 0.1s; }
+.kmae-inbox__item:nth-child(4) { animation-delay: 0.15s; }
+.kmae-inbox__item:nth-child(5) { animation-delay: 0.2s; }
+.kmae-inbox__item:nth-child(6) { animation-delay: 0.25s; }
+.kmae-inbox__item:nth-child(7) { animation-delay: 0.3s; }
+.kmae-inbox__item:nth-child(8) { animation-delay: 0.35s; }
+.kmae-inbox__item:nth-child(9) { animation-delay: 0.4s; }
+.kmae-inbox__item:nth-child(n + 10) { animation-delay: 0.45s; }
+
+.kmae-inbox__item:hover,
+.kmae-inbox__item:focus-within {
+	z-index: 2;
+}
+
+.kmae-inbox__link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	overflow: hidden;
+	padding: 12px 18px 12px 12px;
+	border: 1px solid rgba(var(--ib-c-rgb), 0.38);
+	border-radius: 19px;
+	background:
+		radial-gradient(circle at 0 50%, rgba(var(--ib-c-rgb), 0.12), transparent 34%),
+		linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+	box-shadow: 0 8px 22px rgba(38, 68, 90, 0.08), inset 0 1px 0 #fff;
+	color: inherit;
+	text-decoration: none;
+	transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease, background 0.22s ease;
+}
+
+/* Színes szerep-csík a kártya bal szélén. */
+.kmae-inbox__link::before {
+	content: "";
+	position: absolute;
+	top: 14px;
+	bottom: 14px;
+	left: 0;
+	width: 4px;
+	border-radius: 0 4px 4px 0;
+	background: linear-gradient(180deg, rgba(var(--ib-c-rgb), 0.35), var(--ib-c), rgba(var(--ib-c-rgb), 0.35));
+	box-shadow: 0 0 10px rgba(var(--ib-c-rgb), 0.55);
+	transition: top 0.22s ease, bottom 0.22s ease;
+}
+
+/* Fényvillanás, ami rámutatáskor végigsuhan a kártyán. */
+.kmae-inbox__link::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: -40%;
+	width: 30%;
+	background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+	transform: skewX(-18deg);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.kmae-inbox__link:hover,
+.kmae-inbox__link:focus-visible {
+	border-color: rgba(var(--ib-c-rgb), 0.85);
+	background:
+		radial-gradient(circle at 0 50%, rgba(var(--ib-c-rgb), 0.2), transparent 40%),
+		linear-gradient(145deg, var(--ib-c-soft), rgba(255, 255, 255, 0.86));
+	box-shadow: 0 0 24px rgba(var(--ib-c-rgb), 0.22), 0 16px 34px rgba(38, 68, 90, 0.14), inset 0 1px 0 #fff;
+	transform: translateY(-3px);
+}
+
+.kmae-inbox__link:hover::before,
+.kmae-inbox__link:focus-visible::before {
+	top: 0;
+	bottom: 0;
+}
+
+.kmae-inbox__link:hover::after,
+.kmae-inbox__link:focus-visible::after {
+	animation: kmae-inbox-sheen 0.8s ease;
+}
+
+/* Olvasatlan: narancs keret + lélegző fény. */
+.kmae-inbox__item.is-unread .kmae-inbox__link {
+	border-color: rgba(var(--ib-orange-rgb), 0.75);
+	background:
+		radial-gradient(circle at 0 50%, rgba(var(--ib-orange-rgb), 0.16), transparent 38%),
+		linear-gradient(145deg, rgba(255, 244, 236, 0.96), rgba(255, 255, 255, 0.86));
+	animation: kmae-inbox-glow 2.8s ease-in-out infinite;
+}
+
+/* ---------- Fotó + avatar ---------- */
+
+.kmae-inbox__photo {
+	position: relative;
+	flex: 0 0 132px;
+	width: 132px;
+	height: 92px;
+	border-radius: 14px;
+	background: linear-gradient(145deg, rgba(var(--ib-c-rgb), 0.1), rgba(var(--ib-c-rgb), 0.22));
+	box-shadow: 0 0 0 1px rgba(var(--ib-c-rgb), 0.35), 0 6px 16px rgba(38, 68, 90, 0.14);
+}
+
+.kmae-inbox__photo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 14px;
+	object-fit: cover;
+	transition: transform 0.4s ease;
+}
+
+.kmae-inbox__link:hover .kmae-inbox__photo img,
+.kmae-inbox__link:focus-visible .kmae-inbox__photo img {
+	transform: scale(1.04);
+}
+
+.kmae-inbox__photo-empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	color: rgba(var(--ib-c-rgb), 0.75);
+}
+
+/* A másik fél monogramja a fotó sarkán. */
+.kmae-inbox__avatar {
+	position: absolute;
+	right: -8px;
+	bottom: -8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: linear-gradient(145deg, rgba(var(--ib-c-rgb), 0.55), var(--ib-c) 55%, var(--ib-c-strong));
+	box-shadow: 0 0 14px rgba(var(--ib-c-rgb), 0.5), 0 4px 10px rgba(38, 68, 90, 0.18);
+	color: #fff;
+	font-size: 0.95rem;
+	font-weight: 850;
+	line-height: 1;
+	transition: transform 0.22s ease;
+}
+
+.kmae-inbox__link:hover .kmae-inbox__avatar,
+.kmae-inbox__link:focus-visible .kmae-inbox__avatar {
+	transform: scale(1.1) rotate(-6deg);
+}
+
+/* ---------- Szöveg ---------- */
+
+.kmae-inbox__body {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.kmae-inbox__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.kmae-inbox__car {
+	overflow: hidden;
+	color: var(--ib-ink);
+	font-size: 1.1rem;
+	font-weight: 800;
+	letter-spacing: -0.015em;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.kmae-inbox__time {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 9px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow: inset 0 0 0 1px rgba(70, 84, 99, 0.14);
+	color: var(--ib-ink-3);
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.kmae-inbox__time svg {
+	color: var(--ib-c-strong);
+}
+
+.kmae-inbox__party {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--ib-ink-2);
+	font-size: 0.92rem;
+	font-weight: 700;
+}
+
+.kmae-inbox__role {
+	padding: 2px 9px;
+	border-radius: 999px;
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.kmae-inbox__role--buyer {
+	border: 1px solid rgba(0, 143, 189, 0.5);
+	background: rgba(var(--ib-blue-rgb), 0.14);
+	color: var(--ib-blue-strong);
+}
+
+.kmae-inbox__role--seller {
+	border: 1px solid rgba(233, 94, 19, 0.5);
+	background: rgba(var(--ib-orange-rgb), 0.12);
+	color: var(--ib-orange-strong);
+}
+
+.kmae-inbox__preview {
+	position: relative;
+	overflow: hidden;
+	padding: 7px 12px;
+	border-radius: 4px 12px 12px 12px;
+	background: rgba(255, 255, 255, 0.82);
+	box-shadow: inset 0 0 0 1px rgba(var(--ib-c-rgb), 0.18);
+	color: var(--ib-ink-3);
+	font-size: 0.92rem;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.kmae-inbox__item.is-unread .kmae-inbox__preview {
+	box-shadow: inset 0 0 0 1px rgba(var(--ib-orange-rgb), 0.4);
+	color: var(--ib-ink);
+	font-weight: 700;
+}
+
+.kmae-inbox__you {
+	color: var(--ib-c-strong);
+	font-weight: 800;
+}
+
+/* ---------- Jobb oldal: „Új” jelvény + nyíl ---------- */
+
+.kmae-inbox__side {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-width: 52px;
+}
+
+.kmae-inbox__new {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px 4px 8px;
+	border-radius: 999px;
+	background: linear-gradient(110deg, #ffad41, var(--ib-orange));
+	box-shadow: 0 6px 16px rgba(var(--ib-orange-rgb), 0.35);
+	color: #fff;
+	font-size: 0.72rem;
+	font-weight: 850;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.kmae-inbox__dot {
+	position: relative;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #fff;
+}
+
+.kmae-inbox__dot::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: #fff;
+	animation: kmae-inbox-ping 1.6s ease-out infinite;
+}
+
+.kmae-inbox__go {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border: 1px solid rgba(var(--ib-c-rgb), 0.5);
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 0 14px rgba(var(--ib-c-rgb), 0.16), inset 0 1px 0 #fff;
+	color: var(--ib-c-strong);
+	transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.kmae-inbox__link:hover .kmae-inbox__go,
+.kmae-inbox__link:focus-visible .kmae-inbox__go {
+	border-color: transparent;
+	background: linear-gradient(145deg, rgba(var(--ib-c-rgb), 0.7), var(--ib-c-strong));
+	box-shadow: 0 6px 18px rgba(var(--ib-c-rgb), 0.4);
+	color: #fff;
+	transform: translateX(4px);
+}
+
+/* ---------- Állapotcímke (Ajánlat / Foglalt / Eladva / Lezárva) ---------- */
+
+.kmae-inbox__state,
+.kmae-inbox__gone {
+	flex: none;
+	margin-right: auto;
+	padding: 3px 10px;
+	border: 1px solid rgba(0, 143, 189, 0.4);
+	border-radius: 999px;
+	background: rgba(var(--ib-blue-rgb), 0.12);
+	color: #00789f;
+	font-size: 0.72rem;
+	font-weight: 800;
+	white-space: nowrap;
+}
+
+.kmae-inbox__state--offer {
+	border-color: rgba(233, 94, 19, 0.5);
+	background: linear-gradient(110deg, rgba(255, 195, 107, 0.25), rgba(var(--ib-orange-rgb), 0.16));
+	box-shadow: 0 0 12px rgba(var(--ib-orange-rgb), 0.18);
+	color: #d4540f;
+}
+
+.kmae-inbox__state--reserved,
+.kmae-inbox__state--reserved-other {
+	border-color: #f0cf7a;
+	background: #fff6dc;
+	color: #9a6a00;
+}
+
+.kmae-inbox__state--sold {
+	border-color: #a9dcb8;
+	background: #eaf8ee;
+	color: #1f8a43;
+}
+
+.kmae-inbox__state--closed {
+	border-color: #cfd6dd;
+	background: #f1f4f6;
+	color: #5b6773;
+}
+
+/* Törölt hirdetés beszélgetése: olvasható marad, halványabb sor + címke. */
+.kmae-inbox__gone {
+	border-color: #f3c2c4;
+	background: #fdeeee;
+	color: #d4333a;
+}
+
+.kmae-inbox__item.is-listing-gone .kmae-inbox__photo {
+	opacity: 0.55;
+	filter: grayscale(0.6);
+}
+
+/* ---------- Törlés: piros X a kártya jobb felső sarkában ---------- */
+
+.kmae-inbox__delete {
+	position: absolute;
+	top: -9px;
+	right: -9px;
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	margin: 0;
+	padding: 0;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: linear-gradient(145deg, #ff6b70, #e5383f);
+	box-shadow: 0 4px 12px rgba(212, 51, 58, 0.35);
+	color: #fff;
+	cursor: pointer;
+	transition: background 0.15s ease, transform 0.2s ease;
+}
+
+.kmae-inbox__delete svg {
+	stroke-width: 3;
+}
+
+button.kmae-inbox__delete:hover,
+button.kmae-inbox__delete:focus-visible {
+	background: linear-gradient(145deg, #e5383f, #c4262d);
+	transform: scale(1.12) rotate(90deg);
+}
+
+/* Foglalt: szürke X, rámutatva rövid magyarázat. */
+.kmae-inbox__delete.is-locked {
+	background: #b5bec7;
+	box-shadow: 0 3px 8px rgba(52, 64, 77, 0.2);
+	cursor: not-allowed;
+}
+
+.kmae-inbox__delete-tip {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	display: none;
+	width: 250px;
+	padding: 9px 12px;
+	border-radius: 10px;
+	background: #202936;
+	box-shadow: 0 10px 24px rgba(32, 41, 54, 0.25);
+	color: #fff;
+	font-size: 0.8rem;
+	font-weight: 600;
+	line-height: 1.4;
+	text-align: left;
+}
+
+.kmae-inbox__delete.is-locked:hover .kmae-inbox__delete-tip,
+.kmae-inbox__delete.is-locked:focus .kmae-inbox__delete-tip {
+	display: block;
+}
+
+/* ---------- Visszajelzés a törlés után ---------- */
+
+.kmae-inbox__flash {
+	margin: -6px 0 18px;
+	padding: 11px 16px;
+	border: 1px solid #a9dcb8;
+	border-radius: 14px;
+	background: linear-gradient(110deg, #eaf8ee, #f6fdf8);
+	box-shadow: 0 6px 16px rgba(31, 138, 67, 0.1);
+	color: #1f6b38;
+	font-weight: 700;
+}
+
+.kmae-inbox__flash.is-error {
+	border-color: #f3c2c4;
+	background: #fdeeee;
+	box-shadow: none;
+	color: #b3262d;
+}
+
+/* A „törölted” visszajelzés 3 mp után eltűnik (a hibák maradnak). */
+.kmae-inbox__flash:not(.is-error) {
+	overflow: hidden;
+	animation: kmae-inbox-flash-out 3.4s ease forwards;
+}
+
+@keyframes kmae-inbox-flash-out {
+	0%,
+	88% {
+		opacity: 1;
+		max-height: 120px;
+	}
+	100% {
+		opacity: 0;
+		max-height: 0;
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+		border-width: 0;
+	}
+}
+
+/* ---------- „Biztosan törlöd?” ablak ---------- */
+
+.kmae-inbox-confirm {
+	width: min(420px, calc(100vw - 32px));
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid rgba(0, 199, 247, 0.6);
+	border-radius: 22px;
+	background:
+		radial-gradient(circle at 7% 0%, rgba(0, 199, 247, 0.2), transparent 45%),
+		linear-gradient(135deg, #f3fcff, #fff8f2);
+	box-shadow: 0 24px 60px rgba(32, 41, 54, 0.3), 0 0 28px rgba(0, 199, 247, 0.14);
+	color: #34404d;
+	font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+}
+
+.kmae-inbox-confirm[open] {
+	animation: kmae-inbox-pop 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.kmae-inbox-confirm::backdrop {
+	background: rgba(32, 41, 54, 0.45);
+	backdrop-filter: blur(4px);
+}
+
+.kmae-inbox-confirm__form {
+	margin: 0;
+	padding: 26px 26px 22px;
+}
+
+.kmae-inbox-confirm__title {
+	margin: 0 0 8px;
+	color: #202936;
+	font-size: 1.35rem;
+	font-weight: 850;
+	letter-spacing: -0.02em;
+}
+
+.kmae-inbox-confirm__note {
+	margin: 0 0 4px;
+	color: #b3262d;
+	font-weight: 700;
+}
+
+.kmae-inbox-confirm__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 22px;
+}
+
+.kmae-inbox-confirm__cancel,
+.kmae-inbox-confirm__ok {
+	padding: 10px 20px;
+	border-radius: 999px;
+	font: inherit;
+	font-weight: 800;
+	cursor: pointer;
+	transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.kmae-inbox-confirm__cancel {
+	border: 1px solid rgba(0, 143, 189, 0.45);
+	background: #fff;
+	color: #00789f;
+}
+
+.kmae-inbox-confirm__cancel:hover {
+	box-shadow: 0 0 16px rgba(0, 199, 247, 0.22);
+	transform: translateY(-1px);
+}
+
+.kmae-inbox-confirm__ok {
+	border: 1px solid #c4262d;
+	background: linear-gradient(110deg, #ff6b70, #e5383f);
+	box-shadow: 0 8px 20px rgba(212, 51, 58, 0.28);
+	color: #fff;
+}
+
+.kmae-inbox-confirm__ok:hover {
+	background: linear-gradient(110deg, #e5383f, #c4262d);
+	transform: translateY(-1px);
+}
+
+/* ---------- Mozgások ---------- */
+
+@keyframes kmae-inbox-rise {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes kmae-inbox-sheen {
+	0% {
+		left: -40%;
+		opacity: 0;
+	}
+	20% {
+		opacity: 1;
+	}
+	100% {
+		left: 120%;
+		opacity: 0;
+	}
+}
+
+@keyframes kmae-inbox-glow {
+	0%,
+	100% {
+		box-shadow: 0 0 14px rgba(255, 110, 37, 0.16), 0 8px 22px rgba(38, 68, 90, 0.08), inset 0 1px 0 #fff;
+	}
+	50% {
+		box-shadow: 0 0 28px rgba(255, 110, 37, 0.34), 0 8px 22px rgba(38, 68, 90, 0.08), inset 0 1px 0 #fff;
+	}
+}
+
+@keyframes kmae-inbox-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.18);
+	}
+}
+
+@keyframes kmae-inbox-ping {
+	0% {
+		opacity: 0.9;
+		transform: scale(1);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(2.6);
+	}
+}
+
+@keyframes kmae-inbox-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-8px);
+	}
+}
+
+@keyframes kmae-inbox-wiggle {
+	0%,
+	80%,
+	100% {
+		transform: rotate(0);
+	}
+	85% {
+		transform: rotate(-12deg);
+	}
+	90% {
+		transform: rotate(10deg);
+	}
+	95% {
+		transform: rotate(-6deg);
+	}
+}
+
+@keyframes kmae-inbox-pop {
+	from {
+		opacity: 0;
+		transform: translateY(10px) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.kmae-inbox *,
+	.kmae-inbox::before,
+	.kmae-inbox-confirm {
+		animation: none !important;
+		transition: none !important;
+	}
+}
+
+/* ---------- Telefon: könnyített változat (nincs lag) ----------
+   A nagy blur, a végtelen fény-animációk és a hover-mozgások telefonon
+   görgetéskor és koppintáskor akadást okoztak. Csak mobilon, az asztali
+   kinézet változatlan. */
+@media (max-width: 1024px) {
+	.kmae-inbox {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.kmae-inbox::before,
+	.kmae-inbox__item,
+	.kmae-inbox__link::after,
+	.kmae-inbox__link:hover::after,
+	.kmae-inbox__link:focus-visible::after {
+		animation: none;
+	}
+
+	/* Olvasatlan: állandó narancs fény, nem lélegzik (a box-shadow animáció minden képkockán újrafest). */
+	.kmae-inbox__item.is-unread .kmae-inbox__link {
+		animation: none;
+		box-shadow: 0 0 20px rgba(var(--ib-orange-rgb), 0.24), 0 8px 22px rgba(38, 68, 90, 0.08), inset 0 1px 0 #fff;
+	}
+
+	.kmae-inbox__link,
+	.kmae-inbox__link::before,
+	.kmae-inbox__photo img,
+	.kmae-inbox__go {
+		transition: none;
+	}
+
+	.kmae-inbox__link:hover,
+	.kmae-inbox__link:focus-visible {
+		transform: none;
+	}
+
+	.kmae-inbox__link:hover::before,
+	.kmae-inbox__link:focus-visible::before {
+		top: 14px;
+		bottom: 14px;
+	}
+
+	.kmae-inbox-confirm[open] {
+		animation: none;
+	}
+
+	.kmae-inbox-confirm::backdrop {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: rgba(32, 41, 54, 0.55);
+	}
+}

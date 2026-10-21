@@ -1,0 +1,685 @@
+/* Albira logged-in header — Simple Mode (edge-to-edge neon bar). */
+
+/* ---- Dropdown panels ---- */
+body.kmae-app .kmae-header__panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	z-index: 1300;
+	min-width: 240px;
+	max-width: min(320px, calc(100vw - 20px));
+	padding: 12px;
+	border: 1px solid rgba(0, 199, 247, 0.6);
+	border-radius: 16px;
+	background:
+		radial-gradient(circle at 7% 0%, rgba(0, 199, 247, 0.2), transparent 42%),
+		linear-gradient(135deg, rgba(224, 248, 255, 0.96), rgba(255, 255, 255, 0.92));
+	box-shadow: 0 18px 48px rgba(38, 68, 90, 0.18), 0 0 28px rgba(0, 199, 247, 0.1), inset 0 1px 0 #fff;
+	backdrop-filter: blur(16px) saturate(130%);
+	-webkit-backdrop-filter: blur(16px) saturate(130%);
+	color: #202936;
+	overflow: visible;
+}
+
+/* Neon fénycsík a lenyíló panel tetején. */
+body.kmae-app .kmae-header__panel::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 8%;
+	width: 50%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, #00c7f7, transparent);
+	box-shadow: 0 0 16px rgba(0, 199, 247, 0.9);
+	pointer-events: none;
+}
+
+body.kmae-app .kmae-header__panel[hidden] {
+	display: none !important;
+}
+
+body.kmae-app .kmae-header__panel--menu {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 8px;
+}
+
+body.kmae-app .kmae-header__panel--menu a,
+body.kmae-app .kmae-header__panel-link,
+body.kmae-app .kmae-header__panel-title {
+	color: #202936 !important;
+}
+
+body.kmae-app .kmae-header__panel--menu a {
+	display: block;
+	padding: 10px 12px;
+	border-radius: 9px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	line-height: 1.35;
+	text-decoration: none;
+}
+
+body.kmae-app .kmae-header__panel--menu a:hover,
+body.kmae-app .kmae-header__panel--menu a:focus-visible {
+	background: rgba(0, 199, 247, 0.14);
+	color: #008fbd !important;
+}
+
+body.kmae-app .kmae-header__panel-title {
+	margin: 0 0 8px;
+	font-size: 0.8rem;
+	font-weight: 750;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+body.kmae-app .kmae-header__panel-empty {
+	margin: 0 0 10px;
+	color: #465463 !important;
+	font-size: 0.875rem;
+	line-height: 1.45;
+}
+
+body.kmae-app .kmae-header__panel-link {
+	display: block;
+	margin-top: 6px;
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+body.kmae-app .kmae-header__panel-link:hover,
+body.kmae-app .kmae-header__panel-link:focus-visible {
+	color: #008fbd !important;
+	text-decoration: underline;
+}
+
+body.kmae-app .kmae-header__panel-sep {
+	width: auto;
+	margin: 6px 4px;
+	border: 0;
+	border-top: 1px solid rgba(0, 199, 247, 0.3);
+}
+
+body.kmae-app .kmae-header__logout {
+	color: #e95e13 !important;
+}
+
+/* ---- Desktop logged-in bar (edge-to-edge) ---- */
+@media (min-width: 1025px) {
+	body.kmae-app .kmae-header,
+	body.kmae-app .kmae-header.kmae-pc-topbar,
+	body.kmae-app .kmae-header.is-scrolled {
+		--kmae-header-h: 72px;
+		/* A fejléc a lap tetején marad és elgörög a tartalommal — nem tapad
+		   a képernyő tetejére. `relative` (nem `static`), mert a fejlécképet
+		   és a jelvényeket abszolút pozicionálás igazítja hozzá. */
+		position: relative;
+		top: 0;
+		z-index: 1100;
+		display: block;
+		width: 100%;
+		max-width: none;
+		height: auto;
+		min-height: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		box-shadow: none;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		isolation: isolate;
+		overflow: visible;
+	}
+
+	body.kmae-app .kmae-header::before,
+	body.kmae-app .kmae-header::after {
+		content: none;
+	}
+
+	body.kmae-app .kmae-header__inner {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		height: var(--kmae-header-h);
+		min-height: var(--kmae-header-h);
+		padding: 0 max(24px, env(safe-area-inset-right, 0px)) 0 max(28px, env(safe-area-inset-left, 0px));
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+		overflow: visible;
+		box-sizing: border-box;
+	}
+
+	body.kmae-app .kmae-header.kmae-pc-topbar .kmae-header__sep {
+		display: none;
+	}
+
+	body.kmae-app .kmae-header__mobile-top,
+	body.kmae-app .kmae-logo--desktop {
+		display: none !important;
+	}
+
+	body.kmae-app .kmae-header__sep {
+		display: block;
+		flex: 0 0 auto;
+		width: 1px;
+		height: 28px;
+		margin: 0 24px;
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	body.kmae-app .kmae-pc-logo {
+		display: flex;
+		align-items: center;
+		justify-self: start;
+		grid-column: 1;
+		flex: none;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+		background: transparent;
+		text-decoration: none;
+		position: relative;
+		z-index: 3;
+	}
+
+	body.kmae-app .kmae-pc-logo::before,
+	body.kmae-app .kmae-pc-logo::after {
+		content: none;
+	}
+
+	/* A bejelentkezett fejléc logója. A forráskép 200x62, ezért magasságból
+	   indulunk, nem fix szélességből — így nem nagyítjuk fel. */
+	body.kmae-app .kmae-pc-logo__img {
+		display: block;
+		width: auto;
+		height: 32px;
+		max-width: 150px;
+		object-fit: contain;
+	}
+
+	body.kmae-app .kmae-pc-topnav {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		justify-self: center;
+		grid-column: 2;
+		position: static;
+		flex: none;
+		gap: 30px;
+		width: max-content;
+		max-width: 100%;
+		min-width: 0;
+		margin: 0;
+		flex-wrap: nowrap;
+		transform: none;
+		z-index: 2;
+	}
+
+	body.kmae-app .kmae-header__nav-item {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 0;
+		border-radius: 0;
+		color: #e6e9f0;
+		font-family: var(--kmae-font-body, Outfit, sans-serif);
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 1.2;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	body.kmae-app .kmae-header__nav-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 22px;
+		height: 22px;
+		color: #e6e9f0;
+	}
+
+	body.kmae-app .kmae-header__nav-icon svg {
+		width: 20px;
+		height: 20px;
+		stroke: currentColor;
+	}
+
+	body.kmae-app .kmae-header__nav-label {
+		display: inline;
+	}
+
+	body.kmae-app .kmae-header__nav-item:hover,
+	body.kmae-app .kmae-header__nav-item:focus-visible {
+		color: #fff;
+	}
+
+	body.kmae-app .kmae-header__nav-item:hover .kmae-header__nav-icon,
+	body.kmae-app .kmae-header__nav-item:focus-visible .kmae-header__nav-icon {
+		color: #fff;
+	}
+
+	body.kmae-app .kmae-pc-topbar-right {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		justify-self: end;
+		grid-column: 3;
+		flex: none;
+		gap: 11px;
+		min-width: 0;
+		margin-left: 0;
+		position: relative;
+		z-index: 3;
+	}
+
+	body.kmae-app .kmae-header__dropdown {
+		position: relative;
+		z-index: 1;
+	}
+
+	body.kmae-app .kmae-header__icon-btn {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		min-height: 40px;
+		padding: 0;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 11px;
+		background: rgba(255, 255, 255, 0.06);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		box-shadow: none;
+		color: #e6e9f0;
+		cursor: pointer;
+		font: inherit;
+		text-decoration: none;
+		transition: background-color 160ms ease, border-color 160ms ease;
+	}
+
+	body.kmae-app .kmae-header__icon-btn svg {
+		width: 19px;
+		height: 19px;
+		color: #e6e9f0;
+		stroke: currentColor;
+		fill: none;
+	}
+
+	body.kmae-app .kmae-header__icon-btn:hover,
+	body.kmae-app .kmae-header__icon-btn:focus-visible {
+		border-color: rgba(255, 255, 255, 0.18);
+		background: rgba(255, 255, 255, 0.1);
+		color: #e6e9f0;
+	}
+
+	body.kmae-app .kmae-pc-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		min-width: 30px;
+		height: 32px;
+		padding: 0 0 6px;
+		margin-left: 3px;
+		border: 0;
+		border-radius: 0;
+		/* Piros harang, a szám a harang testében (a JS csak a szöveget cseréli). */
+		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff6b6b'/%3E%3Cstop offset='1' stop-color='%23d91f1f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='12' cy='2.6' r='2' fill='url(%23g)'/%3E%3Cpath d='M12 3.6C7.6 3.6 5 7 5 11.5v4L2.9 18.3c-.5.7-.1 1.6.8 1.6h16.6c.9 0 1.3-.9.8-1.6L19 15.5v-4C19 7 16.4 3.6 12 3.6Z' fill='url(%23g)' stroke='%23ffffff' stroke-width='1.2' stroke-linejoin='round'/%3E%3Cpath d='M9 21.2h6a3 3 0 0 1-6 0Z' fill='url(%23g)'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+		color: #ffffff;
+		font-size: 12px;
+		font-weight: 800;
+		line-height: 1;
+		text-shadow: 0 1px 1px rgba(120, 10, 10, 0.45);
+		filter: drop-shadow(0 1px 3px rgba(220, 38, 38, 0.45));
+	}
+
+	body.kmae-app .kmae-pc-badge[hidden] {
+		display: none;
+	}
+
+	body.kmae-app .kmae-header__profile-btn {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 8px;
+		min-width: 0;
+		min-height: 40px;
+		max-width: min(240px, 34vw);
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		box-shadow: none;
+		color: #e6e9f0;
+		cursor: pointer;
+		font: inherit;
+		font-weight: 600;
+	}
+
+	body.kmae-app .kmae-header__profile-greeting {
+		display: inline-block;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: 14px;
+		font-weight: 700;
+		line-height: 1.2;
+	}
+
+	body.kmae-app .kmae-header__profile-btn:hover,
+	body.kmae-app .kmae-header__profile-btn:focus-visible,
+	body.kmae-app .kmae-header__dropdown.is-open > .kmae-header__profile-btn {
+		background: transparent;
+		border-color: transparent;
+		transform: none;
+	}
+
+	body.kmae-app .kmae-header__avatar {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 34px;
+		height: 34px;
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		border-radius: 50%;
+		background: linear-gradient(145deg, #ffc36b, #ff6e25);
+		box-shadow: 0 0 14px rgba(255, 110, 37, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+		color: #fff;
+		font-size: 13px;
+		font-weight: 750;
+		line-height: 1;
+	}
+
+	body.kmae-app .kmae-header__caret {
+		flex: 0 0 auto;
+		width: 8px;
+		height: 8px;
+		margin-left: 2px;
+		border-right: 2px solid #fff;
+		border-bottom: 2px solid #fff;
+		opacity: 0.92;
+		transform: rotate(45deg) translateY(-2px);
+	}
+}
+
+/* ---- Dark theme: solid #091833 fill + auth gradient border (no glow) ---- */
+@media (min-width: 1025px) {
+	body.kmae-app.kmae-theme-dark .kmae-header,
+	body.kmae-app.kmae-theme-dark .kmae-header.kmae-pc-topbar,
+	body.kmae-app.kmae-theme-dark .kmae-header.is-scrolled {
+		/* Nincs tömör kitöltés: a kép alja átlátszó, és úgy olvad bele az
+		   oldal hátterébe. */
+		background: transparent;
+	}
+
+	/* A belső sáv átlátszó, hogy a mögötte lévő fejléckép látszódjon.
+	   Záró csík sincs: az megtörné az összeolvadást. */
+	body.kmae-app.kmae-theme-dark .kmae-header__inner {
+		border-bottom: 0;
+		background: transparent;
+		box-shadow: none;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	/* Az aktív menüpont ugyanazt a felületet kapja, mint a wizard kijelölt
+	   kártyái: kékes üveg-kitöltés, neonkék keret és lágy külső fény. */
+	body.kmae-app.kmae-theme-dark .kmae-header__nav-item.is-active {
+		position: relative;
+		padding: 8px 18px;
+		border: 1px solid rgba(46, 203, 255, 0.92);
+		border-radius: 999px;
+		background: linear-gradient(
+			145deg,
+			rgba(12, 73, 125, 0.76) 0%,
+			rgba(5, 37, 77, 0.7) 48%,
+			rgba(4, 21, 45, 0.82) 100%
+		);
+		color: #ffffff;
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.16),
+			inset 0 0 24px rgba(0, 160, 255, 0.08),
+			0 0 0 1px rgba(0, 196, 255, 0.12),
+			0 0 18px rgba(0, 174, 255, 0.24),
+			0 0 45px rgba(0, 120, 255, 0.1);
+	}
+
+
+}
+
+@media (max-width: 1024px) {
+	body.kmae-app.kmae-theme-dark .kmae-header,
+	body.kmae-app.kmae-theme-dark .kmae-header.kmae-pc-topbar,
+	body.kmae-app.kmae-theme-dark .kmae-header.is-scrolled {
+		border-bottom: 2px solid transparent;
+		background:
+			linear-gradient(#091833, #091833) padding-box,
+			linear-gradient(90deg, #2070d0 0%, #2070d0 25%, #e26a28 75%, #e26a28 100%) border-box;
+		background-origin: border-box;
+		background-clip: padding-box, border-box;
+		box-shadow: none;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+}
+
+/* ---- Light theme fallback (full-width blue bar) ---- */
+@media (min-width: 1025px) {
+}
+
+@media (min-width: 1025px) and (max-width: 1399px) {
+	body.kmae-app .kmae-pc-topnav {
+		gap: 22px;
+	}
+
+	body.kmae-app .kmae-header__nav-item {
+		font-size: 14px;
+	}
+
+}
+
+/* =====================================================================
+   FEJLÉC-BŐR — MINDEN BELÉPETT OLDALON
+   ---------------------------------------------------------------------
+   A sáv maga átlátszó: a háttérkép végigfut alatta. Az olvashatóságot nem a
+   sáv adja, hanem az, hogy minden vezérlő saját világos üveg-kapszulán ül,
+   sötétkék (#00327a) írással és rajzzal. Az aktív menüpont megfordul: tömör
+   sötétkék, fehér írással.
+
+   Ez korábban csak a hirdetésfeladás oldalon élt; mostantól minden belépett
+   oldal ezt kapja, ezért került ide, a közös fejléc-stíluslapba.
+   ===================================================================== */
+
+body.kmae-app.kmae-theme-dark .kmae-header::after {
+	content: none;
+}
+
+/* A fejléc teljesen átlátszó: nincs saját felülete, a háttérkép végigfut
+   alatta. Az olvashatóságot nem a sáv adja, hanem a menüpontok saját
+   üveg-kapszulája. */
+body.kmae-app.kmae-theme-dark .kmae-header__inner {
+	background: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border-bottom: 0;
+	box-shadow: none;
+}
+
+/* Menüpontok: sötétkék írás világos üveg-kapszulán. A kapszula kell, mert a
+   fotó bármilyen világos vagy sötét lehet alattuk — enélkül a szöveg hol
+   olvasható lenne, hol nem. */
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item {
+	padding: 8px 14px;
+	border: 1px solid rgba(0, 199, 247, 0.45);
+	border-radius: 999px;
+	background: linear-gradient(135deg, rgba(224, 248, 255, 0.86), rgba(255, 255, 255, 0.7));
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow:
+		inset 0 1px 0 #ffffff,
+		0 0 16px rgba(0, 199, 247, 0.12),
+		0 6px 16px rgba(38, 68, 90, 0.12);
+	color: #202936;
+	font-weight: 700;
+	transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item .kmae-header__nav-icon {
+	color: #008fbd;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item:hover,
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item:focus-visible {
+	border-color: rgba(0, 199, 247, 0.85);
+	background: linear-gradient(135deg, rgba(224, 248, 255, 0.96), rgba(255, 255, 255, 0.86));
+	box-shadow:
+		inset 0 1px 0 #ffffff,
+		0 0 20px rgba(0, 199, 247, 0.28),
+		0 8px 20px rgba(38, 68, 90, 0.14);
+	color: #008fbd;
+	outline: none;
+	transform: translateY(-2px);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item:hover .kmae-header__nav-icon,
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item:focus-visible .kmae-header__nav-icon {
+	color: #008fbd;
+}
+
+/* Aktív menüpont: MEGFORDUL. A többi világos üveg sötétkék írással — az
+   aktív tömör sötétkék, fehér írással. Két üvegárnyalat között a szem nem
+   tesz különbséget, egy megfordított kitöltés viszont azonnal látszik. */
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item.is-active,
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item.is-active:hover {
+	border-color: rgba(0, 199, 247, 0.85);
+	background: linear-gradient(110deg, #007fb8, #00c7f7);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.35),
+		0 8px 24px rgba(0, 199, 247, 0.3);
+	color: #ffffff;
+	font-weight: 800;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-header__nav-item.is-active .kmae-header__nav-icon {
+	color: #ffffff;
+}
+
+/* Jobb oldali eszközök (kereső, értesítés, üzenet, profil): ugyanaz az
+   üveg-kapszula, mint a menüpontokon, csak körben — így a fejléc két vége egy
+   nyelvet beszél, és a narancs háttéren is olvashatók maradnak. */
+body.kmae-app.kmae-theme-dark .kmae-header__icon-btn {
+	border: 1px solid rgba(255, 110, 37, 0.45);
+	border-radius: 999px;
+	background: linear-gradient(135deg, rgba(255, 239, 226, 0.88), rgba(255, 255, 255, 0.72));
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow:
+		inset 0 1px 0 #ffffff,
+		0 0 16px rgba(255, 110, 37, 0.12),
+		0 6px 16px rgba(38, 68, 90, 0.12);
+	color: #e95e13;
+	transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+/* A rajz maga is sötétkék: a fejléc alap-CSS-e magára az SVG-re írja rá a
+   világos színt, ami felülírná a gombról örökölt értéket. */
+body.kmae-app.kmae-theme-dark .kmae-header__icon-btn svg {
+	color: #e95e13;
+	stroke: currentColor;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-header__icon-btn:hover,
+body.kmae-app.kmae-theme-dark .kmae-header__icon-btn:focus-visible {
+	border-color: rgba(255, 110, 37, 0.85);
+	background: linear-gradient(135deg, rgba(255, 239, 226, 0.97), rgba(255, 255, 255, 0.88));
+	box-shadow:
+		inset 0 1px 0 #ffffff,
+		0 0 20px rgba(255, 110, 37, 0.28),
+		0 8px 20px rgba(38, 68, 90, 0.14);
+	color: #e95e13;
+	outline: none;
+	transform: translateY(-2px);
+}
+
+/* A profilgomb is kapszulát kap, hogy a sor egységes legyen. */
+body.kmae-app.kmae-theme-dark .kmae-header__profile-btn {
+	padding: 8px 14px 8px 16px;
+	border: 1px solid rgba(255, 110, 37, 0.45);
+	border-radius: 999px;
+	background: linear-gradient(135deg, rgba(255, 239, 226, 0.88), rgba(255, 255, 255, 0.72));
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow:
+		inset 0 1px 0 #ffffff,
+		0 0 16px rgba(255, 110, 37, 0.12),
+		0 6px 16px rgba(38, 68, 90, 0.12);
+	color: #202936;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-header__profile-greeting {
+	color: #202936;
+	font-weight: 800;
+}
+
+/* A nyíl fehér volt — világos üvegen eltűnne. */
+body.kmae-app.kmae-theme-dark .kmae-header__caret {
+	border-right-color: #e95e13;
+	border-bottom-color: #e95e13;
+	opacity: 1;
+}
+
+/* A logó átlátszó hátterű kivágás, ezért `box-shadow` NEM jó rá: az a doboz
+   téglalapja köré rajzolna. A `drop-shadow` az alfa-csatornát követi, tehát
+   pontosan a betűk kontúrjához simul.
+
+   Sötétkék kontúr, de lágyan: négy irányba 0,8px-es, félig áttetsző
+   drop-shadow (a korábbi 1,5px-es, tömör, nyolcirányú keret túl durva volt;
+   kontúr nélkül viszont a világos háttéren eltűnik a logó). Kívül rá egy
+   ~1px-es fehér kontúr jön: logó → kék → fehér. A filterek sorban épülnek,
+   ezért a fehér a kék UTÁN áll, így az kerül kívülre.
+
+   FONTOS a szelektor: bejelentkezve a `.kmae-logo--desktop` el van rejtve
+   (`display: none !important`), és a `.kmae-pc-logo__img` látszik helyette —
+   ezért kell mindkettőt megcímezni. */
+body.kmae-app.kmae-theme-dark .kmae-logo--header img,
+body.kmae-app.kmae-theme-dark .kmae-logo--header .kmae-logo__img,
+body.kmae-app.kmae-theme-dark .kmae-pc-logo__img {
+	filter:
+		drop-shadow(0.8px 0 0 rgba(0, 25, 74, 0.7))
+		drop-shadow(-0.8px 0 0 rgba(0, 25, 74, 0.7))
+		drop-shadow(0 0.8px 0 rgba(0, 25, 74, 0.7))
+		drop-shadow(0 -0.8px 0 rgba(0, 25, 74, 0.7))
+		drop-shadow(1px 0 0 rgba(255, 255, 255, 0.9))
+		drop-shadow(-1px 0 0 rgba(255, 255, 255, 0.9))
+		drop-shadow(0 1px 0 rgba(255, 255, 255, 0.9))
+		drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.9))
+		drop-shadow(0 2px 5px rgba(0, 20, 55, 0.22));
+}
+
+/* Kedvencek: piros szív a fejlécben, a telefonos menüben és az alsó sávban */
+body .kmae-header__nav-icon svg.kmae-icon-heart,
+body .kmae-sheet__icon svg.kmae-icon-heart,
+body .kmae-bt__icon svg.kmae-icon-heart {
+	color: #e11d48;
+}

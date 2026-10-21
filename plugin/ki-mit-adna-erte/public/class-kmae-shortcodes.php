@@ -22,10 +22,8 @@ class KMAE_Shortcodes {
 		add_shortcode( 'kmae_create_listing', array( $this, 'create_listing' ) );
 		add_shortcode( 'kmae_my_listings', array( $this, 'my_listings' ) );
 		add_shortcode( 'kmae_browse', array( $this, 'browse' ) );
-		add_shortcode( 'kmae_my_offers', array( $this, 'my_offers' ) );
+		add_shortcode( 'kmae_favorites', array( $this, 'favorites' ) );
 		add_shortcode( 'kmae_profile', array( $this, 'profile' ) );
-		add_shortcode( 'kmae_how_it_works', array( $this, 'how_it_works' ) );
-		add_shortcode( 'kmae_about', array( $this, 'about' ) );
 		add_shortcode( 'kmae_education', array( $this, 'education' ) );
 		add_shortcode( 'kmae_settings', array( $this, 'settings' ) );
 		add_shortcode( 'kmae_security', array( $this, 'security' ) );
@@ -104,9 +102,19 @@ class KMAE_Shortcodes {
 	}
 
 	public function create_listing() {
-		$login_msg = $this->require_login( __( 'Autó hirdetés feladásához be kell jelentkezned.', 'ki-mit-adna-erte' ) );
-		if ( $login_msg ) {
-			return $login_msg;
+		if ( ! is_user_logged_in() ) {
+			ob_start();
+			include KMAE_PLUGIN_DIR . 'templates/partials/create-listing-guest.php';
+			return ob_get_clean();
+		}
+
+		/* A hirdetésfeladás (új és szerkesztés is) megerősített e-mail címhez
+		   kötött — böngészni, üzenetet küldeni eddig is lehet nélküle. */
+		if ( KMAE_Auth::should_gate_for_verification( get_current_user_id() ) ) {
+			$gate_context = 'listing';
+			ob_start();
+			include KMAE_PLUGIN_DIR . 'templates/partials/email-verify-gate.php';
+			return ob_get_clean();
 		}
 
 		$edit_id = isset( $_GET['kmae_edit'] ) ? absint( $_GET['kmae_edit'] ) : 0;
@@ -139,9 +147,18 @@ class KMAE_Shortcodes {
 				'post_type'      => 'kmae_listing',
 				'author'         => get_current_user_id(),
 				'posts_per_page' => 50,
-				'post_status'    => 'publish',
+				'post_status'    => array( 'publish', 'draft' ),
 				'orderby'        => 'date',
 				'order'          => 'DESC',
+			)
+		);
+		/* Piszkozatból csak a wizard félbehagyott hirdetései kellenek. */
+		$listings = array_values(
+			array_filter(
+				$listings,
+				static function ( $item ) {
+					return 'draft' !== $item->post_status || KMAE_Meta::STATUS_DRAFT === KMAE_Meta::get_status( $item->ID );
+				}
 			)
 		);
 		ob_start();
@@ -162,6 +179,9 @@ class KMAE_Shortcodes {
 			$atts,
 			'kmae_browse'
 		);
+		$atts['exclude_contacted'] = true;
+		/* A „Foglalt” címke változásakor ezt a címkét üríti a KMAE_Chat_Offers (vendég-cache). */
+		do_action( 'litespeed_tag_add', KMAE_Chat_Offers::BROWSE_CACHE_TAG );
 
 		$base_url = $this->get_browse_base_url();
 
@@ -176,7 +196,8 @@ class KMAE_Shortcodes {
 				$atts['category'] = sanitize_text_field( wp_unslash( $_GET['kategoria'] ) );
 			}
 			if ( isset( $_GET['tipus'] ) ) {
-				$atts['type'] = sanitize_text_field( wp_unslash( $_GET['tipus'] ) );
+				$requested_type = sanitize_text_field( wp_unslash( $_GET['tipus'] ) );
+				$atts['type'] = KMAE_OFFER_TYPE_CASH === $requested_type ? KMAE_OFFER_TYPE_CASH : '';
 			}
 			if ( isset( $_GET['megye'] ) && KMAE_Counties::ORSZAG !== $_GET['megye'] ) {
 				$atts['county'] = sanitize_text_field( wp_unslash( $_GET['megye'] ) );
@@ -206,6 +227,7 @@ class KMAE_Shortcodes {
 		}
 
 		$current_type   = sanitize_text_field( wp_unslash( $_GET['tipus'] ) );
+		$current_type   = in_array( $current_type, array( 'mind', KMAE_OFFER_TYPE_CASH ), true ) ? $current_type : 'mind';
 		$base_with_type = add_query_arg( 'tipus', $current_type, $base_with_county );
 		$type_step_url  = $base_with_county;
 
@@ -239,18 +261,78 @@ class KMAE_Shortcodes {
 	}
 
 	private function browse_vehicle_wizard( $atts, $base_url ) {
-		$wizard_keys = array( 'megye', 'kivitel', 'mod', 'ertek', 'max_kp', 'kp_min', 'kp_max', 'step' );
+		$wizard_keys = array(
+			'nezet',
+			'oldal',
+			'rendez',
+			'lat',
+			'lon',
+			'km',
+			'megye',
+			'kivitel',
+			'mod',
+			'kp_min',
+			'kp_max',
+			'step',
+			'marka',
+			'modell',
+			'tilt',
+			'ccm_min',
+			'ccm_max',
+			'le_min',
+			'le_max',
+			'ev_min',
+			'ev_max',
+			'km_min',
+			'km_max',
+			'uzem',
+			'valto',
+			'muszaki',
+			'mot_min',
+			'mot_max',
+			'mot_lejart',
+			'allapot',
+			'ar',
+			'osszes',
+		);
 		$map_url     = remove_query_arg( $wizard_keys, $base_url );
-		$wizard      = KMAE_Browse::parse_wizard_params();
+		$show_all    = isset( $_GET['osszes'] ) && '1' === sanitize_key( wp_unslash( $_GET['osszes'] ) );
+
+		/* Böngészés v2: a lista és a kártyás nézet adata az indexből jön (browse-swipe.php), a régi lekérés (akár 1000 hirdetés) elmarad. */
+		$list_from_index = KMAE_Browse_Feed::use_list_index() || KMAE_Browse_Feed::use_card_index();
+
+		if ( $show_all ) {
+			$listings = array();
+			if ( ! $list_from_index ) {
+				$listings = KMAE_Query::get_listings(
+					array(
+						'per_page'          => KMAE_Browse::needs_full_scan() ? KMAE_Browse::LIST_SCAN : $atts['per_page'],
+						'exclude_contacted' => true,
+					)
+				);
+				$listings = KMAE_Browse::apply_sort( $listings );
+			}
+			$wizard_summary  = array(
+				'county' => '',
+				'bodies' => array(),
+				'mod'    => '',
+			);
+			$browse_base_url = $map_url;
+			ob_start();
+			include KMAE_PLUGIN_DIR . 'templates/browse-swipe.php';
+			return ob_get_clean();
+		}
+
+		$wizard          = KMAE_Browse::parse_wizard_params();
 		$force_body_step = isset( $_GET['step'] ) && 'kivitel' === sanitize_key( wp_unslash( $_GET['step'] ) );
 
-		if ( empty( $wizard['county'] ) || ! KMAE_Counties::is_valid( $wizard['county'] ) ) {
+		if ( empty( $wizard['county'] ) || ! KMAE_Browse::counties_are_valid( $wizard['county'] ) ) {
 			ob_start();
 			include KMAE_PLUGIN_DIR . 'templates/browse-wizard-map.php';
 			return ob_get_clean();
 		}
 
-		$base_with_county = add_query_arg( 'megye', $wizard['county'], remove_query_arg( array( 'kivitel', 'mod', 'ertek', 'max_kp', 'kp_min', 'kp_max', 'step' ), $base_url ) );
+		$base_with_county = add_query_arg( 'megye', $wizard['county'], remove_query_arg( array( 'kivitel', 'mod', 'kp_min', 'kp_max', 'step' ), $base_url ) );
 
 		if ( empty( $wizard['bodies'] ) || $force_body_step ) {
 			$base_url       = $base_with_county;
@@ -277,14 +359,21 @@ class KMAE_Shortcodes {
 			return ob_get_clean();
 		}
 
-		$query_args = array(
-			'per_page' => $atts['per_page'],
-			'county'   => KMAE_Counties::ORSZAG === $wizard['county'] ? '' : $wizard['county'],
+		$county_slugs = KMAE_Browse::county_slugs( $wizard['county'] );
+		$query_args   = array(
+			'per_page' => KMAE_Browse::needs_full_scan( $wizard['mod'] ?? '' ) ? KMAE_Browse::LIST_SCAN : $this->browse_scan_size( $atts, $wizard ),
+			'county'   => 1 === count( $county_slugs ) ? $county_slugs[0] : '',
 			'bodies'   => $wizard['bodies'],
+			'exclude_contacted' => true,
 		);
 
-		$listings = KMAE_Query::get_listings( $query_args );
-		$listings = KMAE_Browse::filter_by_wizard( $listings, $wizard );
+		if ( $list_from_index ) {
+			$listings = array();
+		} else {
+			$listings = KMAE_Query::get_listings( $query_args );
+			$listings = KMAE_Browse::filter_by_wizard( $listings, $wizard );
+			$listings = KMAE_Browse::apply_sort( $listings, $wizard['mod'] ?? '' );
+		}
 
 		$wizard_summary  = $wizard;
 		$browse_base_url = $map_url;
@@ -294,63 +383,65 @@ class KMAE_Shortcodes {
 		return ob_get_clean();
 	}
 
-	private function get_browse_base_url() {
-		if ( is_front_page() ) {
-			return home_url( '/' );
+	/**
+	 * Fine filters need the whole active set, not only the first swipe page.
+	 *
+	 * @param array $atts   Shortcode attrs.
+	 * @param array $wizard Parsed wizard.
+	 * @return int
+	 */
+	private function browse_scan_size( $atts, array $wizard ) {
+		$keys = array( 'brand', 'model', 'blocked', 'cc_min', 'cc_max', 'hp_min', 'hp_max', 'year_min', 'year_max', 'km_min', 'km_max', 'fuel', 'gear', 'conditions', 'prices' );
+		foreach ( $keys as $key ) {
+			if ( ! empty( $wizard[ $key ] ) ) {
+				return 500;
+			}
 		}
-		$permalink = get_permalink();
-		return $permalink ? $permalink : home_url( '/hirdetesek/' );
+		if ( ! empty( $wizard['mot'] ) && 'mind' !== $wizard['mot'] ) {
+			return 500;
+		}
+		if ( count( KMAE_Browse::county_slugs( $wizard['county'] ?? '' ) ) > 1 ) {
+			return 500;
+		}
+		return (int) $atts['per_page'];
 	}
 
-	public function my_offers() {
-		$login_msg = $this->require_login( __( 'Az ajánlatok megtekintéséhez be kell jelentkezned.', 'ki-mit-adna-erte' ) );
+	private function get_browse_base_url() {
+		return class_exists( 'KMAE_Pages' ) ? KMAE_Pages::browse_page_url() : home_url( '/hirdetesek/' );
+	}
+
+	public function favorites() {
+		$login_msg = $this->require_login( __( 'A kedvencek megtekintéséhez be kell jelentkezned.', 'ki-mit-adna-erte' ) );
 		if ( $login_msg ) {
 			return $login_msg;
 		}
 
-		$user_id  = get_current_user_id();
-		$offer_id = isset( $_GET['kmae_offer'] ) ? absint( $_GET['kmae_offer'] ) : 0;
-
-		if ( $offer_id ) {
-			$offer = KMAE_Database::get_offer( $offer_id );
-			if ( ! $offer || ! KMAE_Counter_Offers::user_can_access( $offer, $user_id ) ) {
-				return '<div class="kmae-notice kmae-notice-error"><p>' . esc_html__( 'Ez az ajánlat nem elérhető.', 'ki-mit-adna-erte' ) . '</p><p><a href="' . esc_url( KMAE_Pages::offers_page_url() ) . '" class="kmae-btn kmae-btn-secondary">' . esc_html__( 'Vissza az ajánlatokhoz', 'ki-mit-adna-erte' ) . '</a></p></div>';
-			}
-			KMAE_Database::mark_offer_seen( $user_id, $offer_id );
-			ob_start();
-			include KMAE_PLUGIN_DIR . 'templates/offer-thread.php';
-			return ob_get_clean();
-		}
-
-		$sent_offers     = KMAE_Database::get_offers_by_user( $user_id );
-		$received_offers = KMAE_Database::get_offers_received_by_user( $user_id );
-
+		$listings   = KMAE_Browse::favorite_listings( get_current_user_id() );
+		$browse_url = $this->get_browse_base_url();
 		ob_start();
-		include KMAE_PLUGIN_DIR . 'templates/my-offers.php';
-		return ob_get_clean();
+		include KMAE_PLUGIN_DIR . 'templates/favorites.php';
+		$html = ob_get_clean();
+		KMAE_Browse::mark_favorites_seen( get_current_user_id() );
+		return $html;
 	}
 
 	public function profile() {
+		// Csak a véletlen profil-kulcs nyit meg más profilt; sorszámmal (régi ?kmae_user=) semmit.
+		$view_key = isset( $_GET[ KMAE_Pages::PUBLIC_PROFILE_ARG ] ) ? sanitize_key( wp_unslash( $_GET[ KMAE_Pages::PUBLIC_PROFILE_ARG ] ) ) : '';
+		$view_id  = '' !== $view_key ? KMAE_Pages::user_by_public_key( $view_key ) : 0;
+		if ( $view_id > 0 && get_userdata( $view_id ) ) {
+			$history_user_id = $view_id;
+			ob_start();
+			include KMAE_PLUGIN_DIR . 'templates/public-profile.php';
+			return ob_get_clean();
+		}
+
 		$login_msg = $this->require_login( __( 'Profil megtekintéséhez be kell jelentkezned.', 'ki-mit-adna-erte' ) );
 		if ( $login_msg ) {
 			return $login_msg;
 		}
 		ob_start();
 		include KMAE_PLUGIN_DIR . 'templates/form-profile.php';
-		return ob_get_clean();
-	}
-
-	public function how_it_works() {
-		$seller_video_id = KMAE_Settings::seller_video_id();
-		$buyer_video_id  = KMAE_Settings::buyer_video_id();
-		ob_start();
-		include KMAE_PLUGIN_DIR . 'templates/how-it-works.php';
-		return ob_get_clean();
-	}
-
-	public function about() {
-		ob_start();
-		include KMAE_PLUGIN_DIR . 'templates/about.php';
 		return ob_get_clean();
 	}
 
@@ -400,14 +491,9 @@ class KMAE_Shortcodes {
 		return ob_get_clean();
 	}
 
+	/** Értesítések page: intentionally empty. */
 	public function notifications() {
-		$login_msg = $this->require_login( __( 'Az értesítések megtekintéséhez be kell jelentkezned.', 'ki-mit-adna-erte' ) );
-		if ( $login_msg ) {
-			return $login_msg;
-		}
-		ob_start();
-		include KMAE_PLUGIN_DIR . 'templates/notifications.php';
-		return ob_get_clean();
+		return '';
 	}
 
 	public function messages() {
@@ -415,6 +501,28 @@ class KMAE_Shortcodes {
 		if ( $login_msg ) {
 			return $login_msg;
 		}
+
+		$user_id         = get_current_user_id();
+		$conversation_id = isset( $_GET['kmae_conversation'] ) ? absint( $_GET['kmae_conversation'] ) : 0;
+
+		if ( $conversation_id ) {
+			$conversation = KMAE_Conversations::get( $conversation_id );
+			if ( ! $conversation || ! KMAE_Conversations::is_member( $conversation, $user_id ) ) {
+				return '<div class="kmae-notice kmae-notice-error"><p>' . esc_html__( 'Ez a beszélgetés nem elérhető.', 'ki-mit-adna-erte' ) . '</p><p><a href="' . esc_url( KMAE_Pages::url( 'uzenetek' ) ) . '" class="kmae-btn kmae-btn-secondary">' . esc_html__( 'Vissza az üzenetekhez', 'ki-mit-adna-erte' ) . '</a></p></div>';
+			}
+
+			if ( KMAE_Sale_Contract::is_contract_request() ) {
+				return KMAE_Sale_Contract::render( $conversation, $user_id );
+			}
+
+			KMAE_Database::mark_conversation_thread_seen( $user_id, $conversation );
+
+			ob_start();
+			include KMAE_PLUGIN_DIR . 'templates/offer-thread.php';
+			return ob_get_clean();
+		}
+
+		$inbox = KMAE_Conversations::get_inbox_for_user( $user_id );
 		ob_start();
 		include KMAE_PLUGIN_DIR . 'templates/messages.php';
 		return ob_get_clean();
@@ -471,15 +579,6 @@ class KMAE_Shortcodes {
 						'badge' => ! empty( $stats['listings'] ) ? (string) (int) $stats['listings'] : '',
 						'tone'  => 'buy',
 					),
-					array(
-						'label' => __( 'Beérkezett ajánlatok', 'ki-mit-adna-erte' ),
-						'desc'  => __( 'Nézd meg, ki érdeklődik a hirdetéseid iránt.', 'ki-mit-adna-erte' ),
-						'url'   => $urls['offers'] ?? home_url( '/ajanlatok/' ),
-						'cta'   => __( 'Ajánlatok megtekintése', 'ki-mit-adna-erte' ),
-						'icon'  => 'handshake',
-						'badge' => ! empty( $stats['unseen_offers'] ) ? (string) (int) $stats['unseen_offers'] : '',
-						'tone'  => 'stats',
-					),
 				),
 			),
 			'buy'   => array(
@@ -495,15 +594,8 @@ class KMAE_Shortcodes {
 						'icon'  => 'search',
 					),
 					array(
-						'label' => __( 'Ajánlataim', 'ki-mit-adna-erte' ),
-						'desc'  => __( 'Kövesd a saját ajánlataid állását.', 'ki-mit-adna-erte' ),
-						'url'   => $urls['offers'] ?? home_url( '/ajanlatok/' ),
-						'cta'   => __( 'Ajánlatok megnyitása', 'ki-mit-adna-erte' ),
-						'icon'  => 'list',
-					),
-					array(
 						'label' => __( 'Üzenetek', 'ki-mit-adna-erte' ),
-						'desc'  => __( 'Alkudozás és egyeztetés chatben.', 'ki-mit-adna-erte' ),
+						'desc'  => __( 'Egyeztetés chatben.', 'ki-mit-adna-erte' ),
 						'url'   => $urls['messages'] ?? home_url( '/uzenetek/' ),
 						'cta'   => __( 'Üzenetek megnyitása', 'ki-mit-adna-erte' ),
 						'icon'  => 'chat',
@@ -517,21 +609,21 @@ class KMAE_Shortcodes {
 				'items' => array(
 					array(
 						'label' => __( 'Értesítések', 'ki-mit-adna-erte' ),
-						'desc'  => __( 'Új ajánlatok, válaszok, fontos lépések.', 'ki-mit-adna-erte' ),
+						'desc'  => __( 'Válaszok, fontos lépések.', 'ki-mit-adna-erte' ),
 						'url'   => $urls['notify'] ?? home_url( '/ertesitesek/' ),
 						'cta'   => __( 'Értesítések megnyitása', 'ki-mit-adna-erte' ),
 						'icon'  => 'bell',
 					),
 					array(
 						'label' => __( 'Profilom', 'ki-mit-adna-erte' ),
-						'desc'  => __( 'Bizalom, adatok, megjelenés.', 'ki-mit-adna-erte' ),
+						'desc'  => __( 'Adatok, megjelenés.', 'ki-mit-adna-erte' ),
 						'url'   => $urls['profile'] ?? home_url( '/profil/' ),
 						'cta'   => __( 'Profil megnyitása', 'ki-mit-adna-erte' ),
 						'icon'  => 'user',
 					),
 					array(
 						'label' => __( 'Beállítások', 'ki-mit-adna-erte' ),
-						'desc'  => __( 'Értesítések és fiókpreferenciák.', 'ki-mit-adna-erte' ),
+						'desc'  => __( 'E-mail, jelszó, belépés.', 'ki-mit-adna-erte' ),
 						'url'   => $urls['settings'] ?? home_url( '/beallitasok/' ),
 						'cta'   => __( 'Beállítások', 'ki-mit-adna-erte' ),
 						'icon'  => 'gear',
@@ -546,4 +638,5 @@ class KMAE_Shortcodes {
 		include KMAE_PLUGIN_DIR . 'templates/hub-section.php';
 		return ob_get_clean();
 	}
+
 }

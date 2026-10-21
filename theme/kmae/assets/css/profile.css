@@ -1,0 +1,1058 @@
+/* =====================================================================
+   PROFILOM — ALBIRA VILÁGOS ARCULAT (újratervezve 2026-10-11)
+   ---------------------------------------------------------------------
+   Sablon: plugin templates/form-profile.php (`kmae-profile-*`).
+
+     • fejléc: monogram + név + állapot-jelvények, kitöltöttség-gyűrű,
+       manó, alatta három statisztika-csempe,
+     • bal: „Adataim” űrlap (kék), jobb: gyors elérés + profil törlése,
+     • kék = fiók, adatok; narancs = hangsúly, fő gomb; rámutatás kék.
+
+   A nyilvános profil (`.kmae-public-profile*`) stílusa a fájl végén,
+   külön él. Csak PC.
+   ===================================================================== */
+
+@media (min-width: 1025px) {
+
+	/* ---- 0. Színkészlet ---------------------------------------------- */
+
+	body.kmae-profile-page {
+		--pf-blue: #00c7f7;
+		--pf-blue-strong: #008fbd;
+		--pf-blue-deep: #00678a;
+		--pf-blue-light: #82edff;
+		--pf-blue-rgb: 0, 199, 247;
+		--pf-orange: #ff6e25;
+		--pf-orange-strong: #e95e13;
+		--pf-orange-light: #ffc36b;
+		--pf-orange-rgb: 255, 110, 37;
+
+		--pf-ink: #202936;
+		--pf-ink-soft: #34404d;
+		--pf-copy: #465463;
+		--pf-muted: #6b7887;
+
+		--pf-inset: inset 0 1px 0 #fff;
+		--pf-hex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0 56 16v32L28 64 0 48V16zM28 64v33M0 48l-28 16M56 48l28 16' fill='none' stroke='%23008fbd' stroke-width='1'/%3E%3C/svg%3E");
+	}
+
+	/* ---- 1. A vászon -------------------------------------------------- */
+
+	body.kmae-app.kmae-profile-page .kmae-page {
+		position: relative;
+		left: 50%;
+		width: 100vw;
+		margin-left: -50vw;
+		/* Belépve a fejléc a folyamban áll — csak a hézag kell ide. */
+		padding: 22px 32px 60px;
+		box-sizing: border-box;
+		background: transparent;
+	}
+
+	body.kmae-app.kmae-profile-page .kmae-page > .kmae-container {
+		width: min(1100px, calc(100vw - 64px));
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 0;
+	}
+
+	body.kmae-app.kmae-profile-page .kmae-page__article,
+	body.kmae-app.kmae-profile-page .kmae-page__content {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* Az oldal saját fejlécet hoz, a WordPress-címet elrejtjük. */
+	body.kmae-app.kmae-profile-page .kmae-page__article > .kmae-page__title {
+		display: none;
+	}
+
+	body.kmae-profile-page .kmae-profile {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: 18px;
+		box-sizing: border-box;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		color: var(--pf-ink);
+	}
+
+	.kmae-profile *,
+	.kmae-profile *::before,
+	.kmae-profile *::after {
+		box-sizing: border-box;
+	}
+
+	.kmae-profile .kmae-icon {
+		display: block;
+		flex: 0 0 auto;
+	}
+
+	/* ---- 2. Fejléc ---------------------------------------------------- */
+
+	.kmae-profile-hero {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+		padding: 28px 30px 22px;
+		overflow: hidden;
+		isolation: isolate;
+		border: 1px solid rgba(var(--pf-blue-rgb), 0.62);
+		border-radius: 22px;
+		background:
+			radial-gradient(circle at 6% 0%, rgba(var(--pf-blue-rgb), 0.3), transparent 42%),
+			radial-gradient(circle at 96% 8%, rgba(var(--pf-orange-rgb), 0.24), transparent 44%),
+			linear-gradient(135deg, rgba(238, 251, 255, 0.95), rgba(255, 246, 239, 0.92));
+		box-shadow:
+			0 18px 48px rgba(38, 68, 90, 0.16),
+			0 0 28px rgba(var(--pf-blue-rgb), 0.1),
+			var(--pf-inset);
+		backdrop-filter: blur(16px) saturate(130%);
+		-webkit-backdrop-filter: blur(16px) saturate(130%);
+	}
+
+	/* Neon fénycsík a tetején. */
+	.kmae-profile-hero::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 5%;
+		width: 50%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--pf-blue), transparent);
+		box-shadow: 0 0 16px rgba(var(--pf-blue-rgb), 0.9);
+		pointer-events: none;
+	}
+
+	/* Hatszög-háló dísz, jobbra halványuló. */
+	.kmae-profile-hero::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-image: var(--pf-hex);
+		background-size: 42px 73px;
+		opacity: 0.13;
+		-webkit-mask-image: linear-gradient(100deg, transparent 30%, #000 85%);
+		mask-image: linear-gradient(100deg, transparent 30%, #000 85%);
+		pointer-events: none;
+	}
+
+	.kmae-profile-hero__glow {
+		position: absolute;
+		top: -70px;
+		left: -50px;
+		z-index: -1;
+		width: 260px;
+		height: 260px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(var(--pf-blue-rgb), 0.28), transparent 68%);
+		pointer-events: none;
+	}
+
+	.kmae-profile-hero__main {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto 128px;
+		align-items: center;
+		gap: 24px;
+		min-height: 112px;
+	}
+
+	.kmae-profile-hero__avatar {
+		position: relative;
+		display: flex;
+		width: 96px;
+		height: 96px;
+		align-items: center;
+		justify-content: center;
+		border: 3px solid transparent;
+		border-radius: 50%;
+		background:
+			radial-gradient(circle at 30% 25%, #fff, rgba(232, 249, 255, 0.96) 70%) padding-box,
+			conic-gradient(from 210deg, var(--pf-blue-strong), var(--pf-blue), var(--pf-blue-light), var(--pf-orange-light), var(--pf-orange), var(--pf-blue-strong)) border-box;
+		box-shadow:
+			0 0 0 6px rgba(255, 255, 255, 0.6),
+			0 0 30px rgba(var(--pf-blue-rgb), 0.35),
+			0 12px 26px rgba(38, 68, 90, 0.16);
+	}
+
+	.kmae-profile-hero__initials {
+		font-size: 34px;
+		font-weight: 850;
+		line-height: 1;
+		letter-spacing: -0.04em;
+		background: linear-gradient(135deg, #008fbd, #00c7f7 55%, #ff6e25);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.kmae-profile-hero__verified {
+		position: absolute;
+		right: -2px;
+		bottom: 2px;
+		display: flex;
+		width: 28px;
+		height: 28px;
+		align-items: center;
+		justify-content: center;
+		border: 3px solid #fff;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #3ddc74, #16a34a);
+		box-shadow: 0 4px 12px rgba(21, 128, 61, 0.4);
+		color: #fff;
+	}
+
+	.kmae-profile-hero__id {
+		min-width: 0;
+	}
+
+	.kmae-profile-hero__eyebrow {
+		margin: 0 0 6px;
+		font-size: 11px;
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: 0.17em;
+		text-transform: uppercase;
+		color: var(--pf-blue-strong);
+	}
+
+	.kmae-profile-hero__name {
+		margin: 0;
+		overflow: hidden;
+		font-size: 38px;
+		font-weight: 850;
+		line-height: 1.08;
+		letter-spacing: -0.045em;
+		color: var(--pf-ink);
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.kmae-profile-hero__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 7px;
+		margin: 13px 0 0;
+	}
+
+	/* ---- 3. Állapotjelvények (zöld = kész, piros = hiányzik) --------- */
+
+	.kmae-profile-tag {
+		display: inline-flex;
+		max-width: 100%;
+		height: 30px;
+		align-items: center;
+		gap: 6px;
+		padding: 0 13px;
+		border: 1px solid rgba(var(--pf-blue-rgb), 0.5);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.82);
+		box-shadow: 0 0 14px rgba(var(--pf-blue-rgb), 0.12), var(--pf-inset);
+		font-size: 12.5px;
+		font-weight: 750;
+		line-height: 1;
+		color: var(--pf-blue-deep);
+	}
+
+	.kmae-profile-tag--ok {
+		border-color: #15803d;
+		background: linear-gradient(135deg, #3ddc74, #22c55e);
+		box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+		color: #0b1a10;
+	}
+
+	.kmae-profile-tag--todo {
+		border-color: #b91c1c;
+		background: linear-gradient(135deg, #f05252, #dc2626);
+		box-shadow: 0 4px 12px rgba(185, 28, 28, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+		color: #fff;
+	}
+
+	.kmae-profile-tag-form {
+		display: inline-flex;
+		margin: 0;
+	}
+
+	.kmae-profile-tag--action {
+		cursor: pointer;
+		font-family: inherit;
+		transition: box-shadow 160ms ease, transform 160ms ease;
+	}
+
+	.kmae-profile-tag--action:hover,
+	.kmae-profile-tag--action:focus-visible {
+		box-shadow: 0 6px 16px rgba(185, 28, 28, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+		transform: translateY(-1px);
+		outline: none;
+	}
+
+	/* ---- 4. Kitöltöttség-gyűrű ------------------------------------------ */
+
+	.kmae-profile-ring {
+		display: flex;
+		width: 112px;
+		height: 112px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background:
+			radial-gradient(closest-side, rgba(255, 255, 255, 0.96) 80%, transparent 81% 100%),
+			conic-gradient(var(--pf-orange) 0, var(--pf-blue) calc(var(--pf-pct) * 1%), rgba(var(--pf-blue-rgb), 0.16) 0);
+		box-shadow:
+			0 0 26px rgba(var(--pf-blue-rgb), 0.24),
+			0 10px 22px rgba(38, 68, 90, 0.12);
+		text-align: center;
+	}
+
+	.kmae-profile-ring__value {
+		font-size: 30px;
+		font-weight: 850;
+		line-height: 1;
+		letter-spacing: -0.04em;
+		color: var(--pf-ink);
+	}
+
+	.kmae-profile-ring__value small {
+		margin-left: 1px;
+		font-size: 15px;
+		font-weight: 800;
+		color: var(--pf-blue-strong);
+	}
+
+	.kmae-profile-ring__label {
+		margin-top: 4px;
+		font-size: 9.5px;
+		font-weight: 800;
+		line-height: 1.1;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--pf-muted);
+	}
+
+
+	/* ---- 5. Statisztika-csempék ------------------------------------------ */
+
+	.kmae-profile-stats {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 12px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.kmae-profile-stat {
+		--st: var(--pf-blue);
+		--st-strong: var(--pf-blue-strong);
+		--st-rgb: var(--pf-blue-rgb);
+		display: flex;
+		align-items: center;
+		gap: 13px;
+		margin: 0;
+		padding: 13px 16px;
+		border: 1px solid rgba(var(--st-rgb), 0.38);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.76);
+		box-shadow: 0 0 18px rgba(var(--st-rgb), 0.12), var(--pf-inset);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+	}
+
+	.kmae-profile-stat--orange {
+		--st: var(--pf-orange);
+		--st-strong: var(--pf-orange-strong);
+		--st-rgb: var(--pf-orange-rgb);
+	}
+
+	.kmae-profile-stat__icon {
+		display: flex;
+		width: 42px;
+		height: 42px;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(var(--st-rgb), 0.9));
+		box-shadow: 0 6px 16px rgba(var(--st-rgb), 0.3), var(--pf-inset);
+		color: #fff;
+	}
+
+	.kmae-profile-stat__copy {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.kmae-profile-stat__copy strong {
+		font-size: 19px;
+		font-weight: 850;
+		line-height: 1.1;
+		letter-spacing: -0.03em;
+		color: var(--pf-ink);
+	}
+
+	.kmae-profile-stat__copy span {
+		font-size: 12px;
+		font-weight: 650;
+		line-height: 1.25;
+		color: var(--pf-muted);
+	}
+
+	/* ---- 6. Visszajelző sávok -------------------------------------------- */
+
+	.kmae-profile__alerts {
+		display: grid;
+		gap: 8px;
+	}
+
+	.kmae-profile-alert {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin: 0;
+		padding: 13px 16px;
+		border: 1px solid rgba(var(--pf-blue-rgb), 0.5);
+		border-left: 4px solid var(--pf-blue-strong);
+		border-radius: 14px;
+		background: rgba(238, 251, 255, 0.94);
+		box-shadow: 0 10px 24px rgba(38, 68, 90, 0.1), var(--pf-inset);
+		font-size: 14px;
+		font-weight: 750;
+		line-height: 1.45;
+		color: var(--pf-ink-soft);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+	}
+
+	.kmae-profile-alert__icon {
+		display: flex;
+		color: var(--pf-blue-strong);
+	}
+
+	.kmae-profile-alert--warn {
+		border-color: rgba(var(--pf-orange-rgb), 0.55);
+		border-left-color: var(--pf-orange);
+		background: rgba(255, 243, 235, 0.95);
+		color: #8a3908;
+	}
+
+	.kmae-profile-alert--warn .kmae-profile-alert__icon {
+		color: var(--pf-orange-strong);
+	}
+
+	/* ---- 7. Rács és panelek ---------------------------------------------- */
+
+	.kmae-profile__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+		gap: 18px;
+		align-items: start;
+	}
+
+	.kmae-profile__side {
+		display: grid;
+		gap: 18px;
+		min-width: 0;
+	}
+
+	.kmae-profile-panel {
+		--panel: var(--pf-blue);
+		--panel-strong: var(--pf-blue-strong);
+		--panel-rgb: var(--pf-blue-rgb);
+		position: relative;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 18px;
+		padding: 22px 24px 22px;
+		overflow: hidden;
+		border: 1px solid rgba(var(--panel-rgb), 0.6);
+		border-radius: 22px;
+		background:
+			radial-gradient(circle at 7% 0%, rgba(var(--panel-rgb), 0.2), transparent 42%),
+			linear-gradient(135deg, rgba(224, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow:
+			0 18px 48px rgba(38, 68, 90, 0.14),
+			0 0 28px rgba(var(--panel-rgb), 0.1),
+			var(--pf-inset);
+		backdrop-filter: blur(16px) saturate(130%);
+		-webkit-backdrop-filter: blur(16px) saturate(130%);
+	}
+
+	.kmae-profile-panel::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 5%;
+		width: 50%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--panel), transparent);
+		box-shadow: 0 0 16px rgba(var(--panel-rgb), 0.9);
+		pointer-events: none;
+	}
+
+	.kmae-profile-panel--links {
+		--panel: var(--pf-orange);
+		--panel-strong: var(--pf-orange-strong);
+		--panel-rgb: var(--pf-orange-rgb);
+		background:
+			radial-gradient(circle at 7% 0%, rgba(var(--panel-rgb), 0.2), transparent 42%),
+			linear-gradient(135deg, rgba(255, 239, 226, 0.95), rgba(255, 255, 255, 0.84));
+	}
+
+	.kmae-profile-panel__head {
+		display: flex;
+		align-items: center;
+		gap: 13px;
+		padding-bottom: 15px;
+		border-bottom: 1px solid transparent;
+		border-image: linear-gradient(90deg, rgba(var(--panel-rgb), 0.95), rgba(var(--panel-rgb), 0.08)) 1;
+	}
+
+	.kmae-profile-panel__mark {
+		display: inline-flex;
+		width: 42px;
+		height: 42px;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(var(--panel-rgb), 0.75);
+		border-radius: 50%;
+		background: #fff;
+		box-shadow: 0 0 18px rgba(var(--panel-rgb), 0.22), var(--pf-inset);
+		color: var(--panel-strong);
+	}
+
+	.kmae-profile-panel__eyebrow {
+		margin: 0 0 3px;
+		font-size: 11px;
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: 0.17em;
+		text-transform: uppercase;
+		color: var(--panel-strong);
+	}
+
+	.kmae-profile-panel__title {
+		margin: 0;
+		font-size: 21px;
+		font-weight: 850;
+		line-height: 1.15;
+		letter-spacing: -0.03em;
+		color: var(--pf-ink);
+	}
+
+	/* ---- 8. Űrlap --------------------------------------------------------- */
+
+	.kmae-profile-form {
+		display: grid;
+		gap: 16px;
+	}
+
+	.kmae-profile-field-row {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 14px;
+	}
+
+	.kmae-profile-field {
+		display: grid;
+		gap: 7px;
+		min-width: 0;
+	}
+
+	.kmae-profile-field label {
+		font-size: 11px;
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--pf-blue-strong);
+	}
+
+	.kmae-profile-subhead {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 4px 0 -4px;
+		font-size: 15px;
+		font-weight: 800;
+		color: var(--pf-ink);
+	}
+
+	.kmae-profile-subhead .kmae-icon {
+		color: var(--pf-blue-strong);
+	}
+
+	/* Ikonos beviteli mező. */
+	.kmae-profile-input,
+	.kmae-profile-field .kmae-phone-input {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.kmae-profile-input__icon {
+		position: absolute;
+		left: 15px;
+		display: flex;
+		color: var(--pf-blue-strong);
+		pointer-events: none;
+	}
+
+	.kmae-profile-field .kmae-profile-input input[type="text"],
+	.kmae-profile-field .kmae-profile-input input[type="email"] {
+		padding-left: 44px;
+	}
+
+	.kmae-profile-field .kmae-phone-input__prefix {
+		position: absolute;
+		left: 15px;
+		font-size: 15px;
+		font-weight: 800;
+		line-height: 1;
+		color: var(--pf-blue-strong);
+		pointer-events: none;
+	}
+
+	.kmae-profile-field .kmae-phone-input input[type="tel"] {
+		padding-left: 56px;
+		letter-spacing: 0.05em;
+	}
+
+	.kmae-profile-field input[type="text"],
+	.kmae-profile-field input[type="email"],
+	.kmae-profile-field input[type="tel"],
+	.kmae-profile-field select,
+	.kmae-profile-field textarea {
+		width: 100%;
+		height: 48px;
+		padding: 0 15px;
+		border: 1px solid rgba(var(--pf-blue-rgb), 0.42);
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.92);
+		box-shadow: 0 2px 8px rgba(38, 68, 90, 0.05), var(--pf-inset);
+		font-family: inherit;
+		font-size: 15.5px;
+		font-weight: 650;
+		color: var(--pf-ink);
+		transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+	}
+
+	.kmae-profile-field textarea {
+		height: auto;
+		min-height: 140px;
+		padding: 13px 15px;
+		line-height: 1.55;
+		resize: vertical;
+	}
+
+	.kmae-profile-input.is-readonly input {
+		border-style: dashed;
+		background: rgba(240, 246, 250, 0.8);
+		color: var(--pf-copy);
+		cursor: default;
+	}
+
+	.kmae-profile-field input::placeholder,
+	.kmae-profile-field textarea::placeholder {
+		font-weight: 600;
+		color: #9aa7b6;
+	}
+
+	.kmae-profile-field input:hover,
+	.kmae-profile-field select:hover,
+	.kmae-profile-field textarea:hover {
+		border-color: rgba(var(--pf-blue-rgb), 0.7);
+	}
+
+	/* Fókusz mindig kék. */
+	.kmae-profile-field input:focus,
+	.kmae-profile-field select:focus,
+	.kmae-profile-field textarea:focus {
+		border-color: rgba(var(--pf-blue-rgb), 0.95);
+		background: #fff;
+		box-shadow: 0 0 0 4px rgba(var(--pf-blue-rgb), 0.16), 0 0 20px rgba(var(--pf-blue-rgb), 0.18), var(--pf-inset);
+		outline: none;
+	}
+
+	.kmae-profile-input.is-readonly input:focus,
+	.kmae-profile-input.is-readonly input:hover {
+		border-color: rgba(var(--pf-blue-rgb), 0.42);
+		box-shadow: var(--pf-inset);
+	}
+
+	.kmae-profile-note {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 5px;
+		margin: 0;
+		font-size: 12.5px;
+		font-weight: 550;
+		line-height: 1.4;
+		color: var(--pf-muted);
+	}
+
+	.kmae-profile-note a {
+		font-weight: 750;
+		color: var(--pf-blue-strong);
+		text-decoration: none;
+	}
+
+	.kmae-profile-note a:hover {
+		text-decoration: underline;
+	}
+
+	.kmae-profile-note__lock {
+		display: flex;
+		color: var(--pf-blue-strong);
+	}
+
+	.kmae-profile-intro .kmae-profile-note {
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.kmae-profile-intro__count {
+		flex: 0 0 auto;
+		font-weight: 750;
+		color: var(--pf-ink);
+		opacity: 0.6;
+	}
+
+	.kmae-profile-form__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 10px;
+		padding-top: 16px;
+		border-top: 1px solid rgba(var(--pf-blue-rgb), 0.2);
+	}
+
+	/* ---- 9. Gombok -------------------------------------------------------- */
+
+	.kmae-profile-btn {
+		display: inline-flex;
+		height: 46px;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		padding: 0 26px;
+		border: 0;
+		border-radius: 999px;
+		font-family: inherit;
+		font-size: 15px;
+		font-weight: 800;
+		line-height: 1;
+		text-decoration: none;
+		cursor: pointer;
+		transition: transform 160ms ease, box-shadow 160ms ease;
+	}
+
+	.kmae-profile-btn:hover,
+	.kmae-profile-btn:focus-visible {
+		transform: translateY(-2px);
+		outline: none;
+	}
+
+	.kmae-profile-btn--accent {
+		background: linear-gradient(110deg, #ffad41, var(--pf-orange));
+		box-shadow: 0 8px 24px rgba(var(--pf-orange-rgb), 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+		color: #fff;
+	}
+
+	.kmae-profile-btn--accent:hover,
+	.kmae-profile-btn--accent:focus-visible {
+		box-shadow: 0 12px 30px rgba(var(--pf-orange-rgb), 0.42), 0 0 22px rgba(var(--pf-orange-rgb), 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+	}
+
+	.kmae-profile-btn--danger {
+		background: linear-gradient(110deg, #e75a5a, #d93a3a);
+		box-shadow: 0 8px 22px rgba(217, 58, 58, 0.28);
+		color: #fff;
+	}
+
+	.kmae-profile-btn--danger:hover,
+	.kmae-profile-btn--danger:focus-visible {
+		box-shadow: 0 12px 28px rgba(217, 58, 58, 0.4);
+	}
+
+	/* ---- 10. Gyors elérés ------------------------------------------------ */
+
+	.kmae-profile-links {
+		display: grid;
+		gap: 10px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.kmae-profile-links li {
+		margin: 0;
+	}
+
+	.kmae-profile-link {
+		--lk: var(--pf-blue);
+		--lk-strong: var(--pf-blue-strong);
+		--lk-rgb: var(--pf-blue-rgb);
+		display: flex;
+		align-items: center;
+		gap: 13px;
+		padding: 12px 14px;
+		border: 1px solid rgba(var(--lk-rgb), 0.34);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.78);
+		box-shadow: var(--pf-inset);
+		text-decoration: none;
+		transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+	}
+
+	.kmae-profile-link--orange {
+		--lk: var(--pf-orange);
+		--lk-strong: var(--pf-orange-strong);
+		--lk-rgb: var(--pf-orange-rgb);
+	}
+
+	.kmae-profile-link:hover,
+	.kmae-profile-link:focus-visible {
+		border-color: rgba(var(--pf-blue-rgb), 0.9);
+		box-shadow: 0 10px 24px rgba(38, 68, 90, 0.12), 0 0 20px rgba(var(--pf-blue-rgb), 0.2), var(--pf-inset);
+		transform: translateY(-1px);
+		outline: none;
+	}
+
+	.kmae-profile-link__icon {
+		display: flex;
+		width: 42px;
+		height: 42px;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(var(--lk-rgb), 0.7);
+		border-radius: 50%;
+		background: #fff;
+		box-shadow: 0 0 16px rgba(var(--lk-rgb), 0.2), var(--pf-inset);
+		color: var(--lk-strong);
+		transition: background 160ms ease, color 160ms ease;
+	}
+
+	.kmae-profile-link:hover .kmae-profile-link__icon {
+		border-color: transparent;
+		background: linear-gradient(145deg, var(--pf-blue-light), var(--pf-blue));
+		color: #fff;
+	}
+
+	.kmae-profile-link__copy {
+		display: flex;
+		min-width: 0;
+		flex: 1;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.kmae-profile-link__copy strong {
+		font-size: 15px;
+		font-weight: 800;
+		line-height: 1.2;
+		color: var(--pf-ink);
+	}
+
+	.kmae-profile-link__copy span {
+		font-size: 12.5px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--pf-muted);
+	}
+
+	.kmae-profile-link__arrow {
+		display: flex;
+		flex: 0 0 auto;
+		color: var(--pf-blue-strong);
+		transition: transform 160ms ease;
+	}
+
+	.kmae-profile-link:hover .kmae-profile-link__arrow {
+		transform: translateX(3px);
+	}
+
+	/* ---- 11. Profil törlése: összecsukott, piros veszélyzóna ------------ */
+
+	.kmae-profile-danger {
+		--panel: #d93a3a;
+		--panel-strong: #b42222;
+		--panel-rgb: 217, 58, 58;
+		gap: 0;
+		padding: 0;
+		border-color: rgba(217, 58, 58, 0.35);
+		background: linear-gradient(135deg, rgba(255, 241, 241, 0.92), rgba(255, 255, 255, 0.84));
+		box-shadow: 0 12px 30px rgba(38, 68, 90, 0.1), var(--pf-inset);
+	}
+
+	.kmae-profile-danger::before {
+		opacity: 0.55;
+	}
+
+	.kmae-profile-danger__summary {
+		display: flex;
+		align-items: center;
+		gap: 11px;
+		padding: 15px 20px;
+		cursor: pointer;
+		list-style: none;
+		font-size: 14.5px;
+		font-weight: 800;
+		color: #b42222;
+	}
+
+	.kmae-profile-danger__summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.kmae-profile-danger__icon {
+		display: flex;
+		width: 32px;
+		height: 32px;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(217, 58, 58, 0.45);
+		border-radius: 50%;
+		background: #fff;
+		color: #d93a3a;
+	}
+
+	.kmae-profile-danger__chevron {
+		display: flex;
+		margin-left: auto;
+		transition: transform 180ms ease;
+	}
+
+	.kmae-profile-danger__details[open] .kmae-profile-danger__chevron {
+		transform: rotate(90deg);
+	}
+
+	.kmae-profile-danger__form {
+		display: grid;
+		gap: 14px;
+		padding: 2px 20px 20px;
+	}
+
+	.kmae-profile-danger__text {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 550;
+		line-height: 1.5;
+		color: #55627a;
+	}
+
+	.kmae-profile-danger .kmae-profile-field label {
+		color: #b42222;
+	}
+
+	.kmae-profile-danger .kmae-profile-field input:focus {
+		border-color: rgba(217, 58, 58, 0.8);
+		box-shadow: 0 0 0 4px rgba(217, 58, 58, 0.14), var(--pf-inset);
+	}
+
+	.kmae-profile-danger .kmae-profile-form__actions {
+		border-top-color: rgba(217, 58, 58, 0.18);
+	}
+}
+
+/* ---- Nyilvános profil (`?kmae_user=`) ------------------------------ */
+
+.kmae-public-profile {
+	max-width: 920px;
+	margin: 12px auto 56px;
+	text-align: left;
+}
+.kmae-public-profile__name {
+	margin: 0;
+	color: #16324f;
+	font-size: 32px;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1.15;
+}
+.kmae-public-profile__type {
+	display: inline-flex;
+	margin: 8px 0 0;
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.72);
+	color: #5c6b7a;
+	font-size: 13px;
+	font-weight: 700;
+}
+.kmae-public-profile__intro {
+	position: relative;
+	margin-top: 18px;
+	padding: 16px 20px 14px 22px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 110, 37, 0.32);
+	border-radius: 16px;
+	background:
+		radial-gradient(circle at 100% 0%, rgba(255, 110, 37, 0.12), transparent 45%),
+		linear-gradient(135deg, rgba(255, 246, 239, 0.95), rgba(255, 255, 255, 0.9));
+	box-shadow: inset 0 1px 0 #fff;
+}
+.kmae-public-profile__intro::before {
+	content: "";
+	position: absolute;
+	top: 12px;
+	bottom: 12px;
+	left: 0;
+	width: 3px;
+	border-radius: 0 3px 3px 0;
+	background: linear-gradient(180deg, #ffad41, #ff6e25);
+	box-shadow: 0 0 10px rgba(255, 110, 37, 0.5);
+}
+.kmae-public-profile__intro-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 8px;
+	color: #202936;
+	font-size: 16px;
+	font-weight: 800;
+}
+.kmae-public-profile__intro-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 9px;
+	background: linear-gradient(145deg, #ffad41, #ff6e25);
+	box-shadow: 0 4px 10px rgba(233, 94, 19, 0.28);
+	color: #fff;
+}
+.kmae-public-profile__intro-text {
+	color: #34404d;
+	font-size: 15px;
+	line-height: 1.6;
+}
+.kmae-public-profile__intro-text p {
+	margin: 0 0 8px;
+}
+.kmae-public-profile__intro-text p:last-child {
+	margin-bottom: 0;
+}
+.kmae-public-profile__edit {
+	margin: 18px 0 0;
+	text-align: center;
+}
+.kmae-public-profile__edit a {
+	color: #1c69d5;
+	font-size: 14px;
+	font-weight: 700;
+	text-decoration: none;
+}
+

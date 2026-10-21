@@ -1,0 +1,430 @@
+/* =====================================================================
+   GOOGLE-BELÉPÉS UTÁNI KIEGÉSZÍTŐ KÉPERNYŐ — ALBIRA VILÁGOS ARCULAT
+   ---------------------------------------------------------------------
+   Ez a képernyő belépett állapotban jelenik meg, ezért a vendég oldal
+   stíluslapja nem érvényes rá — mindent maga hoz.
+
+   Két szándékos döntés:
+     • nincs navigáció: a félbehagyott fiók nem érne semmit, ezért a
+       fejléc, a fiók-menü és a lábléc rejtve marad, amíg nincs kész,
+     • világos üvegkártya, kék kerettel és neon csíkkal, ahogy a
+       Beállítások és a Profil paneljei.
+
+   Egyetlen stílusforrás erre a képernyőre, kizárólag PC-re.
+   ===================================================================== */
+
+@media (min-width: 1025px) {
+
+	body.kmae-app.kmae-complete-page {
+		--gc-blue: #00c7f7;
+		--gc-blue-strong: #008fbd;
+		--gc-blue-rgb: 0, 199, 247;
+		--gc-orange: #ff6e25;
+		--gc-orange-rgb: 255, 110, 37;
+		--gc-ink: #202936;
+		--gc-copy: #465463;
+		--gc-muted: #5a6b80;
+	}
+
+	/* ---- 1. Semmi ne vigye el a figyelmet ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-header,
+	body.kmae-app.kmae-complete-page .kmae-drawer,
+	body.kmae-app.kmae-complete-page .kmae-drawer-backdrop,
+	body.kmae-app.kmae-complete-page .kmae-footer,
+	body.kmae-app.kmae-complete-page .kmae-bottom-nav,
+	body.kmae-app.kmae-complete-page .kmae-page__title {
+		display: none;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-main,
+	body.kmae-app.kmae-complete-page .kmae-app-content,
+	body.kmae-app.kmae-complete-page .kmae-app-layout {
+		display: block;
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-page {
+		display: flex;
+		width: 100%;
+		min-height: 100vh;
+		align-items: center;
+		justify-content: center;
+		padding: 40px 24px;
+		box-sizing: border-box;
+		background: transparent;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-page > .kmae-container,
+	body.kmae-app.kmae-complete-page .kmae-page__article,
+	body.kmae-app.kmae-complete-page .kmae-page__content {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* ---- 2. A kártya ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-auth--complete {
+		position: relative;
+		display: flex;
+		width: min(100%, 500px);
+		flex-direction: column;
+		gap: 16px;
+		margin: 0 auto;
+		padding: 26px 28px 28px;
+		overflow: hidden;
+		border: 1px solid rgba(var(--gc-blue-rgb), 0.55);
+		border-radius: 20px;
+		background:
+			radial-gradient(circle at 6% 0%, rgba(var(--gc-blue-rgb), 0.2), transparent 46%),
+			radial-gradient(circle at 100% 100%, rgba(var(--gc-orange-rgb), 0.14), transparent 50%),
+			linear-gradient(135deg, rgba(240, 252, 255, 0.94), rgba(255, 255, 255, 0.88));
+		box-shadow:
+			0 26px 64px rgba(12, 38, 60, 0.26),
+			0 0 30px rgba(var(--gc-blue-rgb), 0.14),
+			inset 0 1px 0 #fff;
+		backdrop-filter: blur(20px) saturate(130%);
+		-webkit-backdrop-filter: blur(20px) saturate(130%);
+		font-family: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
+		color: var(--gc-ink);
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth--complete::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 8%;
+		width: 44%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--gc-blue), transparent);
+		box-shadow: 0 0 14px rgba(var(--gc-blue-rgb), 0.85);
+		pointer-events: none;
+	}
+
+	/* ---- 3. Fejléc ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-auth__header {
+		margin: 0;
+	}
+
+	/* Köszöntés: a manó és a szöveg egy sorban, mint a főoldalon. */
+	body.kmae-app.kmae-complete-page .kmae-complete-greet {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-complete-greet__mascot {
+		width: 84px;
+		height: auto;
+		flex: 0 0 auto;
+		object-fit: contain;
+		filter: drop-shadow(0 8px 16px rgba(0, 100, 150, 0.18));
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-complete-greet__copy {
+		min-width: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__eyebrow {
+		margin: 0 0 6px;
+		font-size: 0.68rem;
+		font-weight: 850;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--gc-blue-strong);
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__title {
+		margin: 0 0 7px;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 1.5rem;
+		font-weight: 850;
+		letter-spacing: -0.03em;
+		line-height: 1.15;
+		color: var(--gc-ink);
+		/* A sorok kiegyensúlyozva törnek, nem marad árva szó a végén. */
+		text-wrap: balance;
+		overflow-wrap: anywhere;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__lead {
+		margin: 0;
+		font-size: 0.88rem;
+		font-weight: 550;
+		line-height: 1.5;
+		color: var(--gc-muted);
+		text-wrap: pretty;
+	}
+
+	/* ---- 4. Űrlap ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-auth__form {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		margin: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-field {
+		display: grid;
+		gap: 6px;
+		min-width: 0;
+		margin: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-field label,
+	body.kmae-app.kmae-complete-page .kmae-auth__section-title {
+		font-size: 0.78rem;
+		font-weight: 850;
+		letter-spacing: 0.06em;
+		line-height: 1.3;
+		text-transform: uppercase;
+		color: var(--gc-blue-strong);
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-field input[type="tel"],
+	body.kmae-app.kmae-complete-page .kmae-field input[type="text"],
+	body.kmae-app.kmae-complete-page .kmae-field select {
+		width: 100%;
+		min-height: 44px;
+		padding: 0 14px;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--gc-blue-rgb), 0.38);
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.94);
+		box-shadow: inset 0 1px 0 #fff;
+		font-family: inherit;
+		font-size: 0.95rem;
+		font-weight: 650;
+		color: var(--gc-ink);
+		color-scheme: light;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-field input::placeholder {
+		font-weight: 600;
+		color: #9aa7b6;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-field input:focus,
+	body.kmae-app.kmae-complete-page .kmae-field select:focus {
+		border-color: rgba(var(--gc-blue-rgb), 0.9);
+		box-shadow: 0 0 0 4px rgba(var(--gc-blue-rgb), 0.14), inset 0 1px 0 #fff;
+		outline: none;
+	}
+
+	/* A +36 fixen a mező bal szélén ül, a beírt szám mellette folytatódik. */
+	body.kmae-app.kmae-complete-page .kmae-phone-input {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-phone-input__prefix {
+		position: absolute;
+		left: 14px;
+		font-size: 0.95rem;
+		font-weight: 800;
+		letter-spacing: 0.01em;
+		line-height: 1;
+		color: var(--gc-blue-strong);
+		pointer-events: none;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-phone-input input[type="tel"] {
+		padding-left: 54px;
+		letter-spacing: 0.04em;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__pw-hint {
+		margin: 0;
+		font-size: 0.76rem;
+		font-weight: 550;
+		line-height: 1.45;
+		color: var(--gc-muted);
+	}
+
+	/* ---- 5. Fiók típusa ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-fieldset {
+		display: grid;
+		gap: 10px;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: none;
+		min-width: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__section-title {
+		margin: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type__option {
+		display: flex;
+		align-items: flex-start;
+		gap: 9px;
+		min-width: 0;
+		padding: 12px 13px;
+		border: 1px solid rgba(var(--gc-blue-rgb), 0.34);
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.82);
+		box-shadow: inset 0 1px 0 #fff;
+		cursor: pointer;
+		transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type__option:hover {
+		border-color: rgba(var(--gc-blue-rgb), 0.7);
+		background: #fff;
+	}
+
+	/* A kiválasztott lehetőség narancs — ez a felhasználó döntése. */
+	body.kmae-app.kmae-complete-page .kmae-account-type__option:has(input:checked) {
+		border-color: rgba(var(--gc-orange-rgb), 0.75);
+		background: rgba(255, 244, 237, 0.92);
+		box-shadow: 0 0 16px rgba(var(--gc-orange-rgb), 0.18), inset 0 1px 0 #fff;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type__option input {
+		flex: 0 0 auto;
+		width: 17px;
+		height: 17px;
+		margin: 1px 0 0;
+		accent-color: var(--gc-orange);
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type__text {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 3px;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type__text strong {
+		font-size: 0.86rem;
+		font-weight: 800;
+		line-height: 1.25;
+		color: var(--gc-ink);
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-account-type__desc {
+		font-size: 0.72rem;
+		font-weight: 550;
+		line-height: 1.35;
+		color: var(--gc-muted);
+	}
+
+	/* ---- 6. Céges adatok ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-auth__company {
+		display: grid;
+		gap: 18px;
+		min-width: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__company .kmae-field-row {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: start;
+		gap: 16px;
+		margin: 0;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__company[hidden] {
+		display: none;
+	}
+
+	/* ---- 7. Feltételek ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-checkbox {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		margin: 0;
+		font-size: 0.82rem;
+		font-weight: 550;
+		line-height: 1.5;
+		color: var(--gc-copy);
+		cursor: pointer;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-checkbox input {
+		flex: 0 0 auto;
+		width: 17px;
+		height: 17px;
+		margin: 2px 0 0;
+		accent-color: var(--gc-orange);
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-checkbox a {
+		color: var(--gc-blue-strong);
+		font-weight: 800;
+		text-decoration: underline;
+		text-decoration-color: rgba(var(--gc-blue-rgb), 0.4);
+	}
+
+	/* ---- 8. Gomb ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-auth__submit {
+		display: inline-flex;
+		width: 100%;
+		min-height: 46px;
+		align-items: center;
+		justify-content: center;
+		margin-top: 2px;
+		padding: 0 20px;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--gc-orange-rgb), 0.85);
+		border-radius: 12px;
+		background: linear-gradient(110deg, #ffad41, var(--gc-orange));
+		box-shadow: 0 8px 24px rgba(var(--gc-orange-rgb), 0.3);
+		font-family: inherit;
+		font-size: 0.95rem;
+		font-weight: 800;
+		line-height: 1;
+		color: #fff;
+		cursor: pointer;
+		transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-auth__submit:hover,
+	body.kmae-app.kmae-complete-page .kmae-auth__submit:focus-visible {
+		transform: translateY(-2px);
+		filter: brightness(1.07);
+		box-shadow: 0 10px 28px rgba(var(--gc-orange-rgb), 0.4);
+		outline: none;
+	}
+
+	/* ---- 9. Hibajelzés ---- */
+
+	body.kmae-app.kmae-complete-page .kmae-notice {
+		margin: 0;
+		padding: 12px 16px;
+		border: 1px solid rgba(225, 29, 72, 0.5);
+		border-left: 3px solid #e11d48;
+		border-radius: 12px;
+		background: rgba(255, 240, 244, 0.94);
+		font-size: 0.86rem;
+		font-weight: 750;
+		line-height: 1.5;
+		color: #a3123a;
+	}
+
+	body.kmae-app.kmae-complete-page .kmae-notice p {
+		margin: 0;
+		color: inherit;
+	}
+}

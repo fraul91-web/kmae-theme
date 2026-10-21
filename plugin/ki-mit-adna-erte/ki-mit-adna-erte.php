@@ -3,7 +3,7 @@
  * Plugin Name:       Albira
  * Plugin URI:        https://kimitadnaerte.hu
  * Description:       Albira piactér — nem eladod a tárgyad, hanem megnézed, mit adnának érte. Alkudozás megalázás nélkül.
- * Version:           3.16.83
+ * Version:           4.65.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            Albira
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'KMAE_VERSION', '3.16.83' );
+define( 'KMAE_VERSION', '4.65.0' );
 
 /** Launch: 'single' = one category only, 'multi' = all categories. */
 define( 'KMAE_LAUNCH_MODE', 'single' );
@@ -30,19 +30,34 @@ define( 'KMAE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KMAE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'KMAE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
-/** Max counter-offer rounds per party. */
-define( 'KMAE_MAX_COUNTER_ROUNDS', 2 );
+/**
+ * Automatikus fájlverzió: a plugin saját CSS/JS fájljai a módosítási idejüket
+ * kapják `ver`-nek, így minden feltöltés után a böngészők frissítik őket
+ * (hosszú böngésző-gyorsítótár mellett is) — nem kell kézzel verziót emelni.
+ *
+ * @param string $src Asset URL.
+ * @return string
+ */
+function kmae_plugin_asset_version_src( $src ) {
+	if ( ! is_string( $src ) || 0 !== strpos( $src, KMAE_PLUGIN_URL ) ) {
+		return $src;
+	}
+	$path = KMAE_PLUGIN_DIR . strtok( substr( $src, strlen( KMAE_PLUGIN_URL ) ), '?' );
+	if ( ! is_file( $path ) ) {
+		return $src;
+	}
+	return add_query_arg( 'ver', (string) filemtime( $path ), $src );
+}
+add_filter( 'style_loader_src', 'kmae_plugin_asset_version_src', 20 );
+add_filter( 'script_loader_src', 'kmae_plugin_asset_version_src', 20 );
 
-/** Archived listing lifecycle (days). */
-define( 'KMAE_ARCHIVE_LOCK_DAYS', 5 );
+/** Archived listing lifecycle (days). Auto-purge after TOTAL. */
+define( 'KMAE_ARCHIVE_LOCK_DAYS', 1 );
 define( 'KMAE_ARCHIVE_REACTIVATE_DAYS', 2 );
 define( 'KMAE_ARCHIVE_TOTAL_DAYS', KMAE_ARCHIVE_LOCK_DAYS + KMAE_ARCHIVE_REACTIVATE_DAYS );
 
-/** Offer type codes. */
+/** Active offer type. */
 define( 'KMAE_OFFER_TYPE_CASH', 'cash' );
-define( 'KMAE_OFFER_TYPE_TRADE', 'trade' );
-define( 'KMAE_OFFER_TYPE_TRADE_PLUS_CASH', 'trade_plus_cash' );
-define( 'KMAE_OFFER_TYPE_TRADE_IN', 'trade_in' );
 
 require_once KMAE_PLUGIN_DIR . 'includes/class-kmae-loader.php';
 

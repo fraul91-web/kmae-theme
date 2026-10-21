@@ -1,0 +1,435 @@
+/*
+ * Adásvételi szerződés aloldal (/uzenetek/?kmae_conversation=ID&kmae_contract=1).
+ * Plugin markup: templates/sale-contract.php. Csak ezen az oldalon töltődik be.
+ */
+
+body.kmae-sale-contract-active {
+	--sc-blue: #1c69d5;
+	--sc-blue-soft: #eaf3fe;
+	--sc-blue-line: #bcd8f6;
+	--sc-orange: #f1640a;
+	--sc-orange-2: #ff9a3c;
+	--sc-ink: #123252;
+	--sc-text: #2a3f55;
+	--sc-muted: #64758a;
+	--sc-line: #d6e2ee;
+}
+
+body.kmae-sale-contract-active .kmae-page__title {
+	display: none;
+}
+
+/* A tartalomdoboz alapból 720 px és balra zárt: itt a szerződés saját 960 px-e számít. */
+body.kmae-sale-contract-active .kmae-page__content {
+	max-width: none;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+body.kmae-sale-contract-active .kmae-contract {
+	box-sizing: border-box;
+	max-width: 960px;
+	margin: 18px auto 48px;
+	color: var(--sc-text);
+}
+
+body.kmae-sale-contract-active .kmae-contract *,
+body.kmae-sale-contract-active .kmae-contract *::before,
+body.kmae-sale-contract-active .kmae-contract *::after {
+	box-sizing: border-box;
+}
+
+/* ---------- Felső sáv ---------- */
+body.kmae-sale-contract-active .kmae-contract__toolbar {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 14px 24px;
+	margin-bottom: 18px;
+	padding: 20px 24px;
+	overflow: hidden;
+	border: 1px solid var(--sc-blue-line);
+	border-radius: 20px;
+	background: linear-gradient(135deg, rgba(234, 243, 254, 0.96), rgba(255, 255, 255, 0.92));
+	box-shadow: 0 14px 34px rgba(22, 63, 122, 0.08), inset 0 1px 0 #fff;
+}
+
+body.kmae-sale-contract-active .kmae-contract__toolbar::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 6%;
+	width: 50%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--sc-orange-2), transparent);
+	box-shadow: 0 0 12px rgba(255, 154, 60, 0.8);
+}
+
+body.kmae-sale-contract-active a.kmae-contract__back {
+	flex-basis: 100%;
+	color: var(--sc-blue);
+	font-size: 14px;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+body.kmae-sale-contract-active .kmae-contract__intro {
+	flex: 1 1 420px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__title {
+	margin: 0 0 6px;
+	color: var(--sc-ink);
+	font-size: 26px;
+	font-weight: 850;
+}
+
+body.kmae-sale-contract-active .kmae-contract__lead,
+body.kmae-sale-contract-active .kmae-contract__note {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+body.kmae-sale-contract-active .kmae-contract__note {
+	margin-top: 4px;
+	color: var(--sc-muted);
+	font-weight: 600;
+}
+
+body.kmae-sale-contract-active .kmae-contract__actions {
+	display: flex;
+	gap: 10px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__btn {
+	padding: 11px 20px;
+	border: 1.5px solid var(--sc-blue-line);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--sc-blue);
+	font-size: 14.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+body.kmae-sale-contract-active .kmae-contract__btn:hover {
+	background: var(--sc-blue-soft);
+}
+
+body.kmae-sale-contract-active .kmae-contract__btn--download {
+	border-color: transparent;
+	background: linear-gradient(110deg, var(--sc-orange-2), var(--sc-orange));
+	box-shadow: 0 6px 16px rgba(241, 100, 10, 0.24);
+	color: #fff;
+}
+
+body.kmae-sale-contract-active .kmae-contract__btn--download:hover {
+	background: linear-gradient(110deg, var(--sc-orange-2), var(--sc-orange));
+	filter: brightness(1.05);
+}
+
+/* ---------- Papír ---------- */
+body.kmae-sale-contract-active .kmae-contract__paper {
+	padding: 40px 48px;
+	border: 1px solid var(--sc-line);
+	border-radius: 6px;
+	background: #fff;
+	box-shadow: 0 14px 34px rgba(22, 63, 122, 0.1);
+	color: #111;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+body.kmae-sale-contract-active .kmae-contract__head {
+	margin-bottom: 14px;
+	text-align: center;
+}
+
+body.kmae-sale-contract-active .kmae-contract__head p {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+body.kmae-sale-contract-active .kmae-contract__small {
+	margin: 10px 0 6px;
+	font-size: 12px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__small--center {
+	text-align: center;
+}
+
+body.kmae-sale-contract-active .kmae-contract__choices {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px 32px;
+	margin-bottom: 8px;
+	font-size: 12.5px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__choices label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+}
+
+body.kmae-sale-contract-active .kmae-contract__section {
+	display: flex;
+	align-items: center;
+	margin: 22px 0 8px;
+	padding: 4px 8px;
+	border-left: 3px solid var(--sc-orange);
+	background: #f4f7fb;
+	color: #111;
+	font-size: 13.5px;
+	font-style: italic;
+	font-weight: 700;
+}
+
+/* Jármű adatai: két egyforma oszlop, a mezők nem lóghatnak ki a papírból. */
+body.kmae-sale-contract-active .kmae-contract__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 36px;
+}
+
+/* Sor: címke | mező | (mértékegység) — minden sorban azonos oszlopok. */
+body.kmae-sale-contract-active .kmae-contract__row {
+	display: grid;
+	grid-template-columns: 280px minmax(0, 1fr);
+	align-items: end;
+	column-gap: 12px;
+	padding: 4px 0;
+}
+
+body.kmae-sale-contract-active .kmae-contract__row--unit {
+	grid-template-columns: 280px minmax(0, 1fr) 62px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__grid .kmae-contract__row {
+	grid-template-columns: 185px minmax(0, 1fr);
+}
+
+body.kmae-sale-contract-active .kmae-contract__label {
+	display: flex;
+	align-items: center;
+	min-height: 30px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+body.kmae-sale-contract-active .kmae-contract__input {
+	width: 100%;
+	height: 30px;
+	min-width: 0;
+	margin: 0;
+	padding: 4px 8px;
+	border: 0;
+	border-bottom: 1px dotted #8a9bb0;
+	border-radius: 0;
+	background: #fbfdff;
+	color: #111;
+	font: inherit;
+	font-size: 13px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__input:focus,
+body.kmae-sale-contract-active .kmae-contract__textarea:focus {
+	outline: 0;
+	border-color: var(--sc-blue);
+	background: var(--sc-blue-soft);
+}
+
+body.kmae-sale-contract-active .kmae-contract__input::placeholder {
+	color: #a9b6c4;
+}
+
+body.kmae-sale-contract-active .kmae-contract__unit {
+	padding-bottom: 6px;
+	font-size: 12.5px;
+	white-space: nowrap;
+}
+
+/* ---------- „i” magyarázat (nyomtatásban nincs) ---------- */
+body.kmae-sale-contract-active .kmae-contract__info {
+	position: relative;
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	margin: 0 0 0 7px;
+	padding: 0;
+	border: 1px solid var(--sc-blue-line);
+	border-radius: 50%;
+	background: var(--sc-blue-soft);
+	box-shadow: none;
+	color: var(--sc-blue);
+	font: italic 700 11px/1 Georgia, "Times New Roman", serif;
+	vertical-align: middle;
+	cursor: help;
+}
+
+body.kmae-sale-contract-active .kmae-contract__info:hover,
+body.kmae-sale-contract-active .kmae-contract__info:focus-visible {
+	border-color: var(--sc-blue);
+	outline: 0;
+	background: var(--sc-blue);
+	color: #fff;
+}
+
+body.kmae-sale-contract-active .kmae-contract__tip {
+	position: absolute;
+	bottom: calc(100% + 10px);
+	left: 50%;
+	z-index: 20;
+	width: 270px;
+	padding: 9px 12px;
+	border-radius: 10px;
+	background: var(--sc-ink);
+	box-shadow: 0 10px 26px rgba(18, 50, 82, 0.28);
+	color: #fff;
+	font: normal 500 12.5px/1.45 Arial, Helvetica, sans-serif;
+	text-align: left;
+	white-space: normal;
+	opacity: 0;
+	visibility: hidden;
+	transform: translate(-50%, 4px);
+	transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+	pointer-events: none;
+}
+
+body.kmae-sale-contract-active .kmae-contract__tip::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -6px;
+	border: 6px solid transparent;
+	border-top-color: var(--sc-ink);
+}
+
+body.kmae-sale-contract-active .kmae-contract__info:hover .kmae-contract__tip,
+body.kmae-sale-contract-active .kmae-contract__info:focus .kmae-contract__tip {
+	opacity: 1;
+	visibility: visible;
+	transform: translate(-50%, 0);
+}
+
+body.kmae-sale-contract-active .kmae-contract__legal {
+	margin: 0;
+	padding-left: 20px;
+	font-size: 11.5px;
+	text-align: justify;
+}
+
+body.kmae-sale-contract-active .kmae-contract__legal li {
+	margin-bottom: 4px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__textarea {
+	display: block;
+	width: 100%;
+	min-height: 70px;
+	padding: 6px 8px;
+	overflow: hidden;
+	border: 1px dotted #8a9bb0;
+	border-radius: 0;
+	background: #fbfdff;
+	color: #111;
+	font: inherit;
+	font-size: 13px;
+	resize: none;
+}
+
+body.kmae-sale-contract-active .kmae-contract__closing {
+	margin: 16px 0 6px;
+	font-size: 12px;
+	font-weight: 700;
+	text-align: justify;
+}
+
+body.kmae-sale-contract-active .kmae-contract__signs {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 40px;
+	margin: 26px 0 8px;
+}
+
+body.kmae-sale-contract-active .kmae-contract__sign,
+body.kmae-sale-contract-active .kmae-contract__witness {
+	display: flex;
+	flex-direction: column;
+	font-size: 12px;
+	text-align: center;
+}
+
+body.kmae-sale-contract-active .kmae-contract__witness strong {
+	text-align: left;
+}
+
+body.kmae-sale-contract-active .kmae-contract__line {
+	display: block;
+	height: 34px;
+	margin-bottom: 3px;
+	border-bottom: 1px dotted #333;
+}
+
+/* ---------- Nyomtatás: csak a papír ---------- */
+@media print {
+	@page {
+		margin: 12mm;
+	}
+
+	body.kmae-sale-contract-active * {
+		visibility: hidden;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__paper,
+	body.kmae-sale-contract-active .kmae-contract__paper * {
+		visibility: visible;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__paper {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		padding: 0;
+		border: 0;
+		box-shadow: none;
+		font-size: 11px;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__input,
+	body.kmae-sale-contract-active .kmae-contract__textarea {
+		background: transparent;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__info {
+		display: none;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__input::placeholder {
+		color: transparent;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__section {
+		background: transparent;
+		break-after: avoid;
+	}
+
+	body.kmae-sale-contract-active .kmae-contract__signs {
+		break-inside: avoid;
+	}
+}

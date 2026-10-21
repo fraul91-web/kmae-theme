@@ -1,0 +1,45 @@
+/* =========================================================
+   Egységes oldalháttér — a vendég-főoldal (landing) háttere
+   minden oldalon, vendégnek és belépve is.
+   Forrás: simple-mode/landing.css body.kmae-marketing (ugyanaz a kép és fehér átfedés).
+   Legvégén töltődik be (functions.php kmae_enqueue_site_background),
+   ezért a régi sötét belépett háttér (app-shell-dark.css) fölé írja.
+   ========================================================= */
+
+/* A kép saját, fix pozíciójú rétegen ül (html::before), nem `background-attachment: fixed`-del:
+   az utóbbi görgetéskor minden képkockán újrafesti a hátteret (az üveg-elmosások miatt laggol).
+   A réteg külön GPU-rétegre kerül, így görgetéskor nem kell újrarajzolni. */
+html::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background:
+		linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.42)),
+		url("https://albira.hu/wp-content/uploads/2026/09/landing-hatter.webp") center top / cover no-repeat,
+		#f3f9ff;
+	transform: translateZ(0);
+	will-change: transform;
+}
+
+/* A body (és a landing body/.kmae-main) háttere átlátszó, hogy a fix réteg látsszon alatta. */
+body,
+body.kmae-marketing:not(.kmae-faq-page) {
+	background: transparent !important;
+}
+
+body.kmae-marketing .kmae-main {
+	background: transparent;
+}
+
+/* A belépett sötét héj díszítő rétegei (ívek, hatszög-háló) a régi hátteret adják, ezért kikapcsoljuk. */
+body.kmae-app.kmae-theme-dark::before,
+body.kmae-app.kmae-theme-dark::after {
+	display: none !important;
+}
+
+/* A főtartalom saját háttere ne takarja a közös képet. A landing saját .kmae-main hátterét nem érinti. */
+body:not(.kmae-marketing) .kmae-main {
+	background: transparent !important;
+}

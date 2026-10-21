@@ -1,0 +1,242 @@
+{
+  "scope": "plugin-only",
+  "plugin_version": "4.60.0",
+  "source_root_name": "ki-mit-adna-erte",
+  "file_count": 128,
+  "php_file_count": 107,
+  "js_file_count": 15,
+  "class_count": 40,
+  "php_symbol_count": 574,
+  "shortcode_count": 25,
+  "ajax_count": 3,
+  "custom_rest_route_count": 0,
+  "features": [
+    {
+      "id": "BOOT-ARCHITECTURE",
+      "title": "Bootstrapping, lifecycle and architecture",
+      "map": "FEATURES/BOOT-ARCHITECTURE.md",
+      "primary_files": [
+        "ki-mit-adna-erte.php",
+        "includes/class-kmae-loader.php",
+        "includes/class-kmae-plugin.php",
+        "includes/class-kmae-activator.php",
+        "includes/class-kmae-deactivator.php"
+      ]
+    },
+    {
+      "id": "PAGES-ROUTING",
+      "title": "Pages, routing, shortcodes and templates",
+      "map": "FEATURES/PAGES-ROUTING.md",
+      "primary_files": [
+        "includes/class-kmae-pages.php",
+        "public/class-kmae-shortcodes.php",
+        "includes/class-kmae-post-types.php"
+      ]
+    },
+    {
+      "id": "AUTH",
+      "title": "Password auth, registration and email verification",
+      "map": "FEATURES/AUTH.md",
+      "primary_files": [
+        "includes/class-kmae-auth.php",
+        "public/class-kmae-public.php",
+        "templates/form-login.php",
+        "templates/form-register.php"
+      ]
+    },
+    {
+      "id": "GOOGLE-AUTH",
+      "title": "Google OAuth login",
+      "map": "FEATURES/GOOGLE-AUTH.md",
+      "primary_files": [
+        "includes/class-kmae-google-auth.php",
+        "templates/partials/google-button.php",
+        "templates/partials/google-complete.php"
+      ]
+    },
+    {
+      "id": "PROFILE-COMPANY-SETTINGS",
+      "title": "Profile, company accounts and user settings",
+      "map": "FEATURES/PROFILE-COMPANY-SETTINGS.md",
+      "primary_files": [
+        "includes/class-kmae-company.php",
+        "includes/class-kmae-auth.php",
+        "public/class-kmae-public.php",
+        "templates/form-profile.php",
+        "templates/settings.php",
+        "templates/security.php"
+      ]
+    },
+    {
+      "id": "LISTINGS",
+      "title": "Listing creation, editing and lifecycle",
+      "map": "FEATURES/LISTINGS.md",
+      "primary_files": [
+        "public/class-kmae-public.php",
+        "includes/class-kmae-listings.php",
+        "includes/class-kmae-meta.php",
+        "includes/class-kmae-seller.php"
+      ]
+    },
+    {
+      "id": "LISTING-WIZARD-DRAFTS",
+      "title": "Listing wizard and autosaved drafts",
+      "map": "FEATURES/LISTING-WIZARD-DRAFTS.md",
+      "primary_files": [
+        "assets/js/listing-wizard.js",
+        "includes/class-kmae-listing-wizard.php",
+        "includes/class-kmae-listing-drafts.php",
+        "templates/partials/listing-wizard.php"
+      ]
+    },
+    {
+      "id": "VEHICLE",
+      "title": "Vehicle-specific data and catalog",
+      "map": "FEATURES/VEHICLE.md",
+      "primary_files": [
+        "includes/class-kmae-vehicle.php",
+        "assets/data/vehicle-catalog.json",
+        "assets/js/vehicle-catalog.js",
+        "templates/partials/vehicle-form-fields.php"
+      ]
+    },
+    {
+      "id": "PHOTO-MOTOR",
+      "title": "Photo motor and image processing",
+      "map": "FEATURES/PHOTO-MOTOR.md",
+      "primary_files": [
+        "includes/class-kmae-photo-motor.php",
+        "includes/class-kmae-images.php",
+        "assets/js/photo-motor.js",
+        "templates/partials/listing-photo-motor.php"
+      ]
+    },
+    {
+      "id": "MODERATION",
+      "title": "Automated listing moderation",
+      "map": "FEATURES/MODERATION.md",
+      "primary_files": [
+        "includes/class-kmae-moderation.php",
+        "public/class-kmae-public.php"
+      ]
+    },
+    {
+      "id": "BROWSE-SEARCH",
+      "title": "Browse, search wizard and personalization",
+      "map": "FEATURES/BROWSE-SEARCH.md",
+      "primary_files": [
+        "includes/class-kmae-query.php",
+        "includes/class-kmae-browse.php",
+        "includes/class-kmae-counties.php",
+        "public/class-kmae-shortcodes.php"
+      ]
+    },
+    {
+      "id": "CHAT",
+      "title": "Chat (conversation, messages, attachments)",
+      "map": "FEATURES/CHAT.md",
+      "primary_files": [
+        "includes/class-kmae-conversations.php",
+        "templates/offer-thread.php",
+        "templates/messages.php",
+        "templates/partials/conversation-timeline.php",
+        "templates/partials/conversation-free-chat.php"
+      ]
+    },
+    {
+      "id": "NOTIFICATIONS",
+      "title": "Event notifications and email",
+      "map": "FEATURES/NOTIFICATIONS.md",
+      "primary_files": [
+        "includes/class-kmae-notifications.php",
+        "includes/class-kmae-brand.php"
+      ]
+    },
+    {
+      "id": "DASHBOARD-HUBS",
+      "title": "Dashboard, hubs and statistics",
+      "map": "FEATURES/DASHBOARD-HUBS.md",
+      "primary_files": [
+        "includes/class-kmae-dashboard.php",
+        "templates/partials/dashboard-home.php",
+        "templates/hub-section.php",
+        "public/class-kmae-shortcodes.php"
+      ]
+    },
+    {
+      "id": "LIVE-NAV",
+      "title": "Live polling, navigation and badges",
+      "map": "FEATURES/LIVE-NAV.md",
+      "primary_files": [
+        "includes/class-kmae-live-page.php",
+        "includes/class-kmae-nav.php",
+        "public/class-kmae-public.php",
+        "assets/js/public.js"
+      ]
+    },
+    {
+      "id": "ADMIN",
+      "title": "WordPress admin integration",
+      "map": "FEATURES/ADMIN.md",
+      "primary_files": [
+        "admin/class-kmae-admin.php",
+        "admin/views/dashboard.php",
+        "admin/views/settings.php",
+        "admin/views/meta-box-listing.php",
+        "admin/views/reports.php"
+      ]
+    },
+    {
+      "id": "CONTACT-FORM",
+      "title": "Public contact form",
+      "map": "FEATURES/CONTACT-FORM.md",
+      "primary_files": [
+        "public/class-kmae-public.php",
+        "templates/contact.php",
+        "includes/class-kmae-settings.php"
+      ]
+    },
+    {
+      "id": "CRON-ARCHIVE",
+      "title": "Archive lifecycle and scheduled purge",
+      "map": "FEATURES/CRON-ARCHIVE.md",
+      "primary_files": [
+        "includes/class-kmae-listings.php",
+        "includes/class-kmae-activator.php",
+        "includes/class-kmae-deactivator.php"
+      ]
+    },
+    {
+      "id": "TAXONOMY-LAUNCH",
+      "title": "Post type, taxonomy and launch mode",
+      "map": "FEATURES/TAXONOMY-LAUNCH.md",
+      "primary_files": [
+        "includes/class-kmae-post-types.php",
+        "includes/class-kmae-taxonomies.php",
+        "includes/class-kmae-launch.php"
+      ]
+    },
+    {
+      "id": "REPORTS",
+      "title": "Bejelentések (hirdetés + chat → admin)",
+      "map": "FEATURES/REPORTS.md",
+      "primary_files": [
+        "includes/class-kmae-reports.php",
+        "templates/partials/report-form.php",
+        "admin/views/reports.php",
+        "admin/class-kmae-admin.php"
+      ]
+    }
+  ],
+  "source_tree_sha256": "cbeb859fbbf2f0680ec64b56cc427619a575af3e4595c2c40b51aa28510a2196",
+  "memory_map_version": "V2-diagnostic-routing",
+  "v2": {
+    "diagnostic_routes": 33,
+    "decision_trees": 14,
+    "hotspots": 14,
+    "regression_routes": 16,
+    "routing_tests": 15,
+    "feature_maps_v2": 23,
+    "quality_gate": "QUALITY-GATE.md"
+  }
+}

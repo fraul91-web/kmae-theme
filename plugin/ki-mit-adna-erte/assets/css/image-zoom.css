@@ -1,0 +1,206 @@
+/*
+ * Képnagyító (PC) — assets/js/image-zoom.js. A réteg a megnyitott galéria gyökerében él
+ * (fix, 0×0-s horgony; a gyerekek a kép helyére kerülnek, a JS számolja a pozíciót).
+ * Sötétkék tömör sáv fehér kerettel (− 100% + | narancs Teljes kép) bal lent — világos és sötét fotón is látszik, kis térkép jobb lent, narancs négyzettel.
+ */
+@media (min-width: 1025px) {
+	.kmae-iz {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 2147483000;
+		width: 0;
+		height: 0;
+		overflow: visible;
+		pointer-events: none;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+	}
+
+	.kmae-iz[hidden],
+	.kmae-iz [hidden] {
+		display: none !important;
+	}
+
+	/* A nagyított kép: pontosan az eredeti fölött, a saját keretén belül */
+	.kmae-iz__view {
+		position: absolute;
+		overflow: hidden;
+		background: #eaf8ff;
+		cursor: grab;
+		pointer-events: auto;
+		touch-action: none;
+		user-select: none;
+	}
+
+	.kmae-iz.is-dragging .kmae-iz__view {
+		cursor: grabbing;
+	}
+
+	.kmae-iz .kmae-iz__img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		display: block;
+		max-width: none;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+		object-fit: cover;
+		transform-origin: 0 0;
+		user-select: none;
+		-webkit-user-drag: none;
+		pointer-events: none;
+	}
+
+	/* Sáv: bal lent, a kép belsejében */
+	.kmae-iz__bar {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		box-sizing: border-box;
+		height: 48px;
+		padding: 0 5px;
+		border: 2px solid #ffffff;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #0b3a66 0%, #0a5ea8 100%);
+		box-shadow:
+			0 0 0 1.5px rgba(11, 58, 102, 0.55),
+			0 0 18px rgba(0, 199, 247, 0.45),
+			0 12px 26px -10px rgba(4, 20, 40, 0.75),
+			inset 0 1px 0 rgba(255, 255, 255, 0.25);
+		color: #ffffff;
+		pointer-events: auto;
+		transform: translateY(-100%);
+		user-select: none;
+	}
+
+	.kmae-iz__btn,
+	.kmae-iz__reset {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		margin: 0;
+		border: 0;
+		background: none;
+		color: #0b3a66;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.kmae-iz__btn {
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #4fd2ff 0%, #12a3e6 100%);
+		box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35), 0 4px 10px -3px rgba(0, 0, 0, 0.45);
+		color: #ffffff;
+		transition: box-shadow 0.15s ease, opacity 0.15s ease;
+	}
+
+	.kmae-iz__btn:hover {
+		box-shadow: 0 0 0 3px #ffffff, 0 0 14px rgba(79, 210, 255, 0.8);
+	}
+
+	.kmae-iz__btn:disabled {
+		opacity: 0.4;
+		box-shadow: none;
+		cursor: default;
+	}
+
+	.kmae-iz__btn svg,
+	.kmae-iz__reset svg {
+		width: 18px;
+		height: 18px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.kmae-iz__pct {
+		min-width: 54px;
+		color: #ffffff;
+		font-size: 15px;
+		font-weight: 800;
+		letter-spacing: 0.02em;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+		text-align: center;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.kmae-iz__reset {
+		gap: 7px;
+		height: 36px;
+		margin-left: 4px;
+		padding: 0 14px 0 11px;
+		border: 0;
+		border-radius: 999px;
+		background: linear-gradient(135deg, #ffad55 0%, #f07a12 100%);
+		box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35), 0 4px 10px -3px rgba(0, 0, 0, 0.45);
+		color: #ffffff;
+		font-size: 14px;
+		font-weight: 800;
+		white-space: nowrap;
+	}
+
+	.kmae-iz__reset svg {
+		width: 16px;
+		height: 16px;
+		color: #ffffff;
+	}
+
+	.kmae-iz__reset:hover {
+		box-shadow: 0 0 0 3px #ffffff, 0 0 14px rgba(255, 154, 60, 0.85);
+	}
+
+	.kmae-iz__btn:focus-visible,
+	.kmae-iz__reset:focus-visible {
+		outline: 3px solid #ffffff;
+		outline-offset: 2px;
+	}
+
+	/* Kis térkép: a teljes kép + a látott terület narancs négyzete (körülötte elsötétítve) */
+	.kmae-iz__map {
+		position: absolute;
+		overflow: hidden;
+		box-sizing: content-box;
+		border: 2px solid #ffffff;
+		border-radius: 12px;
+		background: #eaf8ff;
+		box-shadow: 0 0 0 3px #0b3a66, 0 0 20px rgba(0, 199, 247, 0.5), 0 14px 30px -10px rgba(4, 20, 40, 0.75);
+		cursor: crosshair;
+		pointer-events: auto;
+		touch-action: none;
+		user-select: none;
+	}
+
+	.kmae-iz .kmae-iz__map img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		margin: 0;
+		border: 0;
+		border-radius: 0;
+		box-shadow: none;
+		object-fit: cover;
+		pointer-events: none;
+		-webkit-user-drag: none;
+	}
+
+	.kmae-iz__frame {
+		position: absolute;
+		box-sizing: border-box;
+		border: 2px solid #ff9a3c;
+		border-radius: 3px;
+		box-shadow: 0 0 0 999px rgba(11, 58, 102, 0.4), 0 0 10px rgba(255, 154, 60, 0.7);
+		pointer-events: none;
+	}
+}

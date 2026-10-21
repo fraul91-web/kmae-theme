@@ -1,0 +1,371 @@
+/* Albira — Biztonság és bizalom. Önálló, kizárólag PC-s oldalstílus (a Hogyan működik mintáját követi). */
+
+@media (min-width: 1025px) {
+	body.kmae-security-page {
+		--sec-blue: #00c7f7;
+		--sec-blue-deep: #008fbd;
+		--sec-blue-rgb: 0, 199, 247;
+		--sec-orange: #ff6e25;
+		--sec-orange-light: #ffc36b;
+		--sec-orange-rgb: 255, 110, 37;
+		--sec-ink: #202936;
+		--sec-ink-soft: #34404d;
+		--sec-copy: #465463;
+	}
+
+	/* Csak az oldal vászna teljes szélességű; a közös fejléc érintetlen. */
+	body.kmae-security-page .kmae-page {
+		position: relative;
+		left: 50%;
+		width: 100vw;
+		margin-left: -50vw;
+		padding: calc(var(--kmae-header-h, 72px) + 50px) 32px 84px;
+		box-sizing: border-box;
+		background: transparent;
+	}
+
+	body.kmae-security-page .kmae-page > .kmae-container {
+		width: min(1180px, calc(100vw - 64px));
+		max-width: 1180px;
+		margin: 0 auto;
+		padding: 0;
+	}
+
+	body.kmae-security-page .kmae-page__article,
+	body.kmae-security-page .kmae-page__content {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	body.kmae-security-page .kmae-page__article > .kmae-page__title {
+		display: none;
+	}
+
+	.kmae-sec-page {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: 44px;
+	}
+
+	/* Bevezető */
+	.kmae-sec-page__intro {
+		width: 100%;
+		max-width: 840px;
+		margin: 0 auto 4px;
+		text-align: center;
+	}
+
+	.kmae-sec-page__eyebrow,
+	.kmae-sec-block__eyebrow {
+		display: block;
+		margin: 0 0 8px;
+		font-size: 11px;
+		font-weight: 800;
+		line-height: 1.4;
+		letter-spacing: 0.17em;
+	}
+
+	.kmae-sec-page__eyebrow {
+		color: var(--sec-blue-deep);
+	}
+
+	.kmae-sec-page__title {
+		margin: 0;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 50px;
+		font-weight: 850;
+		line-height: 1.08;
+		letter-spacing: -0.045em;
+		color: var(--sec-ink);
+		text-shadow: 0 2px 12px rgba(255, 255, 255, 0.75);
+	}
+
+	.kmae-sec-page__title span {
+		background: linear-gradient(90deg, #008fbd 0%, var(--sec-blue) 38%, #e99525 70%, var(--sec-orange) 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.kmae-sec-page__lead {
+		max-width: 720px;
+		margin: 18px auto 0;
+		font-size: 17px;
+		font-weight: 650;
+		line-height: 1.7;
+		color: var(--sec-ink-soft);
+		text-shadow: 0 1px 10px rgba(255, 255, 255, 0.88);
+	}
+
+	/* Gyors ugrás a szakaszokra: három üvegpirula. */
+	.kmae-sec-page__jump {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-top: 26px;
+	}
+
+	.kmae-sec-page__jump a {
+		display: inline-flex;
+		align-items: center;
+		height: 40px;
+		padding: 0 20px;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--sec-blue-rgb), 0.45);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.72);
+		font-size: 14px;
+		font-weight: 800;
+		text-decoration: none;
+		color: var(--sec-blue-deep);
+		box-shadow: 0 6px 18px rgba(var(--sec-blue-rgb), 0.12);
+		transition: transform 160ms ease, box-shadow 160ms ease;
+	}
+
+	.kmae-sec-page__jump a:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 10px 24px rgba(var(--sec-blue-rgb), 0.22);
+	}
+
+	/* Szakasz-keret */
+	.kmae-sec-block {
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+		scroll-margin-top: calc(var(--kmae-header-h, 72px) + 24px);
+	}
+
+	.kmae-sec-block__header {
+		text-align: center;
+	}
+
+	.kmae-sec-block__eyebrow {
+		color: var(--sec-orange);
+	}
+
+	.kmae-sec-block__title {
+		margin: 0;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 32px;
+		font-weight: 850;
+		line-height: 1.15;
+		letter-spacing: -0.03em;
+		color: var(--sec-ink);
+	}
+
+	.kmae-sec-block__subtitle {
+		margin: 8px 0 0;
+		font-size: 15px;
+		font-weight: 650;
+		line-height: 1.6;
+		color: var(--sec-copy);
+	}
+
+	/* Üvegkártyák (rendszer-védelem és bejelentés) */
+	.kmae-sec-cards {
+		display: grid;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		gap: 18px;
+	}
+
+	.kmae-sec-cards--system {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.kmae-sec-cards--reports {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.kmae-sec-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 26px 24px 24px;
+		box-sizing: border-box;
+		border: 1px solid rgba(255, 255, 255, 0.92);
+		border-radius: 22px;
+		background: rgba(255, 255, 255, 0.74);
+		backdrop-filter: blur(14px);
+		box-shadow: 0 16px 40px rgba(31, 62, 88, 0.1);
+		overflow: hidden;
+	}
+
+	/* Neon csík a kártya tetején */
+	.kmae-sec-card::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 22px;
+		right: 22px;
+		height: 3px;
+		border-radius: 0 0 4px 4px;
+		background: linear-gradient(90deg, var(--sec-blue), #82edff);
+		box-shadow: 0 0 12px rgba(var(--sec-blue-rgb), 0.55);
+	}
+
+	.kmae-sec-cards--reports .kmae-sec-card:nth-child(2)::before {
+		background: linear-gradient(90deg, var(--sec-orange), var(--sec-orange-light));
+		box-shadow: 0 0 12px rgba(var(--sec-orange-rgb), 0.5);
+	}
+
+	.kmae-sec-card__icon {
+		display: inline-flex;
+		width: 46px;
+		height: 46px;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		border-radius: 14px;
+		background: rgba(var(--sec-blue-rgb), 0.14);
+		color: var(--sec-blue-deep);
+	}
+
+	.kmae-sec-cards--reports .kmae-sec-card:nth-child(2) .kmae-sec-card__icon {
+		background: rgba(var(--sec-orange-rgb), 0.14);
+		color: #d85a14;
+	}
+
+	.kmae-sec-card__label {
+		font-size: 17px;
+		font-weight: 800;
+		line-height: 1.3;
+		color: var(--sec-ink);
+	}
+
+	.kmae-sec-card__text {
+		margin: 0;
+		font-size: 14.5px;
+		font-weight: 600;
+		line-height: 1.65;
+		color: var(--sec-copy);
+	}
+
+	/* Szerepünk: számozott sorok */
+	.kmae-sec-tips {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.kmae-sec-tips__item {
+		display: grid;
+		grid-template-columns: 52px 46px minmax(0, 1fr);
+		align-items: center;
+		gap: 18px;
+		padding: 18px 26px 18px 20px;
+		box-sizing: border-box;
+		border: 1px solid rgba(255, 255, 255, 0.92);
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.7);
+		backdrop-filter: blur(12px);
+		box-shadow: 0 12px 30px rgba(31, 62, 88, 0.08);
+	}
+
+	.kmae-sec-tips__num {
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 28px;
+		font-weight: 850;
+		line-height: 1;
+		letter-spacing: -0.03em;
+		background: linear-gradient(90deg, #e99525, var(--sec-orange));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.kmae-sec-tips__icon {
+		display: inline-flex;
+		width: 46px;
+		height: 46px;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		border-radius: 14px;
+		background: rgba(var(--sec-blue-rgb), 0.14);
+		color: var(--sec-blue-deep);
+	}
+
+	.kmae-sec-tips__copy {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
+	}
+
+	.kmae-sec-tips__label {
+		font-size: 16px;
+		font-weight: 800;
+		line-height: 1.3;
+		color: var(--sec-ink);
+	}
+
+	.kmae-sec-tips__text {
+		font-size: 14.5px;
+		font-weight: 600;
+		line-height: 1.6;
+		color: var(--sec-copy);
+	}
+
+	/* Lábléc: hasznos linkek és a tájékoztató jegyzet */
+	.kmae-sec-footer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding-top: 6px;
+		text-align: center;
+	}
+
+	.kmae-sec-footer__links {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 12px;
+	}
+
+	.kmae-sec-footer__link {
+		display: inline-flex;
+		align-items: center;
+		height: 44px;
+		padding: 0 22px;
+		box-sizing: border-box;
+		border-radius: 12px;
+		font-size: 14px;
+		font-weight: 800;
+		text-decoration: none;
+		color: #fff;
+		transition: transform 160ms ease, box-shadow 160ms ease;
+	}
+
+	.kmae-sec-footer__link:nth-child(odd) {
+		background: linear-gradient(110deg, #007fb8, var(--sec-blue));
+		box-shadow: 0 8px 24px rgba(var(--sec-blue-rgb), 0.3);
+	}
+
+	.kmae-sec-footer__link:nth-child(even) {
+		background: linear-gradient(110deg, #ffad41, var(--sec-orange));
+		box-shadow: 0 8px 24px rgba(var(--sec-orange-rgb), 0.28);
+	}
+
+	.kmae-sec-footer__link:hover {
+		transform: translateY(-1px);
+	}
+
+	.kmae-sec-footer__note {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 650;
+		line-height: 1.6;
+		color: var(--sec-copy);
+	}
+}

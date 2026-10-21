@@ -1,0 +1,251 @@
+.kmae-dashboard .kmae-tagline,
+.kmae-admin-wrap .kmae-tagline {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.kmae-admin-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.kmae-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.kmae-stat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.kmae-stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #6366f1;
+}
+
+.kmae-stat-label {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.kmae-admin-table {
+  margin-top: 1rem;
+}
+
+.kmae-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.kmae-admin-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.kmae-admin-badge-active,
+.kmae-admin-badge-accepted,
+.kmae-admin-badge-pending {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.kmae-admin-badge-archived,
+.kmae-admin-badge-closed,
+.kmae-admin-badge-rejected,
+.kmae-admin-badge-withdrawn {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.kmae-admin-wrap .subsubsub {
+  margin: 1rem 0 0.5rem;
+}
+
+.kmae-admin-wrap .tablenav {
+  margin-top: 1rem;
+}
+
+.post-type-kmae_listing .column-kmae_thumb {
+  width: 60px;
+}
+
+.post-type-kmae_listing .column-kmae_status {
+  width: 90px;
+}
+
+
+/* Albira → Jelentések */
+.kmae-reports .kmae-reports-table {
+  margin-top: 0.5rem;
+}
+
+.kmae-reports .kmae-reports-col-date {
+  width: 130px;
+}
+
+.kmae-reports .kmae-reports-col-where,
+.kmae-reports .kmae-reports-col-status {
+  width: 90px;
+}
+
+.kmae-reports .kmae-reports-col-open {
+  width: 190px;
+}
+
+.kmae-reports .kmae-reports-row-new td:first-child {
+  box-shadow: inset 3px 0 0 #d63638;
+}
+
+.kmae-reports .kmae-reports-muted {
+  color: #646970;
+  font-size: 12px;
+}
+
+.kmae-reports .kmae-reports-excerpt {
+  margin-top: 2px;
+}
+
+.kmae-reports .kmae-reports-status {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.kmae-reports .kmae-reports-status.is-new {
+  background: #fcf0f1;
+  color: #b32d2e;
+}
+
+.kmae-reports .kmae-reports-status.is-valid {
+  background: #fff3e0;
+  color: #b45309;
+}
+
+.kmae-reports .kmae-reports-status.is-invalid {
+  background: #f0f0f1;
+  color: #50575e;
+}
+
+.kmae-reports .kmae-reports-detail {
+  display: grid;
+  gap: 16px;
+  max-width: 980px;
+  margin-top: 12px;
+}
+
+.kmae-reports .kmae-reports-card {
+  padding: 4px 20px 16px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.kmae-reports .kmae-reports-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kmae-reports .kmae-reports-facts th {
+  width: 190px;
+  padding: 10px 10px 10px 0;
+}
+
+.kmae-reports .kmae-reports-facts td {
+  padding: 10px 0;
+}
+
+.kmae-reports .kmae-reports-details-text {
+  white-space: normal;
+  font-size: 14px;
+}
+
+.kmae-reports .kmae-reports-decision {
+  display: flex;
+  gap: 22px;
+  margin: 4px 0 8px;
+  font-size: 14px;
+}
+
+.kmae-reports .kmae-reports-chat {
+  display: grid;
+  gap: 8px;
+  max-height: 640px;
+  overflow-y: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f3f7fb;
+}
+
+.kmae-reports .kmae-reports-msg {
+  max-width: 75%;
+  padding: 8px 12px;
+  border: 1px solid #dbe6f1;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.kmae-reports .kmae-reports-msg.is-buyer {
+  justify-self: start;
+  border-color: #bcd8f6;
+  background: #eaf3fe;
+}
+
+.kmae-reports .kmae-reports-msg.is-seller {
+  justify-self: end;
+  border-color: #ffcfaa;
+  background: #fff2e8;
+}
+
+.kmae-reports .kmae-reports-msg.is-system {
+  justify-self: center;
+  max-width: 90%;
+  background: #f6f7f7;
+  text-align: center;
+}
+
+.kmae-reports .kmae-reports-msg.is-reported {
+  box-shadow: inset 3px 0 0 #d63638;
+}
+
+.kmae-reports .kmae-reports-msg__meta {
+  margin-bottom: 3px;
+  color: #646970;
+  font-size: 12px;
+}
+
+.kmae-reports .kmae-reports-msg__text {
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.kmae-reports .kmae-reports-msg__file {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.kmae-reports .kmae-reports-offer {
+  color: #b45309;
+  font-weight: 600;
+}

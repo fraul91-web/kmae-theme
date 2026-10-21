@@ -1,0 +1,90 @@
+---
+description: Albira PROJECT-MEMORY V2 navigation — token-efficient agent workflow
+alwaysApply: true
+---
+
+# Albira PROJECT-MEMORY V2
+
+Use PROJECT-MEMORY as a navigation index before any bugfix or feature task. Do not load memory content into context "just in case".
+
+## Paths
+
+- Plugin: `plugin/ki-mit-adna-erte/PROJECT-MEMORY/`
+- Theme: `theme/kmae/PROJECT-MEMORY/`
+
+## Scope first
+
+Decide: **PLUGIN**, **THEME**, or **BOTH**.
+
+- Plugin-only → do not load theme memory.
+- Theme-only → do not load plugin memory.
+- BOTH only when the task crosses the plugin–theme boundary.
+
+## Mandatory workflow
+
+1. **TASK** — clarify symptom / goal and scope (PLUGIN | THEME | BOTH)
+2. **MASTER-MAP** — navigation only (entry routing)
+3. **DIAGNOSTIC-ROUTER** — match symptom → feature route
+4. **Exactly 1** relevant `FEATURES/*.md`
+5. Targeted symbol lookup only if needed (never full `SYMBOL-MAP.md`)
+6. Read **SOURCE CODE** from the feature's READ FIRST list
+7. **PRECHECK** — verify current implementation + upstream/downstream risks from the feature map
+8. **Minimal change** — edit only what the task requires
+9. Targeted verify / check after the change
+10. If needed: **targeted PROJECT-MEMORY update** (see below)
+
+## Context budget (default)
+
+```
+ROUTER + 1 FEATURE + 1–5 SOURCE/SYMBOL = normal task context
+```
+
+- Default max **5** source files. If more are needed, justify first.
+- Never load full `SYMBOL-MAP.md`. Grep/search symbols only.
+- Prefer memory paths over repo-wide scan/grep. Broad search only if memory is missing, stale, or contradicts source.
+
+## Authority
+
+- PROJECT-MEMORY is a **navigational index**, not truth.
+- **SOURCE CODE > PROJECT MEMORY**. Always verify source before editing.
+- Do not edit related files "just in case".
+- If a significant architectural change makes memory stale, say so.
+
+## PROJECT-MEMORY maintenance
+
+Keep memory current in small steps with the code — do not regenerate the whole map.
+
+**Order:** source change → test/verify → targeted memory update (only if needed) → done.
+
+### NOT NEEDED (usually)
+
+Structure / feature route unchanged and existing memory stays accurate:
+
+- bug fix in an existing function
+- CSS / UI polish (color, spacing, size, layout)
+- small logic tweak inside an existing path
+
+### UPDATED (same task, minimal)
+
+New navigation info that future agents need:
+
+- new feature, source file, important class/method
+- new endpoint / AJAX / action / hook
+- new state, data flow, or plugin–theme link
+- new upstream/downstream edge
+- responsibility moved to another file/class
+- an existing memory entry is now false
+
+### How to update
+
+- Change only the affected MASTER-MAP / ROUTER / FEATURE / SYMBOL entries.
+- Never rebuild all of PROJECT-MEMORY or re-scan the whole repo.
+- Update from **finished source**, never from plans.
+
+### Report at end of task
+
+`PROJECT-MEMORY FRISSÍTÉS: NOT NEEDED` or `UPDATED` (+ which memory files, if UPDATED).
+
+## Domino rule (existing project constraint)
+
+Prefer page/feature-specific selectors and scoped edits. Do not change shared CSS/PHP/JS globally when a narrower fix works.

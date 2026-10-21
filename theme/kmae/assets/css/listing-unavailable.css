@@ -1,0 +1,166 @@
+/* =====================================================================
+   LEJÁRT HIRDETÉS A LÁTOGATÓNAK — „Ez az autó már nem elérhető”
+   + hasonló autók (plugin templates/listing-unavailable.php).
+   Külön fájl, mert a single-listing.css csak belépve töltődik be,
+   ezt pedig vendég is látja (functions.php kmae_enqueue_listing_unavailable).
+   ===================================================================== */
+.kmae-listing-unavailable {
+	--sl-blue: #00c7f7;
+	--sl-blue-strong: #008fbd;
+	--sl-blue-rgb: 0, 199, 247;
+	--sl-orange: #ff6e25;
+	--sl-orange-strong: #e95e13;
+	--sl-orange-rgb: 255, 110, 37;
+	--sl-text: #202936;
+	--sl-text-3: #465463;
+	--sl-inner: rgba(255, 255, 255, 0.82);
+	--sl-border: rgba(0, 169, 216, 0.34);
+
+	box-sizing: border-box;
+	width: min(100% - 40px, 1080px);
+	margin: 26px auto 40px;
+	color: var(--sl-text);
+	font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+}
+.kmae-listing-unavailable__panel {
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 34px 28px 30px;
+	border: 1px solid rgba(var(--sl-blue-rgb), 0.55);
+	border-radius: 22px;
+	background:
+		radial-gradient(circle at 7% 0%, rgba(var(--sl-blue-rgb), 0.18), transparent 42%),
+		radial-gradient(circle at 100% 100%, rgba(var(--sl-orange-rgb), 0.1), transparent 48%),
+		linear-gradient(135deg, rgba(224, 248, 255, 0.94), rgba(255, 255, 255, 0.86));
+	box-shadow: 0 18px 48px rgba(38, 68, 90, 0.16), 0 0 28px rgba(var(--sl-blue-rgb), 0.08), inset 0 1px 0 #fff;
+	text-align: center;
+}
+.kmae-listing-unavailable__panel::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 5%;
+	width: 50%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--sl-blue), transparent);
+	box-shadow: 0 0 16px rgba(var(--sl-blue-rgb), 0.9);
+}
+.kmae-listing-unavailable__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 58px;
+	height: 58px;
+	border: 1px solid var(--sl-border);
+	border-radius: 50%;
+	background: var(--sl-inner);
+	color: var(--sl-blue-strong);
+}
+.kmae-listing-unavailable__title {
+	margin: 4px 0 0;
+	color: var(--sl-text);
+	font-size: 28px;
+	font-weight: 800;
+	line-height: 1.2;
+}
+.kmae-listing-unavailable__car {
+	margin: 0;
+	color: var(--sl-blue-strong);
+	font-size: 17px;
+	font-weight: 700;
+}
+.kmae-listing-unavailable__text {
+	max-width: 520px;
+	margin: 0;
+	color: var(--sl-text-3);
+	font-size: 15px;
+	line-height: 1.5;
+}
+.kmae-listing-unavailable__browse {
+	margin-top: 8px;
+	padding: 11px 24px;
+	border: 1px solid var(--sl-orange-strong);
+	border-radius: 999px;
+	background: linear-gradient(135deg, #ff8a3c, var(--sl-orange));
+	box-shadow: 0 8px 18px rgba(var(--sl-orange-rgb), 0.28);
+	color: #fff;
+	font-size: 15px;
+	font-weight: 800;
+	text-decoration: none;
+}
+.kmae-listing-unavailable__browse:hover {
+	background: linear-gradient(135deg, #ff7a2a, var(--sl-orange-strong));
+	color: #fff;
+}
+.kmae-listing-unavailable__similar {
+	margin-top: 30px;
+}
+.kmae-listing-unavailable__similar-title {
+	margin: 0 0 14px;
+	color: var(--sl-text);
+	font-size: 21px;
+	font-weight: 800;
+}
+.kmae-listing-unavailable__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px;
+}
+.kmae-listing-unavailable__card {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--sl-border);
+	border-radius: 16px;
+	background: var(--sl-inner);
+	box-shadow: 0 10px 26px rgba(38, 68, 90, 0.12), inset 0 1px 0 #fff;
+	color: inherit;
+	text-decoration: none;
+	transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.kmae-listing-unavailable__card:hover {
+	transform: translateY(-2px);
+	border-color: var(--sl-blue);
+	box-shadow: 0 14px 30px rgba(38, 68, 90, 0.16), 0 0 18px rgba(var(--sl-blue-rgb), 0.18);
+}
+.kmae-listing-unavailable__card-photo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 16 / 10;
+	background: rgba(var(--sl-blue-rgb), 0.08);
+	color: var(--sl-blue-strong);
+}
+.kmae-listing-unavailable__card-photo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.kmae-listing-unavailable__card-body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 12px 14px 14px;
+}
+.kmae-listing-unavailable__card-title {
+	overflow: hidden;
+	color: var(--sl-text);
+	font-size: 16px;
+	font-weight: 800;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.kmae-listing-unavailable__card-meta {
+	color: var(--sl-text-3);
+	font-size: 13px;
+}
+.kmae-listing-unavailable__card-price {
+	color: var(--sl-orange-strong);
+	font-size: 15px;
+	font-weight: 800;
+}

@@ -1,0 +1,1933 @@
+/* =====================================================================
+   Albira — Egyszerű hirdetésszerkesztő (.kmae-create-page.is-simple).
+   Egyetlen forrás: a korábbi egyszerű-módos szabályok a
+   listing-create.css-ből törölve. Csak egyszerű módban töltődik be
+   (functions.php → kmae_enqueue_listing_create_style).
+   A listing-create.css varázslóval közös alapjára épül.
+   ===================================================================== */
+
+.kmae-create-page.is-simple {
+	--ls-blue: #1c69d5;
+	--ls-blue-2: #3a8ff0;
+	--ls-blue-soft: #eaf3fe;
+	--ls-blue-line: #bcd8f6;
+	--ls-cyan: #00b8e6;
+	--ls-orange: #f1640a;
+	--ls-orange-2: #ff9a3c;
+	--ls-orange-soft: #fff2e8;
+	--ls-orange-line: #ffcfaa;
+	--ls-green: #12936d;
+	--ls-green-soft: #e9f9f2;
+	--ls-red: #d4333a;
+	--ls-amber: #b26a00;
+	--ls-amber-soft: #fff6e2;
+	--ls-ink: #123252;
+	--ls-text: #2a3f55;
+	--ls-muted: #64758a;
+	--ls-faint: #8aa0b6;
+	--ls-line: #dfe9f3;
+	--ls-field: #d4e2ef;
+	--ls-soft: #f6f9fc;
+	--ls-card: #ffffff;
+	--ls-shadow: 0 14px 34px rgba(22, 63, 122, 0.07);
+	--ls-photo-col: 300px;
+}
+
+/* ---------- Oldal ---------- */
+.kmae-create-page.is-simple .kmae-create-main {
+	max-width: 1320px;
+	padding: 22px 20px 120px;
+}
+
+/* A plugin a .kmae-hint-et mindenhol fehérre festi — itt világos lapon vagyunk. */
+.kmae-create-page.is-simple .kmae-hint {
+	color: var(--ls-faint) !important;
+}
+
+.kmae-create-page.is-simple .kmae-vehicle-fieldset > legend,
+.kmae-create-page.is-simple .kmae-vehicle-fieldset > .kmae-hint,
+.kmae-create-page.is-simple .kmae-price-mode > legend,
+.kmae-create-page.is-simple .kmae-field:has(#kmae_title) .kmae-hint,
+.kmae-create-page.is-simple .kmae-catalog-showall,
+.kmae-create-page.is-simple .kmae-catalog-head {
+	display: none;
+}
+
+/* ---------- Fejléc ---------- */
+.kmae-create-page.is-simple .kmae-simple-head {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 18px;
+	margin: 0 0 18px;
+	padding: 18px 22px;
+	overflow: hidden;
+	border: 1.5px solid #c9dbee;
+	border-radius: 24px;
+	background:
+		radial-gradient(60% 120% at 0 0, rgba(0, 199, 247, 0.16), transparent 60%),
+		radial-gradient(50% 120% at 100% 0, rgba(255, 110, 37, 0.14), transparent 60%),
+		#eef4fb;
+	box-shadow: 0 14px 34px rgba(16, 44, 72, 0.09);
+}
+
+.kmae-create-page.is-simple .kmae-simple-head::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 32px;
+	left: 32px;
+	height: 3px;
+	border-radius: 0 0 3px 3px;
+	background: linear-gradient(90deg, transparent, #00c7f7 22%, #2070d0 50%, #ff6e25 78%, transparent);
+	box-shadow: 0 0 12px rgba(0, 199, 247, 0.4);
+}
+
+.kmae-create-page.is-simple .kmae-simple-head__title {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-width: 0;
+}
+
+.kmae-create-page.is-simple .kmae-simple-head__car {
+	flex: none;
+	width: 96px;
+	height: 48px;
+	object-fit: contain;
+	filter: drop-shadow(0 6px 10px rgba(16, 44, 72, 0.16));
+}
+
+.kmae-create-page.is-simple .kmae-simple-head h1 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	color: var(--ls-ink);
+	font-size: 24px;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+}
+
+.kmae-create-page.is-simple .kmae-simple-head h1 span {
+	padding: 4px 11px;
+	border-radius: 999px;
+	background: var(--ls-blue-soft);
+	color: var(--ls-blue);
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+}
+
+.kmae-create-page.is-simple .kmae-simple-head p {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0 0;
+	color: var(--ls-muted);
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+.kmae-create-page.is-simple .kmae-simple-head p::before {
+	content: "";
+	flex: none;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--ls-green);
+	box-shadow: 0 0 0 4px rgba(18, 147, 109, 0.14);
+}
+
+.kmae-create-page.is-simple .kmae-simple-head__full {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	min-height: 42px;
+	padding: 0 18px;
+	border: 1px solid var(--ls-blue-line);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--ls-blue);
+	font-size: 14px;
+	font-weight: 800;
+	text-decoration: none;
+	transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-simple-head__full:hover {
+	border-color: var(--ls-blue);
+	background: var(--ls-blue-soft);
+}
+
+/* ---------- Értesítések ---------- */
+.kmae-create-page.is-simple .kmae-create-notices,
+.kmae-create-page.is-simple .kmae-create-form {
+	width: 100%;
+	max-width: none;
+}
+
+.kmae-create-page.is-simple .kmae-create-notice {
+	border-radius: 16px;
+}
+
+/* ---------- Szekciók ---------- */
+.kmae-create-page.is-simple .kmae-create-section {
+	position: relative;
+	margin: 0 0 18px;
+	overflow: visible;
+	border: 1.5px solid var(--sec-line);
+	border-radius: 24px;
+	background: var(--sec-bg);
+	box-shadow: 0 14px 34px rgba(16, 44, 72, 0.09);
+}
+
+.kmae-create-page.is-simple .kmae-create-section__head {
+	gap: 14px;
+	padding: 18px 26px;
+	border-bottom: 1.5px solid var(--sec-line);
+	border-radius: 22px 22px 0 0;
+	background: linear-gradient(90deg, var(--sec-soft) 0%, var(--sec-bg) 75%);
+}
+
+.kmae-create-page.is-simple .kmae-create-section__number {
+	flex: 0 0 40px;
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	background: linear-gradient(140deg, var(--sec-2), var(--sec));
+	box-shadow: 0 6px 14px var(--sec-glow);
+	color: #fff;
+	font-size: 14px;
+}
+
+.kmae-create-page.is-simple .kmae-create-section__head h2 {
+	margin: 0 0 3px;
+	color: var(--sec);
+	font-size: 18px;
+}
+
+.kmae-create-page.is-simple .kmae-create-section__head p {
+	color: var(--ls-muted);
+	font-size: 13.5px;
+}
+
+.kmae-create-page.is-simple .kmae-create-section__body {
+	padding: 22px 26px 24px;
+}
+
+
+
+
+
+/* Szekciószínek: 01 jármű = kék, 02 tartalom = lila, 03 értékesítés = narancs, 04 extrák = zöld. */
+.kmae-create-page.is-simple .kmae-create-section {
+	--sec: #1c69d5;
+	--sec-2: #3a8ff0;
+	--sec-soft: #d6e6fa;
+	--sec-bg: #edf4fc;
+	--sec-line: #bcd5f0;
+	--sec-glow: rgba(28, 105, 213, 0.26);
+}
+
+.kmae-create-page.is-simple .kmae-create-section[aria-labelledby="kmae-section-ad"] {
+	--sec: #7444d0;
+	--sec-2: #9b76ec;
+	--sec-soft: #e5dbfa;
+	--sec-bg: #f3effc;
+	--sec-line: #d2c2f1;
+	--sec-glow: rgba(116, 68, 208, 0.26);
+}
+
+.kmae-create-page.is-simple .kmae-create-section[aria-labelledby="kmae-section-sale"] {
+	--sec: #e0590b;
+	--sec-2: #ff9a3c;
+	--sec-soft: #ffe0cb;
+	--sec-bg: #fff2e8;
+	--sec-line: #ffcaa3;
+	--sec-glow: rgba(224, 89, 11, 0.26);
+}
+
+.kmae-create-page.is-simple .kmae-create-section[aria-labelledby="kmae-section-trust"] {
+	--sec: #0f8a66;
+	--sec-2: #22c08f;
+	--sec-soft: #d0f0e3;
+	--sec-bg: #ebf7f1;
+	--sec-line: #b2e0cc;
+	--sec-glow: rgba(15, 138, 102, 0.26);
+}
+
+/* ---------- Mezők ---------- */
+.kmae-create-page.is-simple .kmae-create-section .kmae-field {
+	margin: 0;
+}
+
+.kmae-create-page.is-simple .kmae-create-section .kmae-field-row {
+	gap: 14px 16px;
+}
+
+.kmae-create-page.is-simple .kmae-create-section label:not(.kmae-price-mode__option):not(.kmae-commitment-option):not(.kmae-checkbox):not(.kmae-trait-option) {
+	margin-bottom: 7px;
+	color: var(--ls-ink);
+	font-size: 13px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple .kmae-create-section input[type="text"],
+.kmae-create-page.is-simple .kmae-create-section input[type="number"],
+.kmae-create-page.is-simple .kmae-create-section select,
+.kmae-create-page.is-simple .kmae-create-section textarea {
+	min-height: 46px;
+	padding: 11px 14px;
+	border: 1.5px solid var(--ls-field);
+	border-radius: 12px;
+	background: #fff;
+	box-shadow: none;
+	color: var(--ls-ink);
+	font-size: 14.5px;
+}
+
+.kmae-create-page.is-simple .kmae-create-section input:hover,
+.kmae-create-page.is-simple .kmae-create-section select:hover,
+.kmae-create-page.is-simple .kmae-create-section textarea:hover {
+	border-color: #b9cfe3;
+}
+
+.kmae-create-page.is-simple .kmae-create-section input:focus,
+.kmae-create-page.is-simple .kmae-create-section select:focus,
+.kmae-create-page.is-simple .kmae-create-section textarea:focus {
+	border-color: var(--ls-blue);
+	background: #fff;
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.12);
+}
+
+/* Szám-mezők: nincs le-fel nyíl (léptető) — csak beírás. */
+.kmae-create-page.is-simple input[type="number"] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+.kmae-create-page.is-simple input[type="number"]::-webkit-outer-spin-button,
+.kmae-create-page.is-simple input[type="number"]::-webkit-inner-spin-button {
+	margin: 0;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.kmae-create-page.is-simple .kmae-create-section input::placeholder,
+.kmae-create-page.is-simple .kmae-create-section textarea::placeholder {
+	color: var(--ls-faint);
+}
+
+.kmae-create-page.is-simple .kmae-create-section textarea {
+	min-height: 170px;
+	line-height: 1.55;
+}
+
+.kmae-create-page.is-simple .kmae-simple-count {
+	display: block;
+	margin-top: 5px;
+	color: var(--ls-faint);
+	font-size: 12px;
+	font-weight: 600;
+	text-align: right;
+}
+
+.kmae-create-page.is-simple .kmae-field-missing input,
+.kmae-create-page.is-simple .kmae-field-missing select,
+.kmae-create-page.is-simple .kmae-field-missing textarea {
+	border-color: var(--ls-red);
+}
+
+/* ---------- 01 Jármű: elrendezés ---------- */
+
+
+
+.kmae-create-page.is-simple .kmae-simple-board {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) var(--ls-photo-col);
+	align-items: start;
+	gap: 18px;
+}
+
+.kmae-create-page.is-simple .kmae-simple-maincol {
+	grid-column: 1;
+	grid-row: 1;
+	min-width: 0;
+}
+
+.kmae-create-page.is-simple .kmae-simple-top {
+	display: block;
+	margin-bottom: 4px;
+}
+
+.kmae-create-page.is-simple .kmae-simple-specs {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) 132px minmax(0, 1fr) minmax(0, 1fr);
+	align-items: start;
+	gap: 14px 16px;
+	min-width: 0;
+}
+
+.kmae-create-page.is-simple .kmae-simple-row {
+	display: contents;
+}
+
+.kmae-create-page.is-simple .kmae-simple-slot--brand { grid-column: 1; grid-row: 1; }
+.kmae-create-page.is-simple .kmae-simple-slot--model { grid-column: 1; grid-row: 2; }
+.kmae-create-page.is-simple .kmae-simple-slot--year { grid-column: 3; grid-row: 1; }
+.kmae-create-page.is-simple .kmae-simple-slot--mileage { grid-column: 4; grid-row: 1; }
+.kmae-create-page.is-simple .kmae-simple-slot--fuel { grid-column: 3; grid-row: 2; }
+.kmae-create-page.is-simple .kmae-simple-slot--transmission { grid-column: 4; grid-row: 2; }
+
+.kmae-create-page.is-simple .kmae-simple-board > .kmae-simple-bodies-row {
+	display: block;
+	grid-column: 1;
+	grid-row: 2;
+	width: 100%;
+	margin: 0;
+}
+
+/* Márka-embléma */
+.kmae-create-page.is-simple .kmae-simple-emblem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	align-self: stretch;
+	gap: 6px;
+	grid-column: 2;
+	grid-row: 1 / span 2;
+	padding: 12px 8px;
+	border: 1px solid var(--ls-line);
+	border-radius: 18px;
+	background: linear-gradient(180deg, #f7fbff, #ffffff);
+	box-shadow: inset 0 1px 0 #fff;
+}
+
+.kmae-create-page.is-simple .kmae-simple-emblem img {
+	width: 64px;
+	height: 64px;
+	object-fit: contain;
+	filter: drop-shadow(0 4px 8px rgba(16, 44, 72, 0.14));
+}
+
+.kmae-create-page.is-simple .kmae-simple-emblem img[hidden] {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-simple-emblem span {
+	color: var(--ls-ink);
+	font-size: 11.5px;
+	font-weight: 800;
+	letter-spacing: 0.05em;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.kmae-create-page.is-simple .kmae-simple-emblem__edit {
+	min-height: 0;
+	margin: 0;
+	padding: 2px 6px;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--ls-blue);
+	font: inherit;
+	font-size: 12.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-simple-emblem__edit:hover {
+	text-decoration: underline;
+}
+
+/* Még nincs márka: a doboz jelzi, hogy itt jelenik meg a logó. */
+.kmae-create-page.is-simple .kmae-simple-emblem:has([data-kmae-simple-emblem-name]:empty) .kmae-simple-emblem__edit {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-simple-emblem:has([data-kmae-simple-emblem-name]:empty)::before {
+	content: "Válassz márkát — itt jelenik meg a logója";
+	max-width: 110px;
+	color: var(--ls-faint);
+	font-size: 11.5px;
+	font-weight: 700;
+	line-height: 1.35;
+	text-align: center;
+}
+
+/* Futásteljesítmény: „km” utótag */
+.kmae-create-page.is-simple .kmae-field:has(#kmae_vehicle_mileage) {
+	position: relative;
+}
+
+.kmae-create-page.is-simple .kmae-field:has(#kmae_vehicle_mileage)::after {
+	content: "km";
+	position: absolute;
+	right: 14px;
+	bottom: 14px;
+	color: var(--ls-faint);
+	font-size: 13px;
+	font-weight: 800;
+	pointer-events: none;
+}
+
+.kmae-create-page.is-simple #kmae_vehicle_mileage {
+	padding-right: 44px;
+}
+
+/* Márka / modell lenyíló panel: márkák = logós rács, modellek = lista */
+.kmae-create-page.is-simple .kmae-catalog-field {
+	position: relative;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-field .kmae-catalog-panel {
+	position: absolute;
+	z-index: 40;
+	top: calc(100% + 6px);
+	left: 0;
+	width: max(100%, 300px);
+	margin: 0;
+	padding: 8px;
+	overflow: hidden;
+	border: 1.5px solid var(--ls-blue-line);
+	border-radius: 18px;
+	background: #fff;
+	box-shadow: 0 22px 48px rgba(16, 44, 72, 0.2);
+}
+
+.kmae-create-page.is-simple .kmae-catalog-field .kmae-catalog-panel--brand {
+	width: max(100%, 460px);
+}
+
+.kmae-create-page.is-simple .kmae-catalog-field .kmae-catalog-panel[hidden] {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-list {
+	display: grid;
+	grid-auto-rows: auto;
+	gap: 2px;
+	max-height: 300px;
+	margin: 0;
+	padding: 2px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	list-style: none;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-list[hidden] {
+	display: none;
+}
+
+/* Modellek: tiszta, lefelé gördülő lista */
+.kmae-create-page.is-simple .kmae-catalog-list .kmae-catalog-option:not(.kmae-catalog-tile) {
+	display: flex;
+	align-items: center;
+	height: auto;
+	min-height: 40px;
+	margin: 0;
+	padding: 8px 12px;
+	border: 0;
+	border-radius: 10px;
+	background: transparent;
+	color: var(--ls-text);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-list .kmae-catalog-option:not(.kmae-catalog-tile):hover,
+.kmae-create-page.is-simple .kmae-catalog-list .kmae-catalog-option:not(.kmae-catalog-tile).is-active {
+	background: var(--ls-blue-soft);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple .kmae-catalog-list .kmae-catalog-option:not(.kmae-catalog-tile).is-selected {
+	background: var(--ls-blue);
+	color: #fff;
+	font-weight: 800;
+}
+
+/* Márkák: rendezett logós rács */
+.kmae-create-page.is-simple .kmae-catalog-list--logos {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-auto-rows: 86px;
+	gap: 8px;
+	max-height: 292px;
+	padding: 2px;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-width: 0;
+	height: 100%;
+	margin: 0;
+	padding: 8px 6px;
+	border: 1.5px solid var(--ls-line);
+	border-radius: 14px;
+	background: #fff;
+	box-shadow: none;
+	color: var(--ls-ink);
+	text-align: center;
+	cursor: pointer;
+	transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tile__logo {
+	width: 56px;
+	max-width: 100%;
+	height: 36px;
+	object-fit: contain;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tile__name {
+	max-width: 100%;
+	overflow: hidden;
+	color: inherit;
+	font-size: 11.5px;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tile:hover,
+.kmae-create-page.is-simple .kmae-catalog-tile.is-active {
+	border-color: var(--ls-blue-line);
+	background: var(--ls-blue-soft);
+	box-shadow: none;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tile.is-selected {
+	border-color: var(--ls-blue);
+	background: #f4f9ff;
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.14);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple .kmae-catalog-custom {
+	display: block;
+	width: 100%;
+	min-height: 0;
+	margin: 8px 0 0;
+	padding: 10px 12px;
+	border: 1.5px dashed var(--ls-blue-line);
+	border-radius: 12px;
+	background: #f7fbff;
+	box-shadow: none;
+	color: var(--ls-blue);
+	font: inherit;
+	font-size: 13.5px;
+	font-weight: 800;
+	text-align: left;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-custom[hidden],
+.kmae-create-page.is-simple .kmae-catalog-empty,
+.kmae-create-page.is-simple .kmae-catalog-or {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tolist {
+	min-height: 0;
+	margin: 6px 0 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--ls-blue);
+	font: inherit;
+	font-size: 12.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-tolist[hidden] {
+	display: none;
+}
+
+/* Kézzel beírt márka/modell megerősítése */
+.kmae-create-page.is-simple .kmae-catalog-confirm {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 12px;
+	margin-top: 8px;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-confirm[hidden],
+.kmae-create-page.is-simple .kmae-catalog-confirm [hidden] {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-confirm__btn {
+	display: inline-flex;
+	align-items: center;
+	min-height: 0;
+	margin: 0;
+	padding: 7px 14px;
+	border: 0;
+	border-radius: 999px;
+	background: linear-gradient(160deg, var(--ls-orange-2), var(--ls-orange));
+	box-shadow: 0 6px 14px rgba(241, 100, 10, 0.22);
+	color: #fff;
+	font: inherit;
+	font-size: 12.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-confirm__btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-confirm__done {
+	display: none;
+	color: var(--ls-green);
+	font-size: 12.5px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-confirm.is-confirmed .kmae-catalog-confirm__done {
+	display: inline;
+}
+
+.kmae-create-page.is-simple .kmae-catalog-confirm .kmae-catalog-tolist {
+	margin: 0;
+}
+
+/* Évválasztó */
+.kmae-create-page.is-simple .kmae-year-field {
+	position: relative;
+}
+
+.kmae-create-page.is-simple .kmae-year-field input {
+	padding-right: 46px;
+}
+
+.kmae-create-page.is-simple .kmae-year-field__cal {
+	position: absolute;
+	top: 50%;
+	right: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 10px;
+	background: transparent;
+	box-shadow: none;
+	color: var(--ls-blue);
+	transform: translateY(-50%);
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-year-field__cal:hover,
+.kmae-create-page.is-simple .kmae-year-field__cal[aria-expanded="true"] {
+	background: var(--ls-blue-soft);
+}
+
+.kmae-create-page.is-simple .kmae-year-panel {
+	position: absolute;
+	z-index: 30;
+	top: calc(100% + 6px);
+	right: 0;
+	left: 0;
+	min-width: 240px;
+	padding: 10px;
+	border: 1px solid var(--ls-line);
+	border-radius: 16px;
+	background: #fff;
+	box-shadow: 0 18px 40px rgba(16, 44, 72, 0.16);
+}
+
+.kmae-create-page.is-simple .kmae-year-panel[hidden] {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-year-panel__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+	color: var(--ls-ink);
+	font-size: 13.5px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple .kmae-year-panel__bar button {
+	width: 30px;
+	height: 30px;
+	min-height: 0;
+	padding: 0;
+	border: 1px solid var(--ls-line);
+	border-radius: 9px;
+	background: #fff;
+	color: var(--ls-ink);
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-year-panel__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 4px;
+}
+
+.kmae-create-page.is-simple .kmae-year-panel__grid button {
+	min-height: 34px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 9px;
+	background: var(--ls-soft);
+	color: var(--ls-text);
+	font: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-year-panel__grid button:hover {
+	background: var(--ls-blue-soft);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple .kmae-year-panel__grid button.is-selected {
+	background: var(--ls-blue);
+	color: #fff;
+}
+
+/* Karosszéria-kártyák */
+.kmae-create-page.is-simple .kmae-body-native {
+	position: relative;
+}
+
+.kmae-create-page.is-simple.kmae-simple-ready .kmae-body-native select {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	min-height: 0 !important;
+	margin: -1px !important;
+	padding: 0 !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	border: 0 !important;
+}
+
+.kmae-create-page.is-simple .kmae-simple-bodies {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 12px 10px;
+	width: 100%;
+	margin-top: 4px;
+}
+
+.kmae-create-page.is-simple .kmae-simple-body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 7px;
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--ls-text);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-simple-body__art {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 62px;
+	padding: 6px;
+	border: 1.5px solid var(--ls-line);
+	border-radius: 14px;
+	background: linear-gradient(180deg, #ffffff, #f6f9fc);
+	transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-simple-body:hover .kmae-simple-body__art {
+	border-color: var(--ls-blue-line);
+	transform: translateY(-1px);
+}
+
+.kmae-create-page.is-simple .kmae-simple-body img {
+	width: 100%;
+	height: 42px;
+	object-fit: contain;
+}
+
+.kmae-create-page.is-simple .kmae-simple-body.is-selected {
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple .kmae-simple-body.is-selected .kmae-simple-body__art {
+	border-color: var(--ls-blue);
+	background: #f4f9ff;
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.14);
+}
+
+.kmae-create-page.is-simple .kmae-simple-body.is-selected .kmae-simple-body__art::after {
+	content: "✓";
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--ls-blue);
+	box-shadow: 0 2px 6px rgba(28, 105, 213, 0.3);
+	color: #fff;
+	font-size: 11px;
+}
+
+/* Fotók — jobb oldali oszlop: nagy kép nyilakkal, bélyegképsor, alacsony feltöltőgomb.
+   A kezelő (mentett + új képek) rejtve marad, azt a listing-field-guards.js nézegetője vezérli. */
+.kmae-create-page.is-simple .kmae-simple-photos {
+	box-sizing: border-box;
+	position: static;
+	display: grid;
+	grid-column: 2;
+	grid-row: 1 / span 2;
+	align-content: start;
+	gap: 10px;
+	width: 100%;
+	margin: 0;
+	padding: 14px;
+	border: 1.5px solid var(--sec-line, var(--ls-line));
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.78);
+	box-shadow: 0 10px 26px rgba(22, 63, 122, 0.08), inset 0 1px 0 #fff;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 0 2px;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__head strong {
+	color: var(--ls-ink);
+	font-size: 14.5px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__head span {
+	color: var(--ls-faint);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__source {
+	display: none;
+}
+
+/* Nagy kép */
+.kmae-create-page.is-simple .kmae-simple-photos__stage {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16 / 10;
+	border-radius: 16px;
+	background: linear-gradient(160deg, #e9f2fb, #f7fafd);
+	box-shadow: inset 0 0 0 1px rgba(18, 50, 82, 0.06);
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__main {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	animation: kmae-simple-photo-in 220ms ease both;
+}
+
+@keyframes kmae-simple-photo-in {
+	from { opacity: 0.4; }
+	to { opacity: 1; }
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 100%;
+	margin: 0;
+	color: var(--ls-faint);
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__badge {
+	position: absolute;
+	top: 9px;
+	left: 9px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: rgba(18, 50, 82, 0.72);
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+	line-height: 1.2;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__badge.is-cover {
+	background: linear-gradient(110deg, #ffad41, #ff6e25);
+	box-shadow: 0 4px 12px rgba(255, 110, 37, 0.35);
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__badge.is-new {
+	background: linear-gradient(110deg, var(--ls-blue-2), var(--ls-blue));
+	box-shadow: 0 4px 12px rgba(28, 105, 213, 0.3);
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__badge.is-stop {
+	background: var(--ls-red);
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__tools {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: flex;
+	gap: 6px;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__tool,
+.kmae-create-page.is-simple .kmae-simple-photos__nav {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.92);
+	box-shadow: 0 3px 10px rgba(10, 30, 50, 0.22);
+	color: var(--ls-ink);
+	cursor: pointer;
+	transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__main[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__empty[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__badge[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__tool[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__nav[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__tools[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__open[hidden],
+.kmae-create-page.is-simple .kmae-simple-photos__thumbs[hidden] {
+	display: none;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__tool:hover {
+	background: #fff;
+	color: #ff6e25;
+	transform: scale(1.06);
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__tool--remove:hover {
+	background: var(--ls-red);
+	color: #fff;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__nav {
+	position: absolute;
+	top: 50%;
+	margin-top: -15px;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__nav--prev { left: 8px; }
+.kmae-create-page.is-simple .kmae-simple-photos__nav--next { right: 8px; }
+
+.kmae-create-page.is-simple .kmae-simple-photos__nav:hover {
+	background: #fff;
+	color: var(--ls-blue);
+	transform: scale(1.08);
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__open {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 0;
+	margin: 0;
+	padding: 6px 11px;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	border-radius: 10px;
+	background: rgba(18, 36, 56, 0.66);
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+	color: #fff;
+	font: inherit;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: background-color 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__open:hover {
+	background: rgba(18, 36, 56, 0.86);
+}
+
+/* Bélyegképsor */
+.kmae-create-page.is-simple .kmae-simple-photos__thumbs {
+	display: flex;
+	gap: 7px;
+	padding: 3px 2px 5px;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__thumb {
+	position: relative;
+	flex: 0 0 calc((100% - 28px) / 5);
+	aspect-ratio: 4 / 3;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+	border-radius: 9px;
+	background: #e9f2fb;
+	box-shadow: 0 0 0 1.5px rgba(18, 50, 82, 0.1);
+	cursor: pointer;
+	opacity: 0.78;
+	transition: opacity 160ms ease, box-shadow 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__thumb img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__thumb:hover {
+	opacity: 1;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__thumb.is-active {
+	box-shadow: 0 0 0 2.5px var(--ls-blue);
+	opacity: 1;
+}
+
+/* Kis pötty: narancs = borító, kék = új, piros = cserélendő */
+.kmae-create-page.is-simple .kmae-simple-photos__thumb.is-cover::after,
+.kmae-create-page.is-simple .kmae-simple-photos__thumb.is-new::after,
+.kmae-create-page.is-simple .kmae-simple-photos__thumb.is-stop::after {
+	content: "";
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--ls-blue);
+	box-shadow: 0 0 0 1.5px #fff;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__thumb.is-cover::after {
+	background: #ff6e25;
+}
+
+.kmae-create-page.is-simple .kmae-simple-photos__thumb.is-stop::after {
+	background: var(--ls-red);
+}
+
+.kmae-create-page.is-simple .kmae-shots__summary {
+	margin: 0;
+	padding: 8px 10px;
+	border-radius: 10px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.kmae-create-page.is-simple .kmae-shots__tip {
+	gap: 8px;
+	margin: 6px 0 0;
+	padding: 8px 10px;
+	border-radius: 10px;
+	font-size: 12px;
+	line-height: 1.35;
+}
+
+.kmae-create-page.is-simple .kmae-shots__tip::before {
+	width: 18px;
+	height: 18px;
+}
+
+/* Alacsony feltöltőgomb */
+.kmae-create-page.is-simple .kmae-simple-drop {
+	box-sizing: border-box;
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 14px;
+	overflow: hidden;
+	border: 1.5px dashed var(--ls-blue-line);
+	border-radius: 12px;
+	background: #f7fbff;
+	box-shadow: none;
+	color: var(--ls-blue);
+	font: inherit;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.kmae-create-page.is-simple .kmae-simple-drop:hover,
+.kmae-create-page.is-simple .kmae-simple-drop.is-dragover {
+	border-color: var(--ls-blue);
+	border-style: solid;
+	background: var(--ls-blue-soft);
+}
+
+.kmae-create-page.is-simple .kmae-simple-drop__title {
+	font-size: 13.5px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple .kmae-simple-drop__hint {
+	color: var(--ls-faint);
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+.kmae-create-page.is-simple .kmae-simple-drop .kmae-uploader__input {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple .kmae-uploader__status {
+	margin: -2px 0 0;
+	color: var(--ls-muted);
+	font-size: 12px;
+	text-align: center;
+}
+
+/* „Fotók megtekintése” — teljes képernyős lapozó (a <body>-ban) */
+.kmae-simple-lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 100003;
+	display: grid;
+	place-items: center;
+	padding: 40px 80px;
+	background: rgba(8, 18, 30, 0.9);
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+	animation: kmae-simple-photo-in 200ms ease both;
+}
+
+.kmae-simple-lightbox__img {
+	max-width: 100%;
+	max-height: calc(100vh - 110px);
+	border-radius: 14px;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+	object-fit: contain;
+}
+
+.kmae-simple-lightbox__close,
+.kmae-simple-lightbox__nav {
+	position: absolute;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	font-size: 30px;
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color 160ms ease;
+}
+
+.kmae-simple-lightbox__close:hover,
+.kmae-simple-lightbox__nav:hover {
+	background: rgba(255, 255, 255, 0.26);
+}
+
+.kmae-simple-lightbox__close { top: 20px; right: 24px; }
+.kmae-simple-lightbox__nav--prev { left: 20px; top: 50%; margin-top: -24px; }
+.kmae-simple-lightbox__nav--next { right: 20px; top: 50%; margin-top: -24px; }
+
+.kmae-simple-lightbox.is-single .kmae-simple-lightbox__nav,
+.kmae-simple-lightbox.is-single .kmae-simple-lightbox__count {
+	display: none;
+}
+
+.kmae-simple-lightbox__count {
+	position: absolute;
+	bottom: 18px;
+	left: 50%;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.14);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+	transform: translateX(-50%);
+}
+
+/* Állapot, műszaki, teljesítmény sorok */
+.kmae-create-page.is-simple .kmae-vehicle-fieldset > .kmae-field-row,
+.kmae-create-page.is-simple .kmae-vehicle-fieldset > .kmae-traits-field {
+	margin-top: 18px;
+}
+
+.kmae-create-page.is-simple .kmae-mot-date__row {
+	display: grid;
+	grid-template-columns: 1fr 1.4fr 0.8fr;
+	gap: 8px;
+}
+
+/* Jellemzők — 5 oszlopos kártyák */
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-field__legend {
+	display: block;
+	margin-bottom: 10px;
+	color: var(--ls-ink);
+	font-size: 13px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-traits-options {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 58px;
+	margin: 0;
+	padding: 10px 14px 10px 10px;
+	border: 1.5px solid var(--ls-line);
+	border-radius: 14px;
+	background: #fff;
+	color: var(--ls-text);
+	cursor: pointer;
+	transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option:hover {
+	border-color: var(--ls-blue-line);
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option__icon {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 11px;
+	background: var(--ls-blue-soft);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option__icon svg {
+	width: 20px;
+	height: 20px;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option__label {
+	min-width: 0;
+	font-size: 13.5px;
+	font-weight: 700;
+	line-height: 1.25;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option:has(input:checked) {
+	border-color: var(--ls-blue);
+	background: #f4f9ff;
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.12);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option:has(input:checked) .kmae-trait-option__icon {
+	background: var(--ls-blue);
+	color: #fff;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option:has(input:checked)::after {
+	content: "✓";
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--ls-blue);
+	color: #fff;
+	font-size: 11px;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option:has(input:focus-visible) {
+	outline: 2px solid var(--ls-blue);
+	outline-offset: 2px;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits .kmae-trait-option.is-locked {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.kmae-create-page.is-simple #kmae-vehicle-traits > .kmae-hint {
+	margin-top: 8px;
+	font-size: 12.5px;
+}
+
+/* ---------- 02 Hirdetés tartalma ---------- */
+.kmae-create-page.is-simple #kmae-section-ad-body {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+	align-items: start;
+	gap: 16px 18px;
+}
+
+.kmae-create-page.is-simple #kmae-section-ad-body > .kmae-field-row {
+	display: contents;
+}
+
+.kmae-create-page.is-simple #kmae-section-ad-body > .kmae-field:has(#kmae_title) { grid-column: 1; order: 1; }
+.kmae-create-page.is-simple #kmae-section-ad-body > .kmae-field-row > .kmae-field { order: 2; }
+.kmae-create-page.is-simple #kmae-section-ad-body > .kmae-create-notice { grid-column: 2 / -1; order: 4; }
+.kmae-create-page.is-simple #kmae-section-ad-body > .kmae-locate { grid-column: 2 / -1; order: 3; margin: -6px 0 0; }
+.kmae-create-page.is-simple #kmae-section-ad-body > .kmae-field:has(#kmae_description) { grid-column: 1 / -1; order: 5; }
+
+/* ---------- 03 Értékesítés módja ---------- */
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 14px 24px;
+	margin: 0;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode:has(.kmae-price-amount-field:not([style*="none"])) {
+	grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__options {
+	display: grid;
+	grid-column: 1;
+	grid-row: 1 / span 6;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-rows: auto;
+	align-items: stretch;
+	gap: 12px;
+	max-width: none;
+	margin: 0;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option {
+	position: relative;
+	display: grid;
+	grid-template-columns: 44px minmax(0, 1fr);
+	grid-template-rows: auto;
+	grid-row: auto;
+	align-items: start;
+	justify-items: stretch;
+	gap: 12px;
+	height: auto;
+	min-height: 0;
+	margin: 0;
+	padding: 16px 40px 16px 14px;
+	border: 1.5px solid var(--ls-line);
+	border-radius: 16px;
+	background: #fff;
+	box-shadow: none;
+	text-align: left;
+	cursor: pointer;
+	transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option:hover {
+	border-color: var(--ls-blue-line);
+	background: #fff;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option:has(input:checked) {
+	border-color: var(--ls-blue);
+	background: #f4f9ff;
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.12);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option--accent:has(input:checked) {
+	border-color: var(--ls-orange);
+	background: #fff6ef;
+	box-shadow: 0 0 0 3px rgba(241, 100, 10, 0.12);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option input {
+	position: absolute;
+	top: 16px;
+	right: 14px;
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	accent-color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option--accent input {
+	accent-color: var(--ls-orange);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__icon {
+	display: grid;
+	grid-column: 1;
+	grid-row: 1;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--ls-blue-soft);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option:has(input[value="guide"]) .kmae-price-mode__icon {
+	background: var(--ls-green-soft);
+	color: var(--ls-green);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option--accent .kmae-price-mode__icon {
+	background: var(--ls-orange-soft);
+	color: var(--ls-orange);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__text {
+	display: flex;
+	flex-direction: column;
+	grid-column: 2;
+	grid-row: 1;
+	align-items: flex-start;
+	gap: 4px;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__text strong {
+	color: var(--ls-ink);
+	font-size: 15px;
+	font-weight: 800;
+	line-height: 1.3;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option:has(input:checked) .kmae-price-mode__text strong {
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__option--accent .kmae-price-mode__text strong {
+	color: var(--ls-orange);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__desc {
+	color: var(--ls-muted);
+	font-size: 12.5px;
+	line-height: 1.4;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-mode__features {
+	display: none;
+}
+
+/* Jobb oszlop: ár + rejtett minimum */
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-amount-field {
+	grid-column: 2;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-amount-field .kmae-hint {
+	display: none;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-wizard-unit {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+	margin: 0;
+	overflow: hidden;
+	border: 1.5px solid var(--ls-field);
+	border-radius: 12px;
+	background: #fff;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-wizard-unit:focus-within {
+	border-color: var(--ls-blue);
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.12);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-wizard-unit input {
+	flex: 1 1 auto;
+	min-height: 46px;
+	padding: 0 14px;
+	border: 0;
+	box-shadow: none;
+	background: transparent;
+	color: var(--ls-ink);
+	font-size: 17px;
+	font-weight: 800;
+	text-align: left;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-wizard-unit input:focus {
+	box-shadow: none;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-wizard-unit__suffix {
+	display: inline-flex;
+	align-items: center;
+	min-width: 46px;
+	padding: 0 14px;
+	border-left: 1px solid #e3ebf3;
+	color: var(--ls-faint);
+	font-size: 14px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-price-amount-field[data-kmae-minimum-field]:not([style*="none"]) {
+	display: grid !important;
+	grid-template-columns: minmax(0, 1fr) minmax(150px, 0.9fr);
+	align-items: center;
+	gap: 10px 14px;
+	padding: 14px 16px;
+	border: 1px solid var(--ls-orange-line);
+	border-radius: 14px;
+	background: var(--ls-orange-soft);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-label label {
+	margin: 0;
+	color: #b5470c;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body [data-kmae-minimum-field] .kmae-wizard-unit {
+	border-color: var(--ls-orange-line);
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-info-dot {
+	display: inline-flex;
+	flex: 0 0 22px;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	min-height: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: linear-gradient(145deg, var(--ls-orange-2), var(--ls-orange));
+	box-shadow: none;
+	color: #fff;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: 14px;
+	font-style: italic;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-info {
+	position: relative;
+	grid-column: 1 / -1;
+	margin: 0;
+	padding: 14px 14px 14px 72px;
+	border: 1px solid var(--ls-orange-line);
+	border-radius: 12px;
+	background: #fff;
+	box-shadow: none;
+	color: var(--ls-text);
+	font-size: 13px;
+	line-height: 1.5;
+	text-align: left;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-info[hidden] {
+	display: none;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-info__mascot {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 52px;
+	height: auto;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-info__title {
+	margin: 0 0 4px;
+	color: var(--ls-ink);
+	font-size: 14.5px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple #kmae-section-sale-body .kmae-minimum-info p {
+	margin: 0;
+}
+
+/* ---------- 04 Extrák ---------- */
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-fieldset {
+	margin: 0;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-create-option-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	height: 100%;
+	min-height: 78px;
+	margin: 0;
+	padding: 14px 16px;
+	border: 1.5px solid var(--ls-line);
+	border-radius: 16px;
+	background: #fff;
+	box-shadow: none;
+	transform: none;
+	cursor: pointer;
+	transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option:hover {
+	border-color: var(--sec-line);
+	background: #fff;
+	box-shadow: none;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option:has(input:checked) {
+	border-color: var(--sec);
+	background: #f4fbf8;
+	box-shadow: 0 0 0 3px rgba(15, 138, 102, 0.14);
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option input[type="checkbox"] {
+	-webkit-appearance: none;
+	appearance: none;
+	position: relative;
+	flex: 0 0 20px;
+	width: 20px;
+	height: 20px;
+	margin: 1px 0 0;
+	border: 1.5px solid #b7cbe0;
+	border-radius: 6px;
+	background: #fff;
+	cursor: pointer;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option input[type="checkbox"]:checked {
+	border-color: var(--sec);
+	background: var(--sec);
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option input[type="checkbox"]:checked::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 6px;
+	width: 5px;
+	height: 10px;
+	border: solid #fff;
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option input[type="checkbox"]:focus-visible {
+	outline: 2px solid var(--ls-blue);
+	outline-offset: 2px;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option__text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option__text strong {
+	color: var(--ls-ink);
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1.3;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option:has(input:checked) .kmae-commitment-option__text strong {
+	color: var(--sec);
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option__desc {
+	color: var(--ls-muted);
+	font-size: 12.5px;
+	line-height: 1.4;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-commitment-option__reward {
+	align-self: flex-start;
+	padding: 3px 8px;
+	border-radius: 8px;
+	background: var(--ls-orange-soft);
+	color: #b5470c;
+	font-size: 11px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple #kmae-section-trust-body .kmae-extra-other-field {
+	margin-top: 14px;
+	padding: 14px 16px;
+	border: 1px solid var(--ls-line);
+	border-radius: 16px;
+	background: var(--ls-soft);
+	box-shadow: none;
+}
+
+/* ---------- Mentés sáv — az űrlap alján, rögzítve ---------- */
+.kmae-create-page.is-simple #kmae-section-finish-body {
+	padding: 0;
+}
+
+.kmae-create-page.is-simple .kmae-create-submit.is-simple-bar {
+	margin: 4px 0 0;
+	padding: 12px 14px;
+	border: 1.5px solid #c9dbee;
+	border-radius: 20px;
+	background: #eef4fb;
+	box-shadow: 0 14px 34px rgba(16, 44, 72, 0.09);
+}
+
+.kmae-create-page.is-simple .is-simple-bar .kmae-form-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.kmae-create-page.is-simple .is-simple-bar .kmae-form-actions .kmae-btn-secondary:first-child {
+	margin-right: auto;
+}
+
+.kmae-create-page.is-simple .is-simple-bar .kmae-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 46px;
+	padding: 0 22px;
+	border-radius: 999px;
+	font-size: 14.5px;
+	font-weight: 800;
+}
+
+.kmae-create-page.is-simple .is-simple-bar .kmae-btn-secondary {
+	border: 1px solid #cfdcea;
+	background: #fff;
+	box-shadow: none;
+	color: var(--ls-text);
+}
+
+.kmae-create-page.is-simple .is-simple-bar .kmae-btn-secondary:hover {
+	border-color: var(--ls-blue-line);
+	color: var(--ls-blue);
+}
+
+.kmae-create-page.is-simple #kmae-listing-submit {
+	min-width: 230px;
+	border: 0;
+	background: linear-gradient(165deg, var(--ls-orange-2) 0%, var(--ls-orange) 100%);
+	box-shadow: 0 10px 22px rgba(241, 100, 10, 0.28);
+	color: #fff;
+}
+
+.kmae-create-page.is-simple #kmae-listing-submit:hover:not(:disabled) {
+	background: linear-gradient(165deg, #ff8a24 0%, #e25e06 100%);
+}
+
+.kmae-create-page.is-simple #kmae-listing-submit:disabled {
+	background: #eef2f7;
+	box-shadow: none;
+	color: var(--ls-faint);
+}

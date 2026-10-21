@@ -1,0 +1,604 @@
+/* Albira — GYIK. Önálló, kizárólag PC-s oldalstílus. Világos arculat (kék + narancs üveg), a Főoldal és a Hogyan működik mintája szerint. */
+
+@media (min-width: 1025px) {
+	body.kmae-faq-page {
+		--faq-blue: #00c7f7;
+		--faq-blue-strong: #008fbd;
+		--faq-blue-text: #008fbd;
+		--faq-blue-rgb: 0, 199, 247;
+		--faq-orange: #ff6e25;
+		--faq-orange-strong: #e95e13;
+		--faq-orange-text: #e95e13;
+		--faq-orange-rgb: 255, 110, 37;
+		--faq-ink: #202936;
+		--faq-copy: #465463;
+		--faq-muted: #667383;
+	}
+
+	/* A közös fix háttérkép (site-background.css) látszik a GYIK alatt is; a body átlátszó. */
+
+	/* Vendég: a világos kép a .kmae-main-en ül (landing.css). */
+	body.kmae-faq-page.kmae-marketing .kmae-main {
+		background: transparent;
+	}
+
+	/* Önálló, viewport-középre zárt vászon; a közös fejléc érintetlen. */
+	body.kmae-faq-page .kmae-page {
+		position: relative;
+		left: 50%;
+		width: 100vw;
+		margin-left: -50vw;
+		padding: calc(var(--kmae-header-h, 72px) + 50px) 32px 84px;
+		box-sizing: border-box;
+		background: transparent;
+	}
+
+	body.kmae-faq-page .kmae-page > .kmae-container {
+		width: min(1180px, calc(100vw - 64px));
+		max-width: 1180px;
+		margin: 0 auto;
+		padding: 0;
+	}
+
+	body.kmae-faq-page .kmae-page__article,
+	body.kmae-faq-page .kmae-page__content {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	body.kmae-faq-page .kmae-page__article > .kmae-page__title {
+		display: none;
+	}
+
+	.kmae-faq {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: 36px;
+	}
+
+	/* Fejléc: eyebrow-pirula, színátmenetes nagy cím. */
+	.kmae-faq__hero {
+		max-width: 760px;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.kmae-faq__eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		margin: 0 0 18px;
+		padding: 7px 16px;
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.6);
+		border-radius: 999px;
+		background: linear-gradient(145deg, rgba(222, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow: 0 0 18px rgba(var(--faq-blue-rgb), 0.2), inset 0 1px 0 #fff;
+		font-size: 11px;
+		font-weight: 850;
+		line-height: 1.4;
+		letter-spacing: 0.17em;
+		color: var(--faq-blue-strong);
+	}
+
+	.kmae-faq__eyebrow::before {
+		content: "";
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--faq-blue);
+		box-shadow: 0 0 10px rgba(var(--faq-blue-rgb), 0.8);
+	}
+
+	.kmae-faq__title {
+		margin: 0;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 60px;
+		font-weight: 850;
+		line-height: 1.04;
+		letter-spacing: -0.045em;
+		background: linear-gradient(100deg, #008fbd 0%, #00c7f7 40%, #e99525 78%, #ff6e25 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		filter: drop-shadow(0 8px 28px rgba(var(--faq-blue-rgb), 0.3));
+	}
+
+	.kmae-faq__lead {
+		max-width: 640px;
+		margin: 18px auto 0;
+		font-size: 17px;
+		font-weight: 600;
+		line-height: 1.7;
+		color: var(--faq-copy);
+	}
+
+	/* Keresőmező: nagy üveg-pirula (ikon nélkül, Raul kérése). */
+	body.kmae-faq-page .kmae-faq__search {
+		width: 100%;
+		max-width: 640px;
+		margin: 0 auto;
+		box-sizing: border-box;
+	}
+
+	body.kmae-faq-page .kmae-faq__search-input {
+		display: block;
+		width: 100%;
+		height: 62px;
+		box-sizing: border-box;
+		padding: 0 26px;
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.7);
+		border-radius: 999px;
+		background-color: rgba(255, 255, 255, 0.9);
+		box-shadow: 0 18px 40px rgba(38, 68, 90, 0.13), 0 0 28px rgba(var(--faq-blue-rgb), 0.16), inset 0 1px 0 #fff;
+		font-family: inherit;
+		font-size: 16px;
+		font-weight: 650;
+		color: var(--faq-ink);
+		outline: none;
+		transition: border-color 160ms ease, box-shadow 160ms ease;
+		-webkit-appearance: none;
+		appearance: none;
+	}
+
+	body.kmae-faq-page .kmae-faq__search-input::placeholder {
+		color: var(--faq-muted);
+		font-weight: 600;
+	}
+
+	body.kmae-faq-page .kmae-faq__search-input:focus {
+		border-color: rgba(var(--faq-blue-rgb), 0.95);
+		box-shadow: 0 18px 40px rgba(38, 68, 90, 0.13), 0 0 0 4px rgba(var(--faq-blue-rgb), 0.25);
+	}
+
+	body.kmae-faq-page .kmae-faq__count {
+		margin: 12px 0 0;
+		text-align: center;
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--faq-copy);
+	}
+
+	/* Csoportok: 2×2 üvegpanelek, a kék eladó, a narancs vevő. */
+	.kmae-faq__groups {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 26px;
+		align-items: start;
+	}
+
+	.kmae-faq-group {
+		--group: var(--faq-blue);
+		--group-strong: var(--faq-blue-text);
+		--group-rgb: var(--faq-blue-rgb);
+		position: relative;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 22px;
+		padding: 30px;
+		overflow: hidden;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--group-rgb), 0.62);
+		border-radius: 22px;
+		background:
+			radial-gradient(circle at 7% 0%, rgba(var(--group-rgb), 0.25), transparent 42%),
+			linear-gradient(145deg, rgba(224, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow: 0 18px 48px rgba(38, 68, 90, 0.14), 0 0 28px rgba(var(--group-rgb), 0.14), inset 0 1px 0 #fff;
+		backdrop-filter: blur(16px) saturate(130%);
+	}
+
+	/* Neon fénycsík a panel tetején. */
+	.kmae-faq-group::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 5%;
+		width: 50%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--group), transparent);
+		box-shadow: 0 0 16px rgba(var(--group-rgb), 0.9);
+	}
+
+	.kmae-faq-group--orange {
+		--group: var(--faq-orange);
+		--group-strong: var(--faq-orange-strong);
+		--group-rgb: var(--faq-orange-rgb);
+		background:
+			radial-gradient(circle at 7% 0%, rgba(var(--group-rgb), 0.2), transparent 42%),
+			linear-gradient(145deg, rgba(255, 239, 226, 0.95), rgba(255, 255, 255, 0.84));
+	}
+
+	.kmae-faq-group__header {
+		padding-bottom: 18px;
+		background: linear-gradient(90deg, transparent, rgba(var(--group-rgb), 0.95), transparent) bottom / 100% 1px no-repeat;
+	}
+
+	.kmae-faq-group__eyebrow {
+		margin: 0 0 6px;
+		font-size: 10px;
+		font-weight: 850;
+		line-height: 1.4;
+		letter-spacing: 0.16em;
+		color: var(--group-strong);
+	}
+
+	.kmae-faq-group__title {
+		margin: 0;
+		font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+		font-size: 26px;
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: -0.03em;
+		color: var(--faq-ink);
+	}
+
+	.kmae-faq-group__items {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	/* Kérdés-sor: fehér üveg, hover-re és nyitva a csoport színe. */
+	.kmae-faq-item {
+		border: 1px solid rgba(var(--group-rgb), 0.3);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.7);
+		box-shadow: inset 0 1px 0 #fff;
+		transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+	}
+
+	.kmae-faq-item:hover {
+		border-color: rgba(var(--group-rgb), 0.6);
+		box-shadow: 0 0 18px rgba(var(--group-rgb), 0.18), inset 0 1px 0 #fff;
+	}
+
+	.kmae-faq-item[open] {
+		border-color: rgba(var(--group-rgb), 0.8);
+		background: rgba(255, 255, 255, 0.9);
+		box-shadow: 0 12px 26px rgba(38, 68, 90, 0.12), inset 3px 0 0 var(--group);
+	}
+
+	.kmae-faq-item__question {
+		display: flex;
+		min-height: 62px;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 0 18px 0 20px;
+		box-sizing: border-box;
+		list-style: none;
+		font-size: 15px;
+		font-weight: 780;
+		line-height: 1.4;
+		color: var(--faq-ink);
+		cursor: pointer;
+	}
+
+	.kmae-faq-item__question::-webkit-details-marker {
+		display: none;
+	}
+
+	.kmae-faq-item__question:focus-visible {
+		border-radius: 15px;
+		outline: 2px solid rgba(var(--group-rgb), 0.68);
+		outline-offset: 2px;
+	}
+
+	.kmae-faq-item__answer {
+		margin: 0 20px;
+		padding: 14px 0 18px;
+		border-top: 1px solid rgba(var(--group-rgb), 0.22);
+	}
+
+	.kmae-faq-item__answer p {
+		margin: 0;
+		font-size: 14px;
+		font-weight: 550;
+		line-height: 1.7;
+		color: var(--faq-copy);
+	}
+
+	/* Lábléc: világos üveg, kék felső csík, egy kék gomb (pirula). */
+	.kmae-faq__footer {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		margin-top: 4px;
+		padding: 26px 32px;
+		overflow: hidden;
+		box-sizing: border-box;
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.6);
+		border-radius: 22px;
+		background:
+			radial-gradient(circle at 100% 0%, rgba(var(--faq-blue-rgb), 0.24), transparent 42%),
+			linear-gradient(145deg, rgba(224, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow: 0 18px 48px rgba(38, 68, 90, 0.14), 0 0 28px rgba(var(--faq-blue-rgb), 0.14), inset 0 1px 0 #fff;
+		backdrop-filter: blur(16px) saturate(130%);
+	}
+
+	.kmae-faq__footer::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 45%;
+		width: 50%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--faq-blue), transparent);
+		box-shadow: 0 0 16px rgba(var(--faq-blue-rgb), 0.9);
+	}
+
+	.kmae-faq__footer p {
+		margin: 0;
+		font-size: 18px;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+		color: var(--faq-ink);
+	}
+
+	/* Hover: árnyék-erősítés és elmozdulás, filter nélkül (a filter a ::before-t is elrontaná). */
+	.kmae-faq__footer a {
+		display: inline-flex;
+		flex: 0 0 auto;
+		height: 48px;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		padding: 0 26px;
+		border-radius: 999px;
+		background: linear-gradient(110deg, #007fb8, #00c7f7);
+		box-shadow: 0 8px 24px rgba(var(--faq-blue-rgb), 0.3);
+		font-size: 14px;
+		font-weight: 800;
+		text-decoration: none;
+		color: #fff;
+		transition: transform 160ms ease, box-shadow 160ms ease;
+	}
+
+	.kmae-faq__footer a:hover,
+	.kmae-faq__footer a:focus-visible {
+		transform: translateY(-2px);
+		box-shadow: 0 12px 30px rgba(var(--faq-blue-rgb), 0.45);
+		outline: none;
+	}
+
+	body.kmae-faq-page .kmae-faq__empty {
+		padding: 26px 28px;
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.5);
+		border-radius: 22px;
+		background: rgba(255, 255, 255, 0.8);
+		box-shadow: 0 18px 40px rgba(38, 68, 90, 0.12), inset 0 1px 0 #fff;
+		text-align: center;
+	}
+
+	body.kmae-faq-page .kmae-faq__empty p {
+		margin: 0;
+		font-size: 15px;
+		font-weight: 750;
+		color: var(--faq-ink);
+	}
+
+	/* =====================================================================
+	   FEJLÉC + LÁBLÉC a GYIK-oldalon (vendég = kmae-marketing, belépett = kmae-app).
+	   Csak ennél az oldalnál, a közös fejléc/lábléc fájlokhoz nem nyúlunk.
+	   A három osztály-ismétlés a belépett héj (0,4,1) szabályai miatt kell.
+	   ===================================================================== */
+
+	/* Sáv: világos üveg, kék alsó csík. */
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header {
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(236, 249, 255, 0.86));
+		backdrop-filter: blur(16px) saturate(130%);
+		-webkit-backdrop-filter: blur(16px) saturate(130%);
+		border-bottom: 1px solid rgba(var(--faq-blue-rgb), 0.35);
+		box-shadow: 0 12px 34px rgba(38, 68, 90, 0.12);
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header::after {
+		content: "";
+		position: absolute;
+		left: 6%;
+		right: 6%;
+		bottom: -1px;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--faq-blue), transparent);
+		box-shadow: 0 0 16px rgba(var(--faq-blue-rgb), 0.8);
+		pointer-events: none;
+	}
+
+	/* Logó: lágy kék fény. */
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-logo--desktop img,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-logo--desktop .kmae-logo__img,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-logo--header img,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-pc-logo__img {
+		filter: drop-shadow(0 0 12px rgba(var(--faq-blue-rgb), 0.4));
+	}
+
+	/* Menüpontok: világos üveg-pirulák. */
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav--guest a,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item {
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.45);
+		background: linear-gradient(135deg, rgba(224, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgba(38, 68, 90, 0.1);
+		color: var(--faq-ink);
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item .kmae-header__nav-icon {
+		color: var(--faq-blue-text);
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav--guest a:hover,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav--guest a:focus-visible,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item:hover,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item:focus-visible {
+		border-color: rgba(var(--faq-blue-rgb), 0.85);
+		background: linear-gradient(135deg, #ffffff, rgba(222, 248, 255, 0.96));
+		box-shadow: inset 0 1px 0 #fff, 0 0 20px rgba(var(--faq-blue-rgb), 0.3), 0 8px 20px rgba(38, 68, 90, 0.12);
+		color: var(--faq-blue-strong);
+		outline: none;
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item:hover .kmae-header__nav-icon,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item:focus-visible .kmae-header__nav-icon {
+		color: var(--faq-blue-strong);
+	}
+
+	/* Aktív menüpont: tömör kék. */
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav--guest a.is-active,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item.is-active,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item.is-active:hover {
+		border-color: rgba(0, 199, 247, 0.7);
+		background: linear-gradient(110deg, #007fb8, #00c7f7);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px rgba(var(--faq-blue-rgb), 0.35);
+		color: #fff;
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-header .kmae-header__nav-item.is-active .kmae-header__nav-icon {
+		color: #fff;
+	}
+
+	/* Belépett: ikon-gombok és profilgomb. */
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__icon-btn,
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__profile-btn {
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.45);
+		background: linear-gradient(135deg, rgba(224, 248, 255, 0.94), rgba(255, 255, 255, 0.84));
+		box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgba(38, 68, 90, 0.1);
+		color: var(--faq-ink);
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__icon-btn svg {
+		color: var(--faq-blue-text);
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__icon-btn:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__icon-btn:focus-visible,
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__profile-btn:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__profile-btn:focus-visible {
+		border-color: rgba(var(--faq-blue-rgb), 0.85);
+		background: linear-gradient(135deg, #ffffff, rgba(222, 248, 255, 0.96));
+		box-shadow: 0 0 20px rgba(var(--faq-blue-rgb), 0.25), 0 8px 20px rgba(38, 68, 90, 0.12);
+		color: var(--faq-blue-strong);
+		outline: none;
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__profile-greeting {
+		color: var(--faq-ink);
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__caret {
+		border-right-color: var(--faq-blue-text);
+		border-bottom-color: var(--faq-blue-text);
+	}
+
+	/* Profil-lenyíló. */
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__panel {
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.5);
+		background:
+			radial-gradient(circle at 7% 0%, rgba(var(--faq-blue-rgb), 0.2), transparent 42%),
+			linear-gradient(135deg, rgba(238, 251, 255, 0.97), rgba(255, 255, 255, 0.97));
+		box-shadow: 0 18px 48px rgba(38, 68, 90, 0.16), 0 0 28px rgba(var(--faq-blue-rgb), 0.12);
+		color: var(--faq-ink);
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__panel::before {
+		background: linear-gradient(90deg, transparent, var(--faq-blue), transparent);
+		box-shadow: 0 0 16px rgba(var(--faq-blue-rgb), 0.9);
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__panel--menu a {
+		color: var(--faq-ink) !important;
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__panel--menu a:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__panel--menu a:focus-visible {
+		background: rgba(var(--faq-blue-rgb), 0.14);
+		color: var(--faq-blue-strong) !important;
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__panel-sep {
+		border-top-color: rgba(var(--faq-blue-rgb), 0.35);
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-app .kmae-header .kmae-header__logout {
+		color: var(--faq-orange-text) !important;
+	}
+
+	/* Vendég: Belépés = világos üveg, Regisztráció = narancs. */
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--login,
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--login:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--login:focus-visible {
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(224, 248, 255, 0.84)) !important;
+		border: 1px solid rgba(var(--faq-blue-rgb), 0.55) !important;
+		color: var(--faq-ink) !important;
+		box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgba(38, 68, 90, 0.1) !important;
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--login:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--login:focus-visible {
+		border-color: rgba(var(--faq-blue-rgb), 0.95) !important;
+		color: var(--faq-blue-strong) !important;
+		box-shadow: 0 0 20px rgba(var(--faq-blue-rgb), 0.25), 0 8px 20px rgba(38, 68, 90, 0.12) !important;
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--register,
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--register:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--register:focus-visible {
+		background: linear-gradient(110deg, #ffad41, #ff6e25) !important;
+		border: 1px solid rgba(255, 110, 37, 0.6) !important;
+		color: #fff !important;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 8px 22px rgba(var(--faq-orange-rgb), 0.35) !important;
+	}
+
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--register:hover,
+	body.kmae-faq-page.kmae-faq-page.kmae-marketing .kmae-header .kmae-header__actions .kmae-btn--register:focus-visible {
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 30px rgba(var(--faq-orange-rgb), 0.5) !important;
+	}
+
+	/* Lábléc: világos üveg, kék felső csík, kék linkek. */
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer.is-open {
+		border-top: 1px solid rgba(var(--faq-blue-rgb), 0.3);
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(236, 249, 255, 0.96));
+		backdrop-filter: blur(14px) saturate(130%);
+		-webkit-backdrop-filter: blur(14px) saturate(130%);
+		box-shadow: 0 -12px 34px rgba(38, 68, 90, 0.1);
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer__panel {
+		background: transparent;
+	}
+
+	/* A lábléc nyila (gomb + ikon) itt is ugyanaz, mint minden oldalon (theme.css). */
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer__copy {
+		color: var(--faq-muted);
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer__link {
+		color: var(--faq-ink);
+	}
+
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer__link:hover,
+	body.kmae-faq-page.kmae-faq-page:is(.kmae-marketing, .kmae-app) .kmae-footer__link:focus-visible {
+		color: var(--faq-blue-strong);
+	}
+
+	/* Lead alatti vékony osztó: kék pont + kék csík. */
+	.kmae-faq__lead::after {
+		content: "";
+		display: block;
+		width: 120px;
+		height: 2px;
+		margin: 26px auto 0;
+		background: linear-gradient(90deg, transparent, var(--faq-blue), transparent);
+		box-shadow: 0 0 14px rgba(var(--faq-blue-rgb), 0.8);
+	}
+}
+
+/* Keresés a GYIK-ben. A [hidden] szabályt a csoportok display: flex-e felülírná, ezért kell a !important. */
+.kmae-faq [hidden] {
+	display: none !important;
+}

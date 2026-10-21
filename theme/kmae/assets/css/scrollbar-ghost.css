@@ -1,0 +1,85 @@
+/* =========================================================
+   PC: „szellem” görgetősáv az oldal jobb szélén.
+   Nyugalmi állapotban alig látszik; ha az egér az ablak jobb
+   szélének közelébe ér (scrollbar-ghost.js: html.kmae-sb-near),
+   vagy a sávra viszik, akkor lesz tömör. Csak asztali nézet (min-width: 1025px),
+   a telefonos nézethez nem nyúl. A régi „nincs görgetősáv”
+   szabályokat (pc-dashboard.css, landing.css) csak a gyökér-
+   (oldal-) sávra írja felül, a belső dobozok sávjai változatlanok.
+   Legvégén töltődik be (functions.php kmae_enqueue_scrollbar_ghost).
+   ========================================================= */
+@media (min-width: 1025px) {
+	/* A 100vw-s teljes szélességű vászonok a sáv miatt pár px-t kilógnának:
+	   oldalirányú görgetés az oldalon sosem kell. */
+	html:root {
+		overflow-x: hidden;
+		background-color: #f3f9ff;
+	}
+
+	/* A body oldalirányú vágása `clip`, nem `hidden`: a `hidden` a html `overflow-x: hidden`
+	   mellett már nem a nézetre terjed, hanem a body vágja le a láblécre lógó nyilat. */
+	html:root body {
+		overflow-x: clip;
+	}
+
+	/* `:not(body)` = ugyanaz az erősség, mint a régi `:has(body)` (a html sosem body),
+	   de nem járja be minden stílus-frissítéskor az egész dokumentumot — mérve a
+	   böngészésen a kártyaváltás stílus-idejének kb. fele ez volt. */
+
+	html:root:not(body) {
+		scrollbar-width: auto !important;
+		scrollbar-color: auto !important;
+		-ms-overflow-style: auto !important;
+	}
+
+	html:root:not(body)::-webkit-scrollbar {
+		display: block !important;
+		width: 12px !important;
+		height: 12px !important;
+		background: transparent !important;
+	}
+
+	html:root:not(body)::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	html:root:not(body)::-webkit-scrollbar-corner {
+		background: transparent;
+	}
+
+	/* Ghost: nyugalmi állapotban alig látszó, vékony „pirula”. */
+	html:root:not(body)::-webkit-scrollbar-thumb {
+		background-color: rgba(70, 110, 160, 0.14);
+		background-clip: padding-box;
+		border: 3px solid transparent;
+		border-radius: 999px;
+		min-height: 48px;
+		transition: background-color 0.2s ease;
+	}
+
+	/* Egér a jobb szélen (JS: html.kmae-sb-near): már mutatja magát. */
+	html.kmae-sb-near:root:not(body)::-webkit-scrollbar-thumb {
+		background-color: rgba(0, 143, 189, 0.55);
+	}
+
+	/* Egér a sávon: tömör, jól látható. */
+	html:root:not(body)::-webkit-scrollbar-thumb:hover,
+	html:root:not(body)::-webkit-scrollbar-thumb:active {
+		background-color: rgba(0, 143, 189, 0.75);
+		border-width: 2px;
+	}
+}
+
+/* Firefox: nincs ::-webkit-scrollbar, ott csak vékony, halvány sáv. */
+@media (min-width: 1025px) {
+	@supports not selector(::-webkit-scrollbar) {
+		html:root:not(body) {
+			scrollbar-width: thin !important;
+			scrollbar-color: rgba(70, 110, 160, 0.4) transparent !important;
+		}
+
+		html.kmae-sb-near:root:not(body) {
+			scrollbar-color: rgba(0, 143, 189, 0.7) transparent !important;
+		}
+	}
+}

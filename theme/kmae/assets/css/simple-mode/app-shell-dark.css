@@ -1,0 +1,465 @@
+/* Logged-in dark shell — one source for canvas, edge rails, cards.
+   Header styles live in simple-mode/header.css.
+   Loaded instead of app-shell-light.css when kmae_color_theme = dark. */
+
+body.kmae-app.kmae-theme-dark {
+	/* ------------------------------------------------------------------
+	   SZEREPKÖRI SZÍNEK — a belépett felület KÖZÖS készlete.
+	   Tizennégy név, és minden oldal ezekre hivatkozik. Ha egy árnyalatot
+	   változtatni kell, itt kell egyszer átírni, nem oldalanként.
+
+	   A többi változó ez alatt komponensre van szabva (`--kmae-hub-*`,
+	   `--kmae-auth-*`). Azokból minden új elem újabb nevet szül — ezért
+	   jött ez a szerepköri réteg föléjük. Új szabály NE fix hexet írjon,
+	   hanem ezeket használja.
+	   ------------------------------------------------------------------ */
+
+	/* Felületek — sötétből világosodva, ahogy egymásba ágyazódnak. */
+	--kmae-surface: rgba(5, 18, 38, 0.92);
+	--kmae-surface-2: rgba(8, 31, 60, 0.66);
+	--kmae-surface-3: rgba(10, 43, 79, 0.82);
+
+	/* Vonalak — halktól a kijelöltig. */
+	--kmae-line: rgba(76, 149, 205, 0.22);
+	--kmae-line-strong: rgba(55, 151, 220, 0.34);
+	--kmae-line-active: rgba(31, 190, 255, 0.78);
+
+	/* Szöveg — cím, leírás, halk segédszöveg, és a narancs gomb felirata. */
+	--kmae-text: #f6f8fb;
+	--kmae-text-2: #a9b8c8;
+	--kmae-text-3: #71869b;
+	--kmae-text-on-accent: #ffffff;
+
+	/* Jelzőszínek. */
+	--kmae-blue: #25baff;
+	--kmae-orange: #ff7a1a;
+	--kmae-ok: #3ddc97;
+	--kmae-danger: #ff6b6b;
+
+	--kmae-dark-header: #010411;
+	--kmae-dark-tool: rgba(255, 255, 255, 0.08);
+	--kmae-dark-tool-border: rgba(120, 200, 255, 0.28);
+	--kmae-dark-accent: #ff7a1a;
+	--kmae-dark-icon-blue: #1a9bff;
+	--kmae-dark-edge-left: #0090ff;
+	--kmae-dark-edge-right: #ff8c28;
+	--kmae-auth-login: linear-gradient(90deg, #0081c0 0%, #00c7f7 100%);
+	--kmae-auth-login-hover: linear-gradient(90deg, #0090d4 0%, #1ad0ff 100%);
+	--kmae-auth-login-border: rgba(0, 187, 243, 0.55);
+	--kmae-auth-login-glow: rgba(0, 187, 243, 0.28);
+	--kmae-auth-login-glow-strong: rgba(0, 187, 243, 0.38);
+	--kmae-auth-register: linear-gradient(90deg, #ffb020 0%, #ff6e25 52%, #e11d48 100%);
+	--kmae-auth-register-hover: linear-gradient(90deg, #ffc043 0%, #ff7f3d 52%, #f02d5a 100%);
+	--kmae-auth-register-glow: rgba(255, 110, 37, 0.28);
+	--kmae-auth-register-glow-strong: rgba(255, 110, 37, 0.4);
+	--kmae-dark-card-border: linear-gradient(
+		135deg,
+		#0081c0 0%,
+		#00c7f7 28%,
+		#ffb020 55%,
+		#ff6e25 78%,
+		#e11d48 100%
+	);
+	--kmae-dark-card-fill: rgba(255, 255, 255, 0.05);
+	--kmae-hub-glass-blur: 22px;
+	--kmae-hub-accent-blue: #00c7f7;
+	--kmae-hub-accent-blue-bright: #0081c0;
+	--kmae-hub-accent-orange: #ff6e25;
+	--kmae-hub-accent-orange-bright: #ffb020;
+	--kmae-hub-card-fill: rgba(2, 8, 20, 0.28);
+	--kmae-hub-inset-glow-blue: rgba(0, 187, 243, 0.16);
+	--kmae-hub-inset-glow-blue-strong: rgba(0, 187, 243, 0.26);
+	--kmae-hub-inset-glow-orange: rgba(255, 110, 37, 0.16);
+	--kmae-hub-inset-glow-orange-strong: rgba(255, 110, 37, 0.26);
+	--kmae-glass-neutral: rgba(4, 12, 32, 0.12);
+	--kmae-glass-neutral-hover: rgba(255, 255, 255, 0.05);
+	--kmae-glass-neutral-active: rgba(255, 255, 255, 0.08);
+	--kmae-luminous-text: rgba(252, 254, 255, 0.97);
+	--kmae-luminous-muted: rgba(228, 236, 248, 0.82);
+	background-color: #f7fbff;
+	overflow-x: hidden;
+}
+
+/* A belépett oldal háttere kódból (képletöltés nélkül), a vendég oldal
+   hangulatában: kék sarkok hatszög-hálóval, narancs és fehér fényívek,
+   pöttymezők, világos középmező. Rögzített rétegek — görgetéskor nem
+   rajzolódnak újra; animáció nincs (az üvegpanelek blur-ja miatt). */
+body.kmae-app.kmae-theme-dark::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background:
+		/* pöttymezők a két szélen */
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3Cpattern id='p' width='16' height='16' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='8' cy='8' r='1.7' fill='%23fff'/%3E%3C/pattern%3E%3CradialGradient id='g'%3E%3Cstop offset='.2' stop-color='%23fff'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cmask id='m'%3E%3Crect width='220' height='220' fill='url(%23g)'/%3E%3C/mask%3E%3C/defs%3E%3Crect width='220' height='220' fill='url(%23p)' mask='url(%23m)'/%3E%3C/svg%3E") left -40px top 52% / 220px 220px no-repeat,
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3Cpattern id='p' width='16' height='16' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='8' cy='8' r='1.7' fill='%23fff'/%3E%3C/pattern%3E%3CradialGradient id='g'%3E%3Cstop offset='.2' stop-color='%23fff'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cmask id='m'%3E%3Crect width='220' height='220' fill='url(%23g)'/%3E%3C/mask%3E%3C/defs%3E%3Crect width='220' height='220' fill='url(%23p)' mask='url(%23m)'/%3E%3C/svg%3E") right -30px top 38% / 200px 200px no-repeat,
+		/* csillanások az íveken */
+		radial-gradient(circle at 83.5% 26.5%, rgba(255, 255, 255, 0.95) 0, rgba(255, 236, 214, 0.55) 3px, transparent 22px),
+		radial-gradient(circle at 14% 9%, rgba(255, 255, 255, 0.95) 0, rgba(220, 245, 255, 0.5) 3px, transparent 20px),
+		radial-gradient(circle at 72% 93%, rgba(255, 255, 255, 0.9) 0, rgba(255, 230, 205, 0.5) 3px, transparent 20px),
+		/* jobb felső narancs ív (vastag fény + vékony fehér kísérő) */
+		radial-gradient(circle at 112% -48%, transparent 52vw, rgba(255, 196, 120, 0.35) 52.6vw, rgba(255, 128, 48, 0.7) 53.4vw, rgba(255, 176, 90, 0.4) 54.2vw, transparent 56vw),
+		radial-gradient(circle at 112% -48%, transparent 49.2vw, rgba(255, 255, 255, 0.85) 49.4vw, transparent 49.8vw),
+		radial-gradient(circle at 112% -48%, transparent 57.4vw, rgba(255, 214, 170, 0.6) 57.6vw, transparent 58.2vw),
+		/* jobb alsó narancs + fehér ív */
+		radial-gradient(circle at 118% 168%, transparent 54vw, rgba(255, 150, 70, 0.75) 54.5vw, rgba(255, 200, 150, 0.3) 55.2vw, transparent 56.4vw),
+		radial-gradient(circle at 118% 168%, transparent 57vw, rgba(255, 255, 255, 0.8) 57.2vw, transparent 57.7vw),
+		radial-gradient(circle at 118% 168%, transparent 60vw, rgba(255, 255, 255, 0.45) 60.2vw, transparent 60.9vw),
+		/* bal felső fehér selyemívek */
+		radial-gradient(circle at -22% -70%, transparent 58vw, rgba(255, 255, 255, 0.85) 58.3vw, transparent 58.9vw),
+		radial-gradient(circle at -22% -70%, transparent 61.5vw, rgba(255, 255, 255, 0.5) 61.8vw, transparent 62.8vw),
+		radial-gradient(circle at -22% -70%, transparent 65vw, rgba(255, 255, 255, 0.32) 65.4vw, transparent 67vw),
+		/* bal alsó hosszú, lapos ív */
+		radial-gradient(ellipse 90% 40% at 30% 112%, transparent 92%, rgba(255, 255, 255, 0.7) 93%, transparent 95%),
+		/* kék sarkok */
+		radial-gradient(ellipse 30% 34% at 0% 0%, rgba(0, 120, 215, 0.75), rgba(40, 160, 240, 0.35) 55%, transparent 100%),
+		radial-gradient(ellipse 34% 40% at 100% 100%, rgba(0, 120, 215, 0.7), rgba(50, 170, 245, 0.32) 55%, transparent 100%),
+		radial-gradient(ellipse 55% 65% at 0% 25%, rgba(130, 200, 250, 0.55), transparent 72%),
+		radial-gradient(ellipse 45% 55% at 100% 70%, rgba(140, 205, 250, 0.45), transparent 72%),
+		/* narancs derengés */
+		radial-gradient(ellipse 34% 40% at 100% 0%, rgba(255, 196, 140, 0.55), transparent 75%),
+		radial-gradient(ellipse 30% 26% at 6% 100%, rgba(255, 196, 160, 0.4), transparent 75%),
+		/* világos középmező */
+		radial-gradient(ellipse 52% 46% at 50% 46%, rgba(255, 255, 255, 0.75), transparent 75%),
+		linear-gradient(160deg, #d6ebfc 0%, #e8f4fe 35%, #eef7ff 60%, #dcedfc 100%);
+}
+
+/* Hatszög-háló a két kék sarokban. */
+body.kmae-app.kmae-theme-dark::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cpath fill='%23ffffff' d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/svg%3E") 0 0 / 84px 147px;
+	opacity: 0.34;
+	-webkit-mask-image:
+		radial-gradient(ellipse 26% 36% at 0% 0%, #000 20%, transparent 100%),
+		radial-gradient(ellipse 28% 38% at 100% 100%, #000 20%, transparent 100%);
+	mask-image:
+		radial-gradient(ellipse 26% 36% at 0% 0%, #000 20%, transparent 100%),
+		radial-gradient(ellipse 28% 38% at 100% 100%, #000 20%, transparent 100%);
+}
+
+/* ------------------------------------------------------------------
+   Edge rails removed (simple mode, dark). Left navigation now lives in
+   the header hamburger dropdown (see header.php + simple-mode/header.css);
+   right info rail is gone entirely. No .kmae-main reservation needed.
+   ------------------------------------------------------------------ */
+
+body.kmae-app.kmae-theme-dark .kmae-main {
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+/* ------------------------------------------------------------------
+   Hub cards — dark glass, gradient border, inset glow (sell / buy / stats)
+   ------------------------------------------------------------------ */
+
+body.kmae-app.kmae-theme-dark .kmae-hub__card,
+body.kmae-app.kmae-theme-dark .kmae-hub .kmae-hub__card,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	border-radius: 18px;
+	backdrop-filter: blur(var(--kmae-hub-glass-blur));
+	-webkit-backdrop-filter: blur(var(--kmae-hub-glass-blur));
+	color: var(--kmae-luminous-text);
+	transition:
+		transform 0.22s ease,
+		box-shadow 0.22s ease;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub__card::before,
+body.kmae-app.kmae-theme-dark .kmae-hub__card::after,
+body.kmae-app.kmae-theme-dark .kmae-hub .kmae-hub__card::before,
+body.kmae-app.kmae-theme-dark .kmae-hub .kmae-hub__card::after,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card::before,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card::after {
+	content: none;
+	display: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card--sell,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card--stats {
+	border: 1.5px solid #00c7f7;
+	background: var(--kmae-hub-card-fill);
+	box-shadow:
+		0 0 18px rgba(0, 199, 247, 0.2),
+		inset 0 0 24px var(--kmae-hub-inset-glow-blue),
+		0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card--buy {
+	border: 1.5px solid #ff6e25;
+	background: var(--kmae-hub-card-fill);
+	box-shadow:
+		0 0 18px rgba(255, 110, 37, 0.22),
+		inset 0 0 24px var(--kmae-hub-inset-glow-orange),
+		0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell:hover,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell:focus-visible,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats:hover,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats:focus-visible {
+	transform: translateY(-4px);
+	outline: none;
+	box-shadow:
+		0 0 18px rgba(0, 199, 247, 0.2),
+		inset 0 0 32px var(--kmae-hub-inset-glow-blue-strong),
+		0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy:hover,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy:focus-visible {
+	transform: translateY(-4px);
+	outline: none;
+	box-shadow:
+		0 0 18px rgba(255, 110, 37, 0.22),
+		inset 0 0 32px var(--kmae-hub-inset-glow-orange-strong),
+		0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell .kmae-hub__card-title,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats .kmae-hub__card-title {
+	color: var(--kmae-hub-accent-blue);
+	text-shadow: 0 0 10px var(--kmae-auth-login-glow);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy .kmae-hub__card-title {
+	color: var(--kmae-hub-accent-orange-bright);
+	text-shadow: 0 0 10px var(--kmae-auth-register-glow);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub__card-lead,
+body.kmae-app.kmae-theme-dark .kmae-hub .kmae-hub__card-lead,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card-lead {
+	color: var(--kmae-luminous-muted);
+	text-shadow: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell .kmae-hub__card-cta,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats .kmae-hub__card-cta {
+	color: #fff;
+	background: var(--kmae-auth-login);
+	border: 1px solid var(--kmae-auth-login-border);
+	box-shadow:
+		0 8px 20px var(--kmae-auth-login-glow),
+		inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy .kmae-hub__card-cta {
+	color: #fff;
+	background: var(--kmae-auth-register);
+	border: none;
+	box-shadow: 0 0 16px var(--kmae-auth-register-glow);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell:hover .kmae-hub__card-cta,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell:focus-visible .kmae-hub__card-cta,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats:hover .kmae-hub__card-cta,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats:focus-visible .kmae-hub__card-cta {
+	background: var(--kmae-auth-login-hover);
+	box-shadow:
+		0 12px 26px var(--kmae-auth-login-glow-strong),
+		inset 0 1px 0 rgba(255, 255, 255, 0.16);
+	filter: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy:hover .kmae-hub__card-cta,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy:focus-visible .kmae-hub__card-cta {
+	background: var(--kmae-auth-register-hover);
+	box-shadow: 0 0 20px var(--kmae-auth-register-glow-strong);
+	filter: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell .kmae-hub__card-icon,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats .kmae-hub__card-icon,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card--sell .kmae-hub__card-icon,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card--stats .kmae-hub__card-icon {
+	color: var(--kmae-hub-accent-blue);
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid var(--kmae-auth-login-border);
+	box-shadow: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy .kmae-hub__card-icon,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu--sell .kmae-hub__card--buy .kmae-hub__card-icon {
+	color: var(--kmae-hub-accent-orange-bright);
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 110, 37, 0.4);
+	box-shadow: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell .kmae-hub__card-icon svg,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats .kmae-hub__card-icon svg {
+	color: var(--kmae-hub-accent-blue);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy .kmae-hub__card-icon svg {
+	color: var(--kmae-hub-accent-orange);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell .kmae-hub__card-icon svg *,
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats .kmae-hub__card-icon svg * {
+	stroke: var(--kmae-hub-accent-blue);
+	fill: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy .kmae-hub__card-icon svg * {
+	stroke: var(--kmae-hub-accent-orange);
+	fill: none;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--sell .kmae-hub__card-icon svg [fill]:not([fill='none']),
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--stats .kmae-hub__card-icon svg [fill]:not([fill='none']) {
+	fill: var(--kmae-hub-accent-blue);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-menu .kmae-hub__card--buy .kmae-hub__card-icon svg [fill]:not([fill='none']) {
+	fill: var(--kmae-hub-accent-orange);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-stats__tile {
+	border: 1.5px solid transparent;
+	border-radius: 16px;
+	background:
+		var(--kmae-hub-card-fill) padding-box,
+		var(--kmae-auth-login) border-box;
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+	backdrop-filter: blur(var(--kmae-hub-glass-blur));
+	-webkit-backdrop-filter: blur(var(--kmae-hub-glass-blur));
+	box-shadow:
+		inset 0 0 20px var(--kmae-hub-inset-glow-blue),
+		0 8px 24px rgba(0, 0, 0, 0.25);
+	color: var(--kmae-luminous-text);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-stats__tile:hover,
+body.kmae-app.kmae-theme-dark .kmae-hub-stats__tile:focus-visible {
+	box-shadow:
+		inset 0 0 28px var(--kmae-hub-inset-glow-blue-strong),
+		0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-stats__label,
+body.kmae-app.kmae-theme-dark .kmae-hub-stats__sub {
+	color: var(--kmae-luminous-muted);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-hub-stats__value {
+	color: var(--kmae-hub-accent-blue);
+	text-shadow: 0 0 8px rgba(62, 233, 255, 0.1);
+}
+/* ------------------------------------------------------------------
+/* Other logged-in surfaces — neutral dark glass */
+body.kmae-app.kmae-theme-dark .kmae-card:hover,
+body.kmae-app.kmae-theme-dark .kmae-browse-card:hover,
+body.kmae-app.kmae-theme-dark .kmae-wizard-card:hover,
+body.kmae-app.kmae-theme-dark .kmae-wizard-mode-card:hover,
+body.kmae-app.kmae-theme-dark .kmae-wizard-mode-card.is-active,
+body.kmae-app.kmae-theme-dark .kmae-wizard-card.is-selected {
+	box-shadow:
+		inset 0 0 26px rgba(0, 187, 243, 0.2),
+		inset 0 0 48px rgba(255, 110, 37, 0.12),
+		0 10px 28px rgba(0, 0, 0, 0.22);
+}
+/* ------------------------------------------------------------------
+   Footer — átlátszó: az oldal háttere látszik át rajta
+   ------------------------------------------------------------------ */
+
+body.kmae-app.kmae-theme-dark .kmae-footer,
+body.kmae-app.kmae-theme-dark .kmae-footer.is-open,
+body.kmae-app.kmae-theme-dark .kmae-footer__panel {
+	background: transparent;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-footer {
+	border-top-color: rgba(255, 255, 255, 0.06);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-footer__toggle {
+	background: rgba(9, 24, 51, 0.55);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-color: rgba(255, 255, 255, 0.12);
+	color: #ffffff;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-footer__toggle:hover,
+body.kmae-app.kmae-theme-dark .kmae-footer__toggle:focus-visible {
+	color: var(--dash-gold);
+}
+
+@media (max-width: 1024px) {
+	body.kmae-app.kmae-theme-dark .kmae-main {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}
+/* ------------------------------------------------------------------
+   LÁBLÉC — az írások sötétkékre váltanak.
+   ------------------------------------------------------------------ */
+
+body.kmae-app.kmae-theme-dark .kmae-footer__copy,
+body.kmae-app.kmae-theme-dark .kmae-footer__link,
+body.kmae-app.kmae-theme-dark .kmae-footer__toggle {
+	color: #00327a;
+}
+/* ==================================================================
+   GYAKORI KÉRDÉSEK (és minden más `kmae-stub` szerkezetű oldal)
+   ------------------------------------------------------------------
+   Minden kérdés-válasz egy kártya, a közös minta szerint. A `kmae-stub`
+   több egyszerű aloldal váza, ezért az itteni formázás azokra is
+   érvényes lesz — szándékosan, hogy ne kelljen külön mindegyiknek.
+   ================================================================== */
+
+body.kmae-app.kmae-theme-dark .kmae-stub h1 {
+	color: #00327a;
+	font-weight: 900;
+	letter-spacing: -0.035em;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-stub__lead {
+	color: #00327a;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-stub__section {
+	border: 1px solid rgba(42, 205, 255, 0.88);
+	border-radius: 19px;
+	background:
+		radial-gradient(circle at 0% 50%, rgba(0, 190, 255, 0.17), transparent 42%),
+		linear-gradient(135deg, rgba(13, 85, 145, 0.96), rgba(5, 36, 75, 0.96));
+	box-shadow:
+		0 0 0 1px rgba(0, 210, 255, 0.05),
+		0 0 26px rgba(0, 170, 255, 0.09),
+		0 14px 34px rgba(0, 0, 0, 0.28),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		inset 0 0 28px rgba(0, 180, 255, 0.03);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-stub__section h2 {
+	color: #ffffff;
+	font-size: 1.04rem;
+	font-weight: 900;
+	letter-spacing: -0.018em;
+	line-height: 1.16;
+}
+
+body.kmae-app.kmae-theme-dark .kmae-stub__section p,
+body.kmae-app.kmae-theme-dark .kmae-stub__section li {
+	color: rgba(225, 238, 255, 0.82);
+}
+
+body.kmae-app.kmae-theme-dark .kmae-stub__section a {
+	color: #8beaff;
+	text-decoration-color: rgba(139, 234, 255, 0.5);
+}

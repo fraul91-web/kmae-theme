@@ -1,0 +1,620 @@
+/* Albira — Saját hirdetéseim. Önálló, világos PC-oldal. */
+body.kmae-my-listings-page .kmae-app-content,
+body.kmae-my-listings-page .kmae-main,
+body.kmae-my-listings-page .kmae-page--my-listings,
+.kmae-my-listings { box-sizing: border-box; width: 100%; max-width: none; min-width: 0; }
+body.kmae-my-listings-page .kmae-app-content { align-items: stretch; }
+body.kmae-my-listings-page .kmae-page--my-listings { padding-top: 18px; }
+
+.kmae-my-listings {
+	--ml-blue: #008fbd; --ml-blue-deep: #00769e; --ml-blue-soft: #dff7ff;
+	--ml-orange: #ff6e25; --ml-orange-deep: #d85210; --ml-orange-soft: #fff0e5;
+	--ml-ink: #202936; --ml-copy: #465463; --ml-muted: #687686;
+	font-family: "Outfit", system-ui, sans-serif; color: var(--ml-ink);
+}
+.kmae-my-listings *, .kmae-my-listings *::before, .kmae-my-listings *::after { box-sizing: border-box; }
+/* A közös belépett-héj 1120 px-es korlátja (pc-dashboard.css, 0,4,1) szűkre fogta a kártyákat: ezen az oldalon szélesebb. */
+body.kmae-my-listings-page.kmae-app .kmae-app-layout.is-panels-closed .kmae-main { max-width: 1320px; }
+.kmae-my-listings__inner { width: calc(100% - 72px); max-width: 1240px; margin: 0 auto; padding: 0 0 72px; }
+
+/* ---------- Fejléc: üvegpanel, lebegő fényfoltok, radar-ikon ---------- */
+.kmae-my-listings__header {
+	position: relative; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 30px;
+	width: 100%; padding: 34px 38px; overflow: hidden;
+	border: 1px solid rgba(0,199,247,.58); border-radius: 26px;
+	background:
+		radial-gradient(circle at 7% 0%, rgba(0,199,247,.25), transparent 42%),
+		radial-gradient(circle at 96% 100%, rgba(255,110,37,.2), transparent 44%),
+		linear-gradient(135deg, rgba(238,251,255,.96), rgba(255,246,239,.94));
+	box-shadow: 0 18px 48px rgba(38,68,90,.16), 0 0 28px rgba(0,199,247,.1), inset 0 1px 0 #fff;
+	-webkit-backdrop-filter: blur(16px) saturate(130%); backdrop-filter: blur(16px) saturate(130%);
+	text-align: left; animation: kmae-ml-rise .6s cubic-bezier(.2,.8,.3,1) both;
+}
+/* Neon fénycsík a tetején, lassan végigfut */
+.kmae-my-listings__header::before {
+	content: ""; position: absolute; z-index: 2; top: 0; left: 5%; width: 50%; height: 2px;
+	background: linear-gradient(90deg, transparent, #00c7f7, #ff6e25, transparent);
+	box-shadow: 0 0 16px rgba(0,199,247,.9); animation: kmae-ml-scan 7s ease-in-out infinite alternate;
+}
+@keyframes kmae-ml-scan { to { left: 45%; } }
+/* Finom hatszög-háló a háttérben */
+.kmae-my-listings__header::after {
+	content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+	background-image: radial-gradient(rgba(0,143,189,.16) 1.2px, transparent 1.3px);
+	background-size: 18px 18px;
+	-webkit-mask-image: linear-gradient(100deg, transparent 30%, #000 75%); mask-image: linear-gradient(100deg, transparent 30%, #000 75%);
+}
+.kmae-my-listings__header-orbs { position: absolute; inset: 0; pointer-events: none; }
+.kmae-my-listings__header-orbs i {
+	position: absolute; border-radius: 50%; filter: blur(2px); opacity: .55;
+	animation: kmae-ml-float 9s ease-in-out infinite;
+}
+.kmae-my-listings__header-orbs i:nth-child(1) { top: -40px; right: 30%; width: 120px; height: 120px; background: radial-gradient(circle, rgba(0,199,247,.32), transparent 70%); }
+.kmae-my-listings__header-orbs i:nth-child(2) { bottom: -50px; right: 8%; width: 160px; height: 160px; background: radial-gradient(circle, rgba(255,110,37,.26), transparent 70%); animation-delay: -3s; }
+.kmae-my-listings__header-orbs i:nth-child(3) { top: 20%; left: 46%; width: 70px; height: 70px; background: radial-gradient(circle, rgba(255,195,107,.4), transparent 70%); animation-delay: -6s; }
+@keyframes kmae-ml-float { 50% { transform: translate(14px, -12px) scale(1.08); } }
+
+.kmae-my-listings__heading-copy { position: relative; z-index: 1; min-width: 0; }
+.kmae-my-listings__eyebrow {
+	display: inline-flex; align-items: center; gap: 7px; margin: 0 0 12px; padding: 6px 12px;
+	border: 1px solid rgba(0,199,247,.45); border-radius: 999px; background: rgba(255,255,255,.75);
+	box-shadow: 0 0 18px rgba(0,199,247,.16), inset 0 1px 0 #fff;
+	color: var(--ml-blue); font-size: 11px; font-weight: 800; letter-spacing: .17em; text-transform: uppercase;
+}
+.kmae-my-listings__title {
+	margin: 0; color: var(--ml-ink); font-family: "Outfit","Space Grotesk",system-ui,sans-serif;
+	font-size: 42px; font-weight: 850; letter-spacing: -.045em; line-height: 1.04;
+}
+.kmae-my-listings__title span {
+	background: linear-gradient(90deg,#008fbd,#00c7f7,#e99525,#ff6e25); background-size: 200% 100%;
+	-webkit-background-clip: text; background-clip: text; color: transparent;
+	animation: kmae-ml-shine 6s ease-in-out infinite alternate;
+}
+@keyframes kmae-ml-shine { to { background-position: 100% 0; } }
+.kmae-my-listings__lead { margin: 12px 0 0; color: var(--ml-copy); font-size: 16px; font-weight: 500; line-height: 1.5; }
+
+/* Radar: lüktető gyűrűk az autó-ikon körül */
+.kmae-my-listings__radar { position: relative; z-index: 1; display: grid; place-items: center; width: 118px; height: 118px; }
+.kmae-my-listings__radar > i {
+	position: absolute; inset: 0; border: 1.5px solid rgba(0,199,247,.55); border-radius: 50%;
+	animation: kmae-ml-ring 3.6s cubic-bezier(.2,.6,.4,1) infinite; opacity: 0;
+}
+.kmae-my-listings__radar > i:nth-child(2) { animation-delay: 1.2s; border-color: rgba(255,110,37,.5); }
+.kmae-my-listings__radar > i:nth-child(3) { animation-delay: 2.4s; }
+@keyframes kmae-ml-ring { 0% { transform: scale(.45); opacity: .9; } 100% { transform: scale(1.15); opacity: 0; } }
+.kmae-my-listings__radar-core {
+	position: relative; display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%;
+	background: linear-gradient(145deg,#82edff,#00a9d8); color: #fff;
+	box-shadow: 0 12px 28px rgba(0,143,189,.35), 0 0 30px rgba(0,199,247,.35), inset 0 1px 0 rgba(255,255,255,.6);
+	animation: kmae-ml-bob 3.2s ease-in-out infinite;
+}
+@keyframes kmae-ml-bob { 50% { transform: translateY(-4px); } }
+
+/* ---------- Összesítő csempék ---------- */
+.kmae-my-listings__summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-top: 18px; }
+.kmae-my-listings__stat {
+	--st: 0, 143, 189;
+	position: relative; display: flex; align-items: center; gap: 15px; min-width: 0; min-height: 104px; padding: 18px 18px 18px 20px;
+	overflow: hidden; border: 1px solid rgba(var(--st), .32); border-radius: 20px;
+	background:
+		radial-gradient(circle at 100% 0%, rgba(var(--st), .16), transparent 55%),
+		linear-gradient(145deg, rgba(255,255,255,.96), rgba(255,255,255,.82));
+	box-shadow: 0 12px 28px rgba(38,68,90,.1), 0 0 20px rgba(var(--st), .1), inset 0 1px 0 #fff;
+	animation: kmae-ml-rise .55s cubic-bezier(.2,.8,.3,1) both; animation-delay: calc(.12s + var(--i, 0) * .07s);
+	transition: box-shadow .2s ease, border-color .2s ease;
+}
+.kmae-my-listings__stat:hover { border-color: rgba(var(--st), .6); box-shadow: 0 16px 34px rgba(38,68,90,.13), 0 0 26px rgba(var(--st), .2), inset 0 1px 0 #fff; }
+/* Színes csík a csempe alján */
+.kmae-my-listings__stat::after {
+	content: ""; position: absolute; left: 20px; right: 20px; bottom: 0; height: 2px; border-radius: 2px;
+	background: linear-gradient(90deg, transparent, rgb(var(--st)), transparent); box-shadow: 0 0 12px rgba(var(--st), .8);
+}
+.kmae-my-listings__stat--active { --st: 18, 170, 120; }
+.kmae-my-listings__stat--awaiting { --st: 255, 110, 37; }
+.kmae-my-listings__stat--views { --st: 0, 169, 216; }
+.kmae-my-listings__stat-icon {
+	position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 52px; width: 52px; height: 52px;
+	border-radius: 16px; background: linear-gradient(140deg, rgba(var(--st), .62), rgb(var(--st)));
+	color: #fff; box-shadow: 0 8px 18px rgba(var(--st), .32), inset 0 1px 0 rgba(255,255,255,.45);
+}
+.kmae-my-listings__stat-icon svg { width: 24px; height: 24px; }
+.kmae-my-listings__stat--total .kmae-my-listings__stat-icon { background: linear-gradient(140deg,#3ec0ea,#0f88c0); }
+.kmae-my-listings__stat--active .kmae-my-listings__stat-icon { background: linear-gradient(140deg,#3ed6a5,#12a06e); }
+.kmae-my-listings__stat--awaiting .kmae-my-listings__stat-icon { background: linear-gradient(140deg,#ffc36b,#ff6e25); }
+.kmae-my-listings__stat--views .kmae-my-listings__stat-icon { background: linear-gradient(140deg,#00c7f7,#ffad41 70%,#ff6e25); }
+/* Élő pötty az aktív csempén */
+.kmae-my-listings__stat--active:not(.is-zero) .kmae-my-listings__stat-icon::after {
+	content: ""; position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border: 2px solid #fff; border-radius: 50%;
+	background: #20d38f; animation: kmae-ml-live 2s ease-in-out infinite;
+}
+@keyframes kmae-ml-live { 50% { box-shadow: 0 0 0 6px rgba(32,211,143,.2); } }
+.kmae-my-listings__stat-copy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kmae-my-listings__stat-label { color: var(--ml-muted); font-size: 12.5px; font-weight: 750; line-height: 1.25; }
+.kmae-my-listings__stat strong { color: var(--ml-ink); font-size: 30px; font-weight: 850; letter-spacing: -.03em; line-height: 1.1; }
+.kmae-my-listings__stat strong small { color: var(--ml-muted); font-size: 14px; font-weight: 750; letter-spacing: 0; }
+.kmae-my-listings__stat.is-zero strong { color: #a3afbb; }
+.kmae-my-listings__stat-note { color: #8794a2; font-size: 11px; font-weight: 600; line-height: 1.3; }
+
+@keyframes kmae-ml-rise { from { opacity: 0; transform: translateY(16px); } }
+
+/* ---------- Kártyarács ---------- */
+.kmae-my-listings__grid {
+	display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); justify-content: stretch; align-items: stretch; gap: 20px; width: 100%; margin-top: 22px;
+}
+/* ---------- Hirdetéskártya ----------
+   Állapotszín: --mlc (aktív zöld, befejezésre vár narancs, lezárt/archivált szürke). */
+.kmae-my-listing-card {
+	--mlc: 18, 179, 127;
+	position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0;
+	padding: 8px; border: 1px solid rgba(var(--mlc), .55); border-radius: 24px;
+	background:
+		radial-gradient(circle at 0% 0%, rgba(var(--mlc), .14), transparent 42%),
+		radial-gradient(circle at 100% 100%, rgba(255,110,37,.08), transparent 45%),
+		linear-gradient(150deg, rgba(240,252,255,.96), rgba(255,255,255,.9) 55%, rgba(255,248,242,.92));
+	box-shadow: 0 16px 36px rgba(38,68,90,.13), 0 0 22px rgba(var(--mlc), .12), inset 0 1px 0 #fff;
+	animation: kmae-ml-rise .6s cubic-bezier(.2,.8,.3,1) both; animation-delay: calc(.3s + var(--i, 0) * .08s);
+	transition: box-shadow .25s ease, border-color .25s ease;
+}
+.kmae-my-listing-card::before {
+	content: ""; position: absolute; z-index: 3; top: 0; left: 8%; width: 46%; height: 2px;
+	background: linear-gradient(90deg, transparent, rgb(var(--mlc)), transparent);
+	box-shadow: 0 0 14px rgba(var(--mlc), .9); transition: left .5s ease, width .5s ease;
+}
+.kmae-my-listing-card:hover::before { left: 20%; width: 60%; }
+.kmae-my-listing-card:hover {
+	border-color: rgba(var(--mlc), .85);
+	box-shadow: 0 24px 48px rgba(38,68,90,.18), 0 0 34px rgba(var(--mlc), .24), inset 0 1px 0 #fff;
+}
+.kmae-my-listing-card--awaiting { --mlc: 255, 110, 37; }
+/* Foglalt: elfogadott ajánlat (KMAE_Chat_Offers), a hirdetés még aktív */
+.kmae-my-listing-card--reserved { --mlc: 233, 94, 19; }
+.kmae-my-listing-card--closed, .kmae-my-listing-card--archived { --mlc: 120, 138, 156; }
+.kmae-my-listing-card--archived { opacity: .82; }
+.kmae-my-listing-card--archived .kmae-my-listing-card__media img { filter: saturate(.6); }
+
+/* Kép: a kártyán belül keretezve, alul sötétítés az ár olvashatóságáért */
+.kmae-my-listing-card__media {
+	position: relative; display: block; width: 100%; aspect-ratio: 16/10; overflow: hidden; border-radius: 18px;
+	background: linear-gradient(145deg,#dff7ff,#fff 56%,#fff0e5); line-height: 0; text-decoration: none;
+}
+.kmae-my-listing-card__media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.8,.3,1); }
+.kmae-my-listing-card:hover .kmae-my-listing-card__media img { transform: scale(1.06); }
+/* Üvegcsillanás: rámutatáskor átsuhan a fotón */
+.kmae-my-listing-card__sheen {
+	position: absolute; z-index: 1; top: 0; left: -70%; width: 45%; height: 100%; pointer-events: none;
+	background: linear-gradient(100deg, transparent, rgba(255,255,255,.38), transparent); transform: skewX(-16deg);
+	transition: left .8s ease;
+}
+.kmae-my-listing-card:hover .kmae-my-listing-card__sheen { left: 130%; }
+/* Fotó nélkül: a lekapart autó háttérképe (mint korábban) */
+.kmae-my-listing-card--no-photo .kmae-my-listing-card__media {
+	background: linear-gradient(rgba(225,248,255,.62), rgba(255,239,226,.54)),
+		url("https://albira.hu/wp-content/uploads/2026/08/albira-letakart-auto-kartya.webp") center/cover no-repeat;
+}
+.kmae-my-listing-card__no-photo {
+	position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+	color: var(--ml-blue-deep); font-size: 13px; font-weight: 750; line-height: 1.2;
+}
+.kmae-my-listing-card__no-photo svg {
+	box-sizing: content-box; padding: 12px; border: 1px solid rgba(0,199,247,.6); border-radius: 50%;
+	background: rgba(255,255,255,.82); box-shadow: 0 0 22px rgba(0,199,247,.3); animation: kmae-ml-bob 3s ease-in-out infinite;
+}
+.kmae-my-listing-card__shade {
+	position: absolute; inset: auto 0 0; height: 55%; pointer-events: none;
+	background: linear-gradient(to top, rgba(10,22,36,.72), rgba(10,22,36,.25) 55%, transparent);
+}
+.kmae-my-listing-card__status {
+	position: absolute; z-index: 2; top: 12px; right: 12px; display: inline-flex; align-items: center; gap: 7px;
+	height: 30px; padding: 0 12px; border-radius: 999px;
+	background: rgba(255,255,255,.92); box-shadow: 0 6px 16px rgba(10,22,36,.22), 0 0 0 1px rgba(var(--mlc), .25);
+	-webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+	color: rgb(var(--mlc)); font-size: 12.5px; font-weight: 850; line-height: 1; white-space: nowrap;
+}
+.kmae-my-listing-card__status::before {
+	content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor;
+}
+.kmae-my-listing-card--active .kmae-my-listing-card__status::before,
+.kmae-my-listing-card--awaiting .kmae-my-listing-card__status::before { animation: kmae-ml-pulse 2s ease-in-out infinite; }
+@keyframes kmae-ml-pulse { 50% { box-shadow: 0 0 0 5px rgba(var(--mlc), .18), 0 0 10px currentColor; } }
+.kmae-my-listing-card__logo {
+	position: absolute; z-index: 2; top: 10px; left: 10px; display: inline-flex; align-items: center; justify-content: center;
+	width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.95); box-shadow: 0 6px 16px rgba(10,22,36,.22);
+}
+.kmae-my-listing-card__logo img { width: 28px; height: 28px; object-fit: contain; }
+.kmae-my-listing-card__price {
+	position: absolute; z-index: 2; left: 14px; bottom: 12px; display: grid; gap: 1px; color: #fff; line-height: 1.1;
+	text-shadow: 0 1px 8px rgba(0,0,0,.35);
+}
+.kmae-my-listing-card__price small { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+.kmae-my-listing-card__price strong { font-size: 22px; font-weight: 850; letter-spacing: -.02em; }
+.kmae-my-listing-card__price.is-open strong {
+	justify-self: start; margin-top: 3px; padding: 5px 11px; border-radius: 999px;
+	background: linear-gradient(110deg,#ffad41,#ff6e25); box-shadow: 0 6px 14px rgba(233,94,19,.4);
+	font-size: 13.5px; text-shadow: none;
+}
+.kmae-my-listing-card__count {
+	position: absolute; z-index: 2; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 5px;
+	height: 26px; padding: 0 9px; border-radius: 999px; background: rgba(255,255,255,.2);
+	-webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+	color: #fff; font-size: 12px; font-weight: 800; line-height: 1;
+}
+
+/* Szöveges rész */
+.kmae-my-listing-card__body { display: flex; flex: 1 1 auto; flex-direction: column; gap: 10px; min-width: 0; padding: 13px 6px 4px; }
+.kmae-my-listing-card__head { min-width: 0; }
+.kmae-my-listing-card__title {
+	margin: 0; overflow: hidden; color: #0d1b2e; font-family: "Outfit","Space Grotesk",system-ui,sans-serif;
+	font-size: 20px; font-weight: 850; letter-spacing: -.025em; line-height: 1.15; white-space: nowrap; text-overflow: ellipsis;
+}
+.kmae-my-listing-card__title a { color: inherit; text-decoration: none; transition: color .18s ease; }
+.kmae-my-listing-card__title a:hover, .kmae-my-listing-card__title a:focus-visible { color: var(--ml-blue-deep); outline: none; }
+.kmae-my-listing-card__sub {
+	display: flex; align-items: center; gap: 8px; margin: 6px 0 0; overflow: hidden;
+	color: var(--ml-blue); font-size: 12.5px; font-weight: 800; white-space: nowrap;
+}
+.kmae-my-listing-card__sub > span { flex: 0 0 auto; }
+.kmae-my-listing-card__loc { display: inline-flex; flex: 1 1 auto !important; align-items: center; gap: 4px; min-width: 0; overflow: hidden; color: var(--ml-muted); font-weight: 650; text-overflow: ellipsis; }
+/* Motor (lóerő, köbcenti) és hely ikonos pirulák a kártya alcímében */
+.kmae-my-listing-card__chip {
+	display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; height: 24px; padding: 0 9px;
+	border: 1px solid rgba(0,199,247,.3); border-radius: 999px; background: linear-gradient(145deg,#effbff,#d6f4ff);
+	color: var(--ml-blue-deep); font-size: 12px; font-weight: 800; white-space: nowrap;
+}
+.kmae-my-listing-card__chip svg { flex: 0 0 auto; width: 13px; height: 13px; }
+.kmae-my-listing-card__chip:not(.kmae-my-listing-card__loc) svg { fill: currentColor; }
+.kmae-my-listing-card__chip.kmae-my-listing-card__loc { border-color: rgba(120,138,156,.22); background: #f3f6f9; color: var(--ml-muted); }
+
+.kmae-my-listing-card__specs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+.kmae-my-listing-card__spec {
+	display: flex; align-items: center; gap: 7px; min-width: 0; height: 36px; padding: 0 9px 0 4px;
+	border: 1px solid rgba(0,169,216,.2); border-radius: 12px; background: rgba(255,255,255,.82); box-shadow: inset 0 1px 0 #fff;
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+.kmae-my-listing-card:hover .kmae-my-listing-card__spec { border-color: rgba(0,199,247,.38); box-shadow: 0 0 12px rgba(0,199,247,.1), inset 0 1px 0 #fff; }
+.kmae-my-listing-card__spec-icon {
+	display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; width: 28px; height: 28px;
+	border-radius: 9px; background: linear-gradient(145deg,#e6f9ff,#c9f0ff); color: var(--ml-blue-deep);
+}
+.kmae-my-listing-card__spec-icon svg { width: 15px; height: 15px; stroke: currentColor; }
+.kmae-my-listing-card__spec-text {
+	min-width: 0; overflow: hidden; color: #0d1b2e; font-size: 13px; font-weight: 800; line-height: 1; white-space: nowrap; text-overflow: ellipsis;
+}
+
+/* Aktív hirdetés: megtekintés + ajánlat mini-csempék */
+.kmae-my-listing-card__stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+.kmae-my-listing-card__stat {
+	--cs: 0, 143, 189;
+	display: flex; align-items: center; gap: 8px; min-width: 0; height: 38px; padding: 0 10px 0 5px;
+	border: 1px solid rgba(var(--cs), .22); border-radius: 12px;
+	background: linear-gradient(145deg, rgba(var(--cs), .1), rgba(255,255,255,.85));
+	color: var(--ml-copy); font-size: 12px; font-weight: 650; line-height: 1.1;
+}
+.kmae-my-listing-card__stat--offers { --cs: 255, 110, 37; }
+.kmae-my-listing-card__stat > i {
+	display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border-radius: 9px;
+	background: linear-gradient(140deg, rgba(var(--cs), .55), rgb(var(--cs))); color: #fff; box-shadow: 0 4px 10px rgba(var(--cs), .25);
+}
+.kmae-my-listing-card__stat > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.kmae-my-listing-card__stat strong { color: #0d1b2e; font-size: 15px; font-weight: 850; }
+
+.kmae-my-listing-card__notice {
+	display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border: 1px solid rgba(255,110,37,.32);
+	border-radius: 12px; background: linear-gradient(145deg,#fff3ea,#fffaf6); color: #7b4a31; font-size: 12.5px; font-weight: 600; line-height: 1.4;
+	box-shadow: 0 0 16px rgba(255,110,37,.08);
+}
+.kmae-my-listing-card__notice svg { flex: 0 0 auto; margin-top: 1px; color: var(--ml-orange); }
+.kmae-my-listing-card__notice strong { color: var(--ml-orange-deep); font-weight: 850; }
+
+/* Gombok */
+.kmae-my-listing-card__actions { display: flex; flex-direction: column; gap: 7px; margin-top: auto; }
+.kmae-my-listing-card__actions form { margin: 0; }
+.kmae-my-listing-card__subactions { display: flex; gap: 8px; }
+.kmae-my-listing-card__subactions > .kmae-my-listing-card__button,
+.kmae-my-listing-card__subactions > .kmae-my-listing-card__delete-form { flex: 1 1 0; min-width: 0; }
+.kmae-my-listing-card__subactions .kmae-my-listing-card__delete-form { display: flex; margin: 0; }
+.kmae-my-listing-card__button {
+	display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 36px; padding: 0 10px;
+	border: 1px solid transparent; border-radius: 13px; font-family: "Outfit",system-ui,sans-serif; font-size: 14px; font-weight: 800;
+	line-height: 1; text-decoration: none; cursor: pointer;
+	transition: transform .17s ease, box-shadow .17s ease, background-color .17s ease, border-color .17s ease, color .17s ease, filter .17s ease;
+}
+.kmae-my-listing-card__button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kmae-my-listing-card__button svg { flex: 0 0 auto; }
+.kmae-my-listing-card__button--primary {
+	min-height: 44px; border-color: rgba(255,179,102,.9);
+	background: linear-gradient(110deg,#ffad41,#ff6e25); box-shadow: 0 10px 22px rgba(233,94,19,.28), inset 0 1px 0 rgba(255,255,255,.4);
+	color: #fff; font-size: 15px;
+}
+.kmae-my-listing-card__button--primary span { flex: 1 1 auto; text-align: left; }
+.kmae-my-listing-card__button--primary svg:last-child { transition: transform .2s ease; }
+.kmae-my-listing-card__button--primary:hover svg:last-child { transform: translateX(3px); }
+.kmae-my-listing-card__button--primary:hover, .kmae-my-listing-card__button--primary:focus-visible {
+	color: #fff; filter: brightness(1.07); transform: translateY(-1px); outline: none;
+}
+.kmae-my-listing-card__button--secondary { border-color: rgba(0,169,216,.45); background: rgba(255,255,255,.85); color: var(--ml-blue-deep); }
+.kmae-my-listing-card__button--secondary:hover, .kmae-my-listing-card__button--secondary:focus-visible {
+	border-color: #00c7f7; background: #eafaff; box-shadow: 0 0 16px rgba(0,199,247,.2); outline: none;
+}
+.kmae-my-listing-card__button--danger { border-color: rgba(214,58,58,.35); background: rgba(255,255,255,.85); color: #c93636; }
+.kmae-my-listing-card__button--danger:hover, .kmae-my-listing-card__button--danger:focus-visible {
+	border-color: #d63a3a; background: #fff0ef; box-shadow: 0 0 16px rgba(214,58,58,.16); outline: none;
+}
+
+/* „Új hirdetés” kártya a rács végén */
+.kmae-my-listing-new {
+	position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+	min-height: 320px; padding: 28px; overflow: hidden;
+	border: 2px dashed rgba(0,199,247,.5); border-radius: 24px; text-align: center; text-decoration: none;
+	background:
+		radial-gradient(circle at 50% 38%, rgba(0,199,247,.16), transparent 55%),
+		linear-gradient(150deg, rgba(240,252,255,.7), rgba(255,248,242,.7));
+	color: var(--ml-copy);
+	animation: kmae-ml-rise .6s cubic-bezier(.2,.8,.3,1) both; animation-delay: calc(.3s + var(--i, 0) * .08s);
+	transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+}
+.kmae-my-listing-new:hover, .kmae-my-listing-new:focus-visible {
+	border-color: rgba(255,110,37,.7); outline: none;
+	box-shadow: 0 18px 40px rgba(38,68,90,.12), 0 0 30px rgba(255,110,37,.16);
+}
+.kmae-my-listing-new__icon {
+	display: grid; place-items: center; width: 72px; height: 72px; margin-bottom: 6px; border-radius: 50%;
+	background: linear-gradient(145deg,#82edff,#00a9d8); color: #fff;
+	box-shadow: 0 12px 26px rgba(0,143,189,.3), 0 0 0 8px rgba(0,199,247,.1), inset 0 1px 0 rgba(255,255,255,.6);
+	transition: transform .35s cubic-bezier(.2,.9,.3,1.3), background .25s ease, box-shadow .25s ease;
+}
+.kmae-my-listing-new:hover .kmae-my-listing-new__icon {
+	transform: rotate(90deg) scale(1.06); background: linear-gradient(145deg,#ffc36b,#ff6e25);
+	box-shadow: 0 12px 26px rgba(233,94,19,.3), 0 0 0 10px rgba(255,110,37,.12), inset 0 1px 0 rgba(255,255,255,.6);
+}
+.kmae-my-listing-new strong { color: var(--ml-ink); font-size: 20px; font-weight: 850; letter-spacing: -.02em; }
+.kmae-my-listing-new > span:last-child { max-width: 220px; color: var(--ml-muted); font-size: 13.5px; font-weight: 600; line-height: 1.45; }
+
+/* ---------- Üres állapot: még nincs hirdetés ---------- */
+.kmae-my-listings__empty {
+	position: relative; display: grid; grid-template-columns: 330px minmax(0,1fr); align-items: center; gap: 36px;
+	margin-top: 22px; padding: 40px 48px 40px 28px; overflow: hidden;
+	border: 1px solid rgba(255,110,37,.5); border-radius: 26px;
+	background:
+		radial-gradient(circle at 18% 50%, rgba(0,199,247,.22), transparent 40%),
+		radial-gradient(circle at 100% 0%, rgba(255,110,37,.18), transparent 42%),
+		linear-gradient(135deg, rgba(238,251,255,.95), rgba(255,246,239,.93));
+	box-shadow: 0 18px 48px rgba(38,68,90,.16), 0 0 28px rgba(255,110,37,.1), inset 0 1px 0 #fff;
+	-webkit-backdrop-filter: blur(16px) saturate(130%); backdrop-filter: blur(16px) saturate(130%);
+	animation: kmae-ml-rise .65s cubic-bezier(.2,.8,.3,1) .12s both;
+}
+.kmae-my-listings__empty::before {
+	content: ""; position: absolute; top: 0; left: 40%; width: 50%; height: 2px;
+	background: linear-gradient(90deg, transparent, #ff6e25, transparent); box-shadow: 0 0 16px rgba(255,110,37,.9);
+}
+.kmae-my-listings__empty-visual { position: relative; display: grid; place-items: center; height: 300px; }
+.kmae-my-listings__empty-halo {
+	position: absolute; width: 250px; height: 250px; border-radius: 50%;
+	background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(130,237,255,.45) 45%, transparent 70%);
+	box-shadow: 0 0 0 1px rgba(0,199,247,.25), 0 0 0 22px rgba(0,199,247,.06), 0 0 0 46px rgba(0,199,247,.035);
+	animation: kmae-ml-halo 5s ease-in-out infinite;
+}
+@keyframes kmae-ml-halo { 50% { transform: scale(1.05); } }
+.kmae-my-listings__empty-mascot {
+	position: relative; z-index: 1; width: 210px; height: auto;
+	filter: drop-shadow(0 18px 24px rgba(14,28,44,.22)); animation: kmae-ml-wave 4s ease-in-out infinite;
+	transform-origin: 50% 100%;
+}
+@keyframes kmae-ml-wave { 0%, 100% { transform: translateY(0) rotate(0); } 30% { transform: translateY(-8px) rotate(-2deg); } 60% { transform: translateY(-3px) rotate(1.5deg); } }
+.kmae-my-listings__empty-spark {
+	position: absolute; z-index: 2; display: grid; place-items: center; border-radius: 50%;
+	background: rgba(255,255,255,.88); box-shadow: 0 8px 18px rgba(38,68,90,.14), inset 0 1px 0 #fff;
+	animation: kmae-ml-float 6s ease-in-out infinite;
+}
+.kmae-my-listings__empty-spark--a { top: 22px; right: 26px; width: 46px; height: 46px; color: #ff6e25; border: 1px solid rgba(255,110,37,.5); }
+.kmae-my-listings__empty-spark--b { top: 70px; left: 18px; width: 34px; height: 34px; color: #00a9d8; border: 1px solid rgba(0,199,247,.5); animation-delay: -2s; }
+.kmae-my-listings__empty-spark--c { bottom: 28px; right: 18px; width: 44px; height: 44px; color: #008fbd; border: 1px solid rgba(0,199,247,.5); animation-delay: -4s; }
+
+.kmae-my-listings__empty-copy { position: relative; z-index: 1; min-width: 0; }
+.kmae-my-listings__empty-eyebrow {
+	display: inline-flex; margin: 0 0 12px; padding: 6px 12px; border: 1px solid rgba(255,110,37,.45); border-radius: 999px;
+	background: rgba(255,255,255,.75); color: var(--ml-orange-deep); font-size: 11px; font-weight: 800; letter-spacing: .17em; text-transform: uppercase;
+	box-shadow: 0 0 18px rgba(255,110,37,.14), inset 0 1px 0 #fff;
+}
+.kmae-my-listings__empty-title {
+	margin: 0; color: var(--ml-ink); font-size: 32px; font-weight: 850; letter-spacing: -.04em; line-height: 1.12;
+}
+.kmae-my-listings__empty-title span {
+	background: linear-gradient(90deg,#008fbd,#00c7f7,#e99525,#ff6e25); background-size: 200% 100%;
+	-webkit-background-clip: text; background-clip: text; color: transparent; animation: kmae-ml-shine 6s ease-in-out infinite alternate;
+}
+.kmae-my-listings__empty-lead { margin: 12px 0 0; max-width: 560px; color: var(--ml-copy); font-size: 15.5px; font-weight: 500; line-height: 1.55; }
+.kmae-my-listings__empty-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 24px 0 0; padding: 0; list-style: none; counter-reset: kmae-ml-step; }
+.kmae-my-listings__empty-steps li {
+	position: relative; display: flex; align-items: flex-start; gap: 11px; padding: 14px 14px 14px 12px; counter-increment: kmae-ml-step;
+	border: 1px solid rgba(0,199,247,.32); border-radius: 16px; background: rgba(255,255,255,.78);
+	box-shadow: 0 8px 20px rgba(38,68,90,.08), inset 0 1px 0 #fff;
+	animation: kmae-ml-rise .55s cubic-bezier(.2,.8,.3,1) both; animation-delay: calc(.45s + var(--i, 0) * .12s);
+	transition: border-color .2s ease, box-shadow .2s ease;
+}
+.kmae-my-listings__empty-steps li:hover { border-color: rgba(0,199,247,.7); box-shadow: 0 12px 26px rgba(38,68,90,.1), 0 0 20px rgba(0,199,247,.18), inset 0 1px 0 #fff; }
+.kmae-my-listings__empty-steps li::after {
+	content: counter(kmae-ml-step); position: absolute; top: -9px; right: 12px; display: grid; place-items: center;
+	width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(110deg,#ffad41,#ff6e25);
+	color: #fff; font-size: 11.5px; font-weight: 850; box-shadow: 0 4px 10px rgba(233,94,19,.3);
+}
+.kmae-my-listings__empty-step-icon {
+	display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 12px;
+	background: linear-gradient(140deg,#3ec0ea,#0f88c0); color: #fff; box-shadow: 0 6px 14px rgba(0,125,167,.26);
+}
+.kmae-my-listings__empty-steps li > span:last-child { display: grid; gap: 3px; min-width: 0; }
+.kmae-my-listings__empty-steps strong { color: var(--ml-ink); font-size: 14.5px; font-weight: 850; line-height: 1.2; }
+.kmae-my-listings__empty-steps small { color: var(--ml-muted); font-size: 12.5px; font-weight: 600; line-height: 1.4; }
+.kmae-my-listings__empty-cta {
+	position: relative; display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; min-height: 56px; padding: 0 22px;
+	overflow: hidden; border-radius: 999px; background: linear-gradient(110deg,#ffad41,#ff6e25);
+	box-shadow: 0 12px 28px rgba(233,94,19,.34), inset 0 1px 0 rgba(255,255,255,.35);
+	color: #fff; font-size: 16px; font-weight: 800; text-decoration: none; transition: transform .18s ease, box-shadow .18s ease;
+	animation: kmae-ml-rise .55s cubic-bezier(.2,.8,.3,1) .85s both;
+}
+.kmae-my-listings__empty-cta::after {
+	content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; pointer-events: none;
+	background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform: skewX(-18deg);
+	animation: kmae-ml-sweep 4s ease-in-out infinite;
+}
+.kmae-my-listings__empty-cta svg:last-child { transition: transform .2s ease; }
+.kmae-my-listings__empty-cta:hover, .kmae-my-listings__empty-cta:focus-visible {
+	color: #fff; outline: none; transform: translateY(-2px); box-shadow: 0 16px 34px rgba(233,94,19,.42), 0 0 0 5px rgba(255,110,37,.14);
+}
+.kmae-my-listings__empty-cta:hover svg:last-child { transform: translateX(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+	.kmae-my-listings *, .kmae-my-listings *::before, .kmae-my-listings *::after { animation: none !important; transition-duration: .01s !important; }
+}
+
+/* Félbehagyott hirdetés: a Szerkesztés gomb fölött kinyíló két lekerekített
+   gomb. A JS a gomb közepére teszi (fix pozíció), innen repülnek ki. */
+.kmae-draft-radial { position: fixed; z-index: 1500; width: 0; height: 0; pointer-events: none; }
+.kmae-draft-radial[hidden] { display: none; }
+.kmae-draft-radial__item {
+	--x: 0px; --y: 0px; --s: .4;
+	position: absolute; left: -84px; top: -31px; display: flex; align-items: center; justify-content: center; gap: 10px;
+	width: 168px; height: 62px; padding: 0 14px; box-sizing: border-box;
+	border: 1px solid rgba(0,199,247,.85); border-radius: 16px;
+	background: linear-gradient(110deg,#007fb8,#00c7f7);
+	box-shadow: 0 12px 28px rgba(0,125,167,.26), 0 0 22px rgba(0,199,247,.3), inset 0 1px 0 rgba(255,255,255,.35);
+	color: #fff; font-family: "Outfit",system-ui,sans-serif; text-align: left; text-decoration: none;
+	opacity: 0; pointer-events: none; transform: translate(var(--x), var(--y)) scale(var(--s));
+	transition: transform .32s cubic-bezier(.2,.9,.3,1.2), opacity .2s ease, box-shadow .18s ease, filter .18s ease;
+}
+.kmae-draft-radial__item--wizard {
+	border-color: rgba(255,110,37,.85); background: linear-gradient(110deg,#ffad41,#ff6e25);
+	box-shadow: 0 12px 28px rgba(216,82,16,.26), 0 0 22px rgba(255,110,37,.32), inset 0 1px 0 rgba(255,255,255,.35);
+	transition-delay: .04s;
+}
+.kmae-draft-radial.is-open .kmae-draft-radial__item { --s: 1; opacity: 1; pointer-events: auto; }
+.kmae-draft-radial.is-open .kmae-draft-radial__item--simple { --x: -96px; --y: -52px; }
+.kmae-draft-radial.is-open .kmae-draft-radial__item--wizard { --x: 96px; --y: -52px; }
+.kmae-draft-radial.is-open .kmae-draft-radial__item--simple:hover,
+.kmae-draft-radial.is-open .kmae-draft-radial__item--simple:focus-visible,
+.kmae-draft-radial.is-open .kmae-draft-radial__item--wizard:hover,
+.kmae-draft-radial.is-open .kmae-draft-radial__item--wizard:focus-visible { --y: -56px; filter: brightness(1.08); outline: none; transition-delay: 0s; }
+.kmae-draft-radial__item--simple:hover, .kmae-draft-radial__item--simple:focus-visible { box-shadow: 0 14px 32px rgba(0,125,167,.3), 0 0 30px rgba(0,199,247,.45), inset 0 1px 0 rgba(255,255,255,.35); }
+.kmae-draft-radial__item--wizard:hover, .kmae-draft-radial__item--wizard:focus-visible { box-shadow: 0 14px 32px rgba(216,82,16,.3), 0 0 30px rgba(255,110,37,.5), inset 0 1px 0 rgba(255,255,255,.35); }
+.kmae-draft-radial__icon {
+	display: flex; flex: 0 0 auto; align-items: center; justify-content: center; width: 34px; height: 34px;
+	border: 1px solid rgba(255,255,255,.45); border-radius: 10px; background: rgba(255,255,255,.2); line-height: 0;
+}
+.kmae-draft-radial__icon svg { display: block; width: 18px; height: 18px; stroke: currentColor; }
+.kmae-draft-radial__label { display: block; font-size: 13px; font-weight: 800; line-height: 1.2; }
+.kmae-my-listing-card__button--primary.is-radial-open { box-shadow: 0 0 0 3px rgba(255,110,37,.22), 0 9px 22px rgba(216,82,16,.34); }
+
+/* Törlés megerősítése — oldalon belüli ablak (my-listings.js). */
+body.kmae-delete-confirm-open { overflow: hidden; }
+.kmae-delete-confirm {
+	position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; overflow-y: auto;
+	padding: 84px 24px 24px; /* felül hely a kikukucskáló manónak */
+	font-family: "Outfit","Space Grotesk",system-ui,sans-serif;
+}
+.kmae-delete-confirm[hidden], .kmae-delete-confirm [hidden] { display: none !important; }
+.kmae-delete-confirm__backdrop {
+	position: absolute; inset: 0; background: rgba(14,28,44,.46);
+	-webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; transition: opacity .22s ease;
+}
+.kmae-delete-confirm.is-open .kmae-delete-confirm__backdrop { opacity: 1; }
+.kmae-delete-confirm__card {
+	position: relative; z-index: 1; box-sizing: border-box; width: min(470px,100%); padding: 92px 30px 26px;
+	border: 1px solid rgba(214,58,58,.42); border-radius: 26px; text-align: center; color: #202936;
+	background:
+		radial-gradient(circle at 50% 0%, rgba(255,110,90,.16), transparent 50%),
+		radial-gradient(circle at 100% 100%, rgba(0,199,247,.1), transparent 45%),
+		linear-gradient(160deg, rgba(255,247,245,.98), rgba(255,255,255,.97));
+	box-shadow: 0 30px 70px rgba(14,28,44,.32), 0 0 30px rgba(214,58,58,.12), inset 0 1px 0 #fff;
+	opacity: 0; transform: translateY(16px) scale(.96);
+	transition: opacity .24s ease, transform .3s cubic-bezier(.2,.9,.3,1.25);
+}
+.kmae-delete-confirm.is-open .kmae-delete-confirm__card { opacity: 1; transform: none; }
+.kmae-delete-confirm__card::before {
+	content: ""; position: absolute; top: 0; left: 25%; width: 50%; height: 2px;
+	background: linear-gradient(90deg, transparent, #e04545, transparent); box-shadow: 0 0 16px rgba(214,58,58,.75);
+}
+/* A szomorú manó a kártya tetejéből kukucskál ki */
+.kmae-delete-confirm__mascot {
+	position: absolute; top: -58px; left: 50%; width: 132px; height: auto; pointer-events: none;
+	filter: drop-shadow(0 14px 22px rgba(14,28,44,.25)); transform: translateX(-50%);
+	animation: kmae-dc-bob 3.4s ease-in-out infinite;
+}
+@keyframes kmae-dc-bob { 50% { transform: translate(-50%, -4px); } }
+.kmae-delete-confirm__eyebrow {
+	display: inline-flex; align-items: center; gap: 6px; margin: 0 0 8px; padding: 5px 11px; border-radius: 999px;
+	background: rgba(214,58,58,.1); color: #c93636; font-size: 11px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase;
+}
+.kmae-delete-confirm__title { margin: 0 0 16px; color: #202936; font-size: 25px; font-weight: 850; letter-spacing: -.03em; line-height: 1.2; }
+
+/* A törlendő hirdetés mini kártyája */
+.kmae-delete-confirm__item {
+	display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid rgba(0,169,216,.24); border-radius: 16px;
+	background: rgba(255,255,255,.88); box-shadow: 0 8px 20px rgba(38,68,90,.08), inset 0 1px 0 #fff; text-align: left;
+}
+.kmae-delete-confirm__thumb {
+	position: relative; display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center;
+	width: 76px; height: 56px; overflow: hidden; border-radius: 11px; background: linear-gradient(145deg,#dff7ff,#fff0e5); color: var(--ml-blue-deep, #00769e);
+}
+.kmae-delete-confirm__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.kmae-delete-confirm__thumb.has-photo svg { display: none; }
+.kmae-delete-confirm__item-text { display: grid; flex: 1 1 auto; gap: 2px; min-width: 0; }
+.kmae-delete-confirm__item-text strong { overflow: hidden; color: #0d1b2e; font-size: 15px; font-weight: 850; white-space: nowrap; text-overflow: ellipsis; }
+.kmae-delete-confirm__item-text small { color: #687686; font-size: 12.5px; font-weight: 650; }
+.kmae-delete-confirm__status {
+	flex: 0 0 auto; padding: 4px 9px; border-radius: 999px; background: #eef4fa; color: #465463; font-size: 11px; font-weight: 800;
+}
+
+/* Mi történik törléskor */
+.kmae-delete-confirm__list { display: grid; gap: 7px; margin: 14px 0 0; padding: 0; list-style: none; text-align: left; }
+.kmae-delete-confirm__list li { display: flex; align-items: flex-start; gap: 9px; color: #465463; font-size: 13.5px; font-weight: 600; line-height: 1.45; }
+.kmae-delete-confirm__list svg { flex: 0 0 auto; margin-top: 2px; color: #8a98a8; }
+.kmae-delete-confirm__list li.is-strong { margin-top: 2px; padding: 8px 11px; border-radius: 11px; background: rgba(214,58,58,.08); color: #b02a2a; font-weight: 800; }
+.kmae-delete-confirm__list li.is-strong svg { color: #d63a3a; }
+
+.kmae-delete-confirm__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+.kmae-delete-confirm__btn {
+	display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 16px;
+	border: 1px solid transparent; border-radius: 14px; font-family: inherit; font-size: 14.5px; font-weight: 850; line-height: 1; cursor: pointer;
+	transition: transform .16s ease, filter .16s ease, box-shadow .16s ease, border-color .16s ease, background-color .16s ease;
+}
+.kmae-delete-confirm__btn--cancel { border-color: rgba(0,169,216,.5); background: #fff; box-shadow: inset 0 1px 0 #fff; color: #00769e; }
+.kmae-delete-confirm__btn--cancel:hover, .kmae-delete-confirm__btn--cancel:focus-visible {
+	border-color: #00c7f7; background: #eafaff; box-shadow: 0 0 18px rgba(0,199,247,.22); outline: none;
+}
+.kmae-delete-confirm__btn--ok { background: linear-gradient(110deg,#f0705f,#d63a3a); box-shadow: 0 10px 24px rgba(214,58,58,.32); color: #fff; }
+.kmae-delete-confirm__btn--ok:hover, .kmae-delete-confirm__btn--ok:focus-visible { filter: brightness(1.06); transform: translateY(-1px); outline: none; }
+.kmae-delete-confirm__btn--ok.is-busy svg { animation: kmae-dc-shake .5s ease-in-out infinite; }
+@keyframes kmae-dc-shake { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+.kmae-delete-confirm__btn:disabled { cursor: progress; transform: none; }
+
+@media (max-width: 1100px) {
+	.kmae-my-listings__inner { width: calc(100% - 48px); }
+}
+@media (max-width: 980px) {
+	.kmae-my-listings__grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+	.kmae-my-listings__summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 680px) {
+	.kmae-my-listings__grid { grid-template-columns: minmax(0,1fr); }
+}
+
+/* Saját hirdetéseim, üres állapot: a manó, a fénykorong, a díszek és a címsor csillogása ne mozogjon. Csak ezen az oldalon (.kmae-my-listings__empty). */
+.kmae-my-listings__empty *,
+.kmae-my-listings__empty *::before,
+.kmae-my-listings__empty *::after,
+.kmae-my-listings__empty::before {
+	animation: none !important;
+	transition: none !important;
+}
+.kmae-my-listings__empty-mascot { transform: none; }
+
+/* Saját hirdetéseim, üres állapot — TELEFON: nincs manó-színpad, a tartalom egy oszlopban, a dobozon belül elrendezve. */
+@media (max-width: 1024px) {
+	.kmae-my-listings__empty { grid-template-columns: minmax(0,1fr); gap: 0; margin-top: 16px; padding: 26px 18px 22px; border-radius: 22px; }
+	.kmae-my-listings__empty-visual { display: none; }
+	.kmae-my-listings__empty-eyebrow { margin-bottom: 10px; }
+	.kmae-my-listings__empty-title { font-size: 25px; }
+	.kmae-my-listings__empty-lead { margin-top: 10px; font-size: 15px; }
+	.kmae-my-listings__empty-steps { grid-template-columns: minmax(0,1fr); gap: 10px; margin-top: 20px; }
+	.kmae-my-listings__empty-steps li { align-items: center; padding: 12px 14px; }
+	.kmae-my-listings__empty-cta { display: flex; justify-content: center; width: 100%; margin-top: 20px; padding: 0 18px; box-sizing: border-box; }
+}

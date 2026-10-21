@@ -1,0 +1,2003 @@
+/* =====================================================================
+   Albira — Beszélgetés (chat) oldal.
+   Egyetlen forrás: a korábbi rétegek (public.css) törölve.
+   Csak megnyitott beszélgetésnél töltődik be (functions.php).
+
+   FIX SZÍNSZABÁLY: vevő = KÉK, eladó = NARANCS. Mindenhol: buborék,
+   küldés gombok (a néző szerepe).
+   Vevő buborékja balra, eladóé jobbra — nem a „saját” üzenet szerint.
+   ===================================================================== */
+
+body.kmae-offer-thread-active {
+	--ot-blue: #1c69d5;
+	--ot-blue-2: #3a8ff0;
+	--ot-blue-soft: #eaf3fe;
+	--ot-blue-line: #bcd8f6;
+	--ot-orange: #f1640a;
+	--ot-orange-2: #ff9a3c;
+	--ot-orange-soft: #fff2e8;
+	--ot-orange-line: #ffcfaa;
+	--ot-green: #12936d;
+	--ot-green-2: #22c08f;
+	--ot-green-soft: #e9f9f2;
+	--ot-red: #d4333a;
+	--ot-red-soft: #fdeeee;
+	--ot-amber: #b26a00;
+	--ot-amber-soft: #fff6e2;
+	--ot-ink: #123252;
+	--ot-text: #2a3f55;
+	--ot-muted: #64758a;
+	--ot-faint: #8aa0b6;
+	--ot-line: #e3ecf5;
+	--ot-soft: #f6f9fc;
+	--ot-card: #ffffff;
+	--ot-radius: 20px;
+	--ot-shadow: 0 14px 34px rgba(22, 63, 122, 0.08);
+	--ot-sticky-top: 92px;
+	/* Csevegőablak magassága; a szélesség ebből lesz 16:9 */
+	--ot-chat-h: clamp(600px, calc(100dvh - 140px), 980px);
+}
+
+/* ---------- 1. Oldalkeret ---------- */
+body.kmae-offer-thread-active .kmae-page {
+	/* Fejléc alatt csak 18px legyen a csevegő felső széléig. Belépve a
+	   fejléc a folyamban áll (simple-mode/header.css: position: relative),
+	   ezért a magassága nem kerül ide, csak a hézag. */
+	padding-top: 18px;
+}
+
+body.kmae-offer-thread-active .kmae-page__title {
+	display: none;
+}
+
+/* A téma belépve 1120px-es, középre igazított hasábba fogja a tartalmat
+   (pc-dashboard.css) — a chat a teljes szélességet kapja, balra zárva. */
+body.kmae-app.kmae-offer-thread-active .kmae-app-layout.is-panels-closed .kmae-main {
+	width: 100%;
+	max-width: none;
+	margin-left: 0;
+	margin-right: 0;
+	align-self: stretch;
+}
+
+body.kmae-offer-thread-active .kmae-page__content {
+	max-width: none;
+}
+
+body.kmae-offer-thread-active .kmae-page-content,
+body.kmae-offer-thread-active .kmae-page__content {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+body.kmae-offer-thread-active .kmae-page > .kmae-container {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
+	padding-right: 24px;
+	padding-left: 24px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+body.kmae-offer-thread-active .kmae-conversation-thread {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
+	margin: 0 auto 32px;
+	color: var(--ot-text);
+}
+
+body.kmae-offer-thread-active .kmae-conversation-thread *,
+body.kmae-offer-thread-active .kmae-conversation-thread *::before,
+body.kmae-offer-thread-active .kmae-conversation-thread *::after {
+	box-sizing: border-box;
+}
+
+/* ---------- 2. Elrendezés: egy nagy üvegpanel ----------
+   Felül a fejléc (teljes szélesség), alatta balra a csevegő, jobbra az autó kártyája. */
+body.kmae-offer-thread-active .kmae-conversation-layout {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 310px;
+	grid-template-rows: auto minmax(0, 1fr);
+	gap: 14px;
+	width: 100%;
+	max-width: 1560px;
+	height: var(--ot-chat-h);
+	margin: 0 auto;
+	padding: 14px;
+	border: 1px solid rgba(0, 199, 247, 0.45);
+	border-radius: 28px;
+	background:
+		radial-gradient(circle at 4% 0%, rgba(0, 199, 247, 0.16), transparent 40%),
+		radial-gradient(circle at 98% 100%, rgba(255, 110, 37, 0.1), transparent 42%),
+		linear-gradient(135deg, rgba(238, 251, 255, 0.94), rgba(255, 255, 255, 0.86));
+	box-shadow:
+		0 18px 48px rgba(38, 68, 90, 0.16),
+		0 0 28px rgba(0, 199, 247, 0.1),
+		inset 0 1px 0 #fff;
+	backdrop-filter: blur(16px) saturate(130%);
+	-webkit-backdrop-filter: blur(16px) saturate(130%);
+}
+
+/* ---------- 3. Fejléc ---------- */
+body.kmae-offer-thread-active .kmae-chat-top {
+	display: flex;
+	grid-column: 1 / -1;
+	align-items: center;
+	gap: 16px;
+	min-width: 0;
+	padding: 10px 14px;
+	border: 1px solid rgba(0, 199, 247, 0.22);
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.72);
+	box-shadow: 0 6px 18px rgba(38, 68, 90, 0.06), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__back {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 18px 8px 4px;
+	border-right: 1px solid rgba(0, 143, 189, 0.18);
+	color: #1c69d5;
+	font-size: 14.5px;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__back:hover {
+	color: #008fbd;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__photo {
+	flex: none;
+	width: 52px;
+	height: 52px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	object-fit: cover;
+	box-shadow: 0 4px 12px rgba(38, 68, 90, 0.18);
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__copy {
+	display: grid;
+	gap: 3px;
+	min-width: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__title {
+	margin: 0;
+	overflow: hidden;
+	color: #202936;
+	font-size: 18px;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__title a:hover {
+	color: #008fbd;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	color: #465463;
+	font-size: 12.5px;
+	font-weight: 600;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__meta strong {
+	color: #34404d;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__sep {
+	color: #c3d0dd;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__tools {
+	display: flex;
+	flex: none;
+	gap: 10px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__tool {
+	display: grid;
+	width: 44px;
+	height: 44px;
+	place-items: center;
+	border: 1px solid rgba(0, 143, 189, 0.2);
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 6px 14px rgba(38, 68, 90, 0.1), inset 0 1px 0 #fff;
+	color: #1c69d5;
+	transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-top__tool:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 18px rgba(0, 199, 247, 0.22);
+}
+
+/* Állapotjelző (zöld pötty + felirat) */
+body.kmae-offer-thread-active .kmae-chat-listing-status {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+	padding: 6px 12px;
+	border-radius: 999px;
+	color: #34404d;
+	font-size: 12.5px;
+	font-weight: 700;
+}
+
+body.kmae-offer-thread-active .kmae-chat-listing-status__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--ot-green-2);
+	box-shadow: 0 0 0 3px rgba(34, 192, 143, 0.2);
+	animation: ot-pulse 2s ease-in-out infinite;
+}
+
+body.kmae-offer-thread-active .kmae-chat-listing-status.is-closed .kmae-chat-listing-status__dot {
+	background: var(--ot-faint);
+	box-shadow: none;
+	animation: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-listing-status.is-listing-deleted {
+	color: var(--ot-red);
+}
+
+body.kmae-offer-thread-active .kmae-chat-listing-status.is-listing-deleted .kmae-chat-listing-status__dot {
+	background: var(--ot-red);
+	box-shadow: none;
+	animation: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-listing-status.is-reserved {
+	color: #e95e13;
+}
+
+body.kmae-offer-thread-active .kmae-chat-listing-status.is-reserved .kmae-chat-listing-status__dot {
+	background: #e95e13;
+	box-shadow: 0 0 0 3px rgba(233, 94, 19, 0.2);
+	animation: none;
+}
+
+@keyframes ot-pulse {
+	50% { box-shadow: 0 0 0 6px rgba(34, 192, 143, 0.08); }
+}
+
+/* ---------- 4. Csevegő (bal) ---------- */
+body.kmae-offer-thread-active .kmae-chat-shell {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
+	border: 1px solid rgba(0, 199, 247, 0.22);
+	border-radius: 22px;
+	background: rgba(255, 255, 255, 0.5);
+	box-shadow: inset 0 1px 0 #fff;
+}
+
+/* Értesítő sávok a csevegő tetején */
+body.kmae-offer-thread-active .kmae-chat-notices {
+	display: grid;
+	flex: none;
+	gap: 8px;
+	padding: 12px 16px 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-flash {
+	margin: 0;
+	padding: 9px 14px;
+	border-radius: 12px;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+body.kmae-offer-thread-active .kmae-chat-flash--success {
+	border: 1px solid #c9eedd;
+	background: var(--ot-green-soft);
+	color: #0f6e50;
+}
+
+body.kmae-offer-thread-active .kmae-chat-flash--error {
+	border: 1px solid #f3c2c4;
+	background: var(--ot-red-soft);
+	color: #b4232a;
+}
+
+body.kmae-offer-thread-active .kmae-chat-flash--blocked {
+	border: 1px solid rgba(70, 84, 99, 0.2);
+	background: rgba(255, 255, 255, 0.8);
+	color: #465463;
+}
+
+body.kmae-offer-thread-active .kmae-chat-thread {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 14px;
+	min-height: 0;
+	padding: 20px 22px 14px;
+	overflow-y: auto;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
+}
+
+body.kmae-offer-thread-active .kmae-conversation-timeline__empty {
+	margin: auto;
+	padding: 12px 18px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.85);
+	color: #465463;
+	font-size: 13.5px;
+	text-align: center;
+}
+
+/* Nap elválasztó: vonal – felirat – vonal */
+body.kmae-offer-thread-active .kmae-chat-date-sep {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin: 4px 12%;
+	color: #6b7a8a;
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+body.kmae-offer-thread-active .kmae-chat-date-sep::before,
+body.kmae-offer-thread-active .kmae-chat-date-sep::after {
+	content: "";
+	flex: 1 1 auto;
+	height: 1px;
+	background: rgba(0, 143, 189, 0.16);
+}
+
+/* Üzenet: vevő balra (kék avatar, fehér buborék), eladó jobbra (narancs) */
+body.kmae-offer-thread-active .kmae-chat-msg {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	max-width: min(72%, 560px);
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--buyer {
+	align-self: flex-start;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--seller {
+	align-self: flex-end;
+}
+
+body.kmae-offer-thread-active .kmae-chat-avatar {
+	display: grid;
+	flex: none;
+	width: 36px;
+	height: 36px;
+	place-items: center;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: linear-gradient(145deg, #8fcbff, #3a8ff0);
+	box-shadow: 0 4px 10px rgba(28, 105, 213, 0.22);
+	color: #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg__body {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--buyer .kmae-chat-msg__body {
+	align-items: flex-start;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--seller .kmae-chat-msg__body {
+	align-items: flex-end;
+}
+
+body.kmae-offer-thread-active .kmae-chat-bubble {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 11px 15px 8px;
+	border-radius: 16px;
+	font-size: 13.5px;
+	font-weight: 600;
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--buyer .kmae-chat-bubble {
+	border: 1px solid rgba(28, 105, 213, 0.1);
+	border-top-left-radius: 6px;
+	background: rgba(255, 255, 255, 0.96);
+	box-shadow: 0 6px 18px rgba(38, 68, 90, 0.08);
+	color: #202936;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--seller .kmae-chat-bubble {
+	border-bottom-right-radius: 6px;
+	background: linear-gradient(135deg, #ffa043, #ff6e25);
+	box-shadow: 0 10px 22px rgba(255, 110, 37, 0.26);
+	color: #fff;
+}
+
+/* Idő + olvasási pipa a buborék alján */
+body.kmae-offer-thread-active .kmae-chat-msg__foot {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+/* Az időt halványítjuk, nem az egész láblécet: a pipa színe így tisztán látszik. */
+body.kmae-offer-thread-active .kmae-chat-msg__foot .kmae-chat-time {
+	opacity: 0.75;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--seller .kmae-chat-msg__foot {
+	justify-content: flex-end;
+}
+
+/* Pipák: a fehér korong azért kell, hogy a kék pipa a narancs buborékon is látszódjon. */
+body.kmae-offer-thread-active .kmae-chat-read {
+	display: inline-flex;
+	padding: 2px;
+	border-radius: 50%;
+	background: #fff;
+	color: #8a94a6;
+}
+
+/* Két kék pipa: a másik fél elolvasta. */
+body.kmae-offer-thread-active .kmae-chat-read.is-read {
+	color: #1c69d5;
+}
+
+body.kmae-offer-thread-active .kmae-chat-image {
+	display: block;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 12px;
+	background: none;
+	cursor: zoom-in;
+}
+
+body.kmae-offer-thread-active .kmae-chat-image img {
+	display: block;
+	max-width: 260px;
+	max-height: 260px;
+	border-radius: 12px;
+	object-fit: cover;
+}
+
+body.kmae-offer-thread-active .kmae-chat-image__note,
+body.kmae-offer-thread-active .kmae-chat-image__gone {
+	margin: 0;
+	font-size: 11.5px;
+	opacity: 0.85;
+}
+
+body.kmae-offer-thread-active .kmae-chat-file {
+	color: inherit;
+	font-weight: 800;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* ---------- Jobb oszlop: autó kártya + műveletek ---------- */
+body.kmae-offer-thread-active .kmae-chat-side {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+	min-height: 0;
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+/* Elfogadott ajánlat után: az egész balra zárva, a csevegő a maradék szélesség, a jobb oszlopban
+   az autó-kártya mellé (jobbra) kerül az adatos doboz. Mindkét félnek ugyanígy. */
+body.kmae-offer-thread-active .kmae-conversation-layout:has(> .kmae-chat-side > .kmae-chat-deal) {
+	/* A csevegő legalább 440px: a beviteli sor (csatolás, emoji, Küldés) ne essen ki */
+	grid-template-columns: minmax(440px, 1fr) 634px;
+	max-width: none;
+	margin: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-deal) {
+	display: grid;
+	grid-template-columns: 310px 310px;
+	grid-template-rows: auto auto auto 1fr;
+	align-items: start;
+	gap: 12px;
+}
+
+/* Bal oszlop: autó (a teljes magasságban).
+   Jobb oszlop egymás alatt: elfogadott ajánlat, ellenőrzőlista, „Mire figyelj”.
+   Az utolsó (üres) 1fr sor nyeli el az autó-kártya többletmagasságát, így a jobb
+   oszlop dobozai között nem nyílik hézag. */
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-deal) > .kmae-chat-car {
+	grid-column: 1;
+	grid-row: 1 / span 4;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-deal) > .kmae-chat-deal {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-deal) > .kmae-chat-tips {
+	grid-column: 2;
+	grid-row: 3;
+	align-self: start;
+	margin-top: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-deal) > .kmae-chat-checklist {
+	grid-column: 2;
+	grid-row: 2;
+	margin-top: 0;
+}
+
+/* Vevő (elfogadott ajánlat után): a kártyán a Kedvenc sor plusz ~46px — ennyivel
+   tömörebb kép és sorköz, hogy az eladóéhoz hasonlóan görgetés nélkül kiférjen. */
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-checklist) {
+	overflow-x: hidden;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-checklist) > .kmae-chat-car {
+	gap: 8px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-checklist) .kmae-chat-car__photo {
+	aspect-ratio: 2 / 1;
+}
+
+body.kmae-offer-thread-active .kmae-chat-side:has(> .kmae-chat-checklist) .kmae-chat-car__specs {
+	gap: 6px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid rgba(0, 199, 247, 0.22);
+	border-radius: 22px;
+	background: rgba(255, 255, 255, 0.72);
+	box-shadow: 0 6px 18px rgba(38, 68, 90, 0.06), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__photo {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	aspect-ratio: 16 / 9;
+	border-radius: 14px;
+	background: linear-gradient(135deg, #e0f8ff, #fff);
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__photo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__badge {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, #22c08f, #12936d);
+	box-shadow: 0 4px 12px rgba(18, 147, 109, 0.3);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__badge.is-reserved {
+	background: linear-gradient(135deg, #ffad41, #ff6e25);
+	box-shadow: 0 4px 12px rgba(255, 110, 37, 0.3);
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__badge.is-closed {
+	background: #6b7a8a;
+	box-shadow: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__title {
+	margin: 0 2px;
+	color: #202936;
+	font-size: 18px;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__specs {
+	display: grid;
+	gap: 10px;
+	margin: 0 2px;
+	padding: 0;
+	list-style: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__specs li {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+	color: #34404d;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__icon {
+	display: inline-grid;
+	flex: none;
+	width: 18px;
+	height: 18px;
+	place-items: center;
+	color: #465463;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__value {
+	display: block;
+	min-width: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__price {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 12px 14px;
+	border: 1px solid rgba(0, 199, 247, 0.35);
+	border-radius: 14px;
+	background: linear-gradient(135deg, rgba(224, 248, 255, 0.95), rgba(255, 255, 255, 0.85));
+	box-shadow: 0 0 18px rgba(0, 199, 247, 0.14), inset 0 1px 0 #fff;
+	color: #1c69d5;
+	text-decoration: none;
+	transition: box-shadow 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__price strong {
+	color: #202936;
+	font-size: 18px;
+	font-weight: 850;
+	letter-spacing: -0.01em;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__price:hover {
+	box-shadow: 0 0 22px rgba(0, 199, 247, 0.28), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__actions {
+	display: grid;
+	gap: 4px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-block {
+	margin: 0;
+}
+
+/* Kedvenc / Bejelentés / Tiltás sorok — csak a betű és az ikon színes, a sor háttere és kerete átlátszó */
+body.kmae-offer-thread-active .kmae-chat-car__action,
+body.kmae-offer-thread-active .kmae-chat-car__actions .kmae-report-open {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 4px;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: #5b6b7d;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	text-align: left;
+	cursor: pointer;
+	transition: color 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action:hover,
+body.kmae-offer-thread-active .kmae-chat-car__actions .kmae-report-open:hover {
+	background: transparent;
+	color: #0a8fc4;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action:focus-visible,
+body.kmae-offer-thread-active .kmae-chat-car__actions .kmae-report-open:focus-visible {
+	outline: 2px solid rgba(0, 199, 247, 0.45);
+	outline-offset: 3px;
+	border-radius: 6px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action-icon,
+body.kmae-offer-thread-active .kmae-chat-car__actions .kmae-report-open__icon {
+	display: inline-grid;
+	flex: none;
+	width: 18px;
+	place-items: center;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action--fav {
+	color: #e95e13;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action--fav .kmae-chat-car__action-icon {
+	color: #e11d48;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action--fav:hover {
+	background: transparent;
+	color: #c94d0c;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action--fav.is-saved svg {
+	fill: currentColor;
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action--block:hover {
+	color: var(--ot-red);
+}
+
+body.kmae-offer-thread-active .kmae-chat-car__action--block.is-blocked {
+	color: var(--ot-red);
+}
+
+/* Ajánlat buborék (vevő ajánlata a chatben) */
+body.kmae-offer-thread-active .kmae-chat-offer-bubble {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 220px;
+	padding: 14px 18px 16px;
+	overflow: hidden;
+	border: 1.5px solid rgba(255, 110, 37, 0.7);
+	border-radius: 20px;
+	background:
+		radial-gradient(circle at 92% 0%, rgba(255, 110, 37, 0.18), transparent 50%),
+		linear-gradient(135deg, rgba(255, 239, 226, 0.96), rgba(255, 255, 255, 0.92));
+	box-shadow: 0 10px 26px rgba(38, 68, 90, 0.14), 0 0 22px rgba(255, 110, 37, 0.18), inset 0 1px 0 #fff;
+	color: #202936;
+}
+
+body.kmae-offer-thread-active .kmae-chat-msg--buyer .kmae-chat-offer-bubble {
+	border-bottom-left-radius: 6px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 8%;
+	width: 55%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, #ff6e25, transparent);
+	box-shadow: 0 0 14px rgba(255, 110, 37, 0.9);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble__head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble__icon {
+	display: grid;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border: 1px solid rgba(255, 110, 37, 0.6);
+	border-radius: 50%;
+	background: #fff;
+	color: #e95e13;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble__label {
+	color: #e95e13;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.17em;
+	text-transform: uppercase;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble__state {
+	margin-left: auto;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: linear-gradient(110deg, #ffad41, #ff6e25);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble__amount {
+	color: #202936;
+	font-size: 26px;
+	font-weight: 850;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-replaced {
+	border-color: var(--ot-line);
+	background: var(--ot-soft);
+	box-shadow: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-replaced::before {
+	display: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-replaced .kmae-chat-offer-bubble__state {
+	background: #e9eff6;
+	color: var(--ot-muted);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-replaced .kmae-chat-offer-bubble__amount {
+	color: var(--ot-faint);
+	text-decoration: line-through;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-closed,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-withdrawn,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-lapsed {
+	border-color: var(--ot-line);
+	background: var(--ot-soft);
+	box-shadow: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-closed::before,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-withdrawn::before,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-lapsed::before {
+	display: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-closed .kmae-chat-offer-bubble__state,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-withdrawn .kmae-chat-offer-bubble__state,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-lapsed .kmae-chat-offer-bubble__state {
+	background: #e9eff6;
+	color: var(--ot-muted);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-closed .kmae-chat-offer-bubble__amount,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-withdrawn .kmae-chat-offer-bubble__amount,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-lapsed .kmae-chat-offer-bubble__amount {
+	color: var(--ot-faint);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-accepted,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-sold {
+	border-color: rgba(18, 147, 109, 0.6);
+	background:
+		radial-gradient(circle at 92% 0%, rgba(34, 192, 143, 0.18), transparent 50%),
+		linear-gradient(135deg, rgba(233, 249, 242, 0.96), rgba(255, 255, 255, 0.92));
+	box-shadow: 0 10px 26px rgba(38, 68, 90, 0.14), 0 0 22px rgba(34, 192, 143, 0.2), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-accepted::before,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-sold::before {
+	background: linear-gradient(90deg, transparent, var(--ot-green-2), transparent);
+	box-shadow: 0 0 14px rgba(34, 192, 143, 0.9);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-accepted .kmae-chat-offer-bubble__state,
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-sold .kmae-chat-offer-bubble__state {
+	background: linear-gradient(110deg, var(--ot-green-2), var(--ot-green));
+}
+
+/* [Elfogadom] az ajánlat buborék alatt (csak eladónál) */
+body.kmae-offer-thread-active .kmae-chat-offer-accept {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	margin: 8px 0 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-accept__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 9px 18px;
+	border: 0;
+	border-radius: 999px;
+	background: linear-gradient(110deg, var(--ot-orange-2), var(--ot-orange));
+	box-shadow: 0 8px 18px rgba(241, 100, 10, 0.28);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-accept__btn:hover {
+	filter: brightness(1.05);
+	box-shadow: 0 10px 22px rgba(241, 100, 10, 0.36);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-accept__note {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	max-width: 320px;
+	color: var(--ot-muted);
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-accept__note-title {
+	color: var(--ot-ink);
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-accept__note-line::before {
+	content: "• ";
+	color: var(--ot-orange);
+}
+
+/* [Visszavonom] a vevő saját, élő ajánlata alatt */
+body.kmae-offer-thread-active .kmae-chat-offer-retract {
+	display: flex;
+	justify-content: flex-end;
+	margin: 6px 0 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-retract__btn {
+	padding: 4px 12px;
+	border: 1px solid var(--ot-blue-line);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.85);
+	color: var(--ot-muted);
+	font-size: 12.5px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-retract__btn:hover {
+	border-color: var(--ot-blue-2);
+	color: var(--ot-blue);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-retracted .kmae-chat-offer-bubble__state {
+	background: #e9eff6;
+	color: var(--ot-muted);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer-bubble.is-retracted .kmae-chat-offer-bubble__amount {
+	color: var(--ot-faint);
+	text-decoration: line-through;
+}
+
+/* Törölt hirdetés sáv a chat tetején */
+body.kmae-offer-thread-active .kmae-chat-deleted {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	padding: 11px 16px;
+	border: 1px solid #f3c2c4;
+	border-radius: 14px;
+	background: var(--ot-red-soft);
+	color: var(--ot-red);
+	font-size: 14px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deleted__icon {
+	display: inline-flex;
+	flex: none;
+}
+
+/* Rendszerüzenet a chatben */
+body.kmae-offer-thread-active .kmae-chat-system {
+	display: flex;
+	align-items: center;
+	align-self: center;
+	gap: 8px;
+	max-width: 80%;
+	padding: 8px 16px;
+	border: 1px solid var(--ot-blue-line);
+	border-radius: 999px;
+	background: var(--ot-blue-soft);
+	color: var(--ot-ink);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.4;
+	text-align: center;
+}
+
+body.kmae-offer-thread-active .kmae-chat-system__icon {
+	display: inline-flex;
+	flex: none;
+	color: var(--ot-blue);
+}
+
+/* Elfogadott ajánlat kártya a jobb oszlopban: összeg + telefonszám (+ eladónak a műveletek) */
+body.kmae-offer-thread-active .kmae-chat-deal {
+	position: relative;
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: 12px;
+	padding: 14px 16px;
+	overflow: hidden;
+	border: 1px solid #c9eedd;
+	border-radius: 14px;
+	background: linear-gradient(135deg, rgba(233, 249, 242, 0.96), rgba(255, 255, 255, 0.9));
+	box-shadow: 0 0 18px rgba(34, 192, 143, 0.12), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 6%;
+	width: 50%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--ot-green-2), transparent);
+	box-shadow: 0 0 12px rgba(34, 192, 143, 0.8);
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__info,
+body.kmae-offer-thread-active .kmae-chat-deal__phone {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ot-ink);
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__phone-icon {
+	display: inline-flex;
+	color: var(--ot-green);
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__phone-label {
+	color: var(--ot-muted);
+	font-weight: 600;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__phone-number {
+	color: var(--ot-green);
+	font-size: 15px;
+	font-weight: 850;
+	text-decoration: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__phone-missing {
+	color: var(--ot-muted);
+	font-weight: 600;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__cancel {
+	flex: 1 1 0;
+	margin: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__cancel-btn {
+	width: 100%;
+	padding: 8px 12px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--ot-red);
+	box-shadow: 0 6px 16px rgba(212, 51, 58, 0.24);
+	color: #fff;
+	font-size: 13.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__cancel-btn:hover {
+	filter: brightness(1.08);
+}
+
+/* Eladó: [Lezárom] + [Mégse kelt el] és a magyarázat */
+body.kmae-offer-thread-active .kmae-chat-deal__actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__close {
+	flex: 1 1 0;
+	margin: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__close-btn {
+	width: 100%;
+	padding: 8px 12px;
+	border: 0;
+	border-radius: 999px;
+	background: linear-gradient(110deg, var(--ot-green-2), var(--ot-green));
+	box-shadow: 0 6px 16px rgba(18, 147, 109, 0.24);
+	color: #fff;
+	font-size: 13.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__close-btn:hover {
+	filter: brightness(1.05);
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__guide {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding-top: 10px;
+	border-top: 1px solid #c9eedd;
+	color: var(--ot-muted);
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__guide-title {
+	color: var(--ot-ink);
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-deal__guide-line strong {
+	color: var(--ot-ink);
+	font-weight: 800;
+}
+
+/* Eladó: adásvételi szerződés aloldal */
+body.kmae-offer-thread-active a.kmae-chat-deal__contract {
+	display: block;
+	padding: 9px 16px;
+	border-radius: 999px;
+	background: linear-gradient(110deg, var(--ot-orange-2), var(--ot-orange));
+	box-shadow: 0 6px 16px rgba(241, 100, 10, 0.22);
+	color: #fff;
+	font-size: 13.5px;
+	font-weight: 800;
+	text-align: center;
+	text-decoration: none;
+}
+
+body.kmae-offer-thread-active a.kmae-chat-deal__contract:hover {
+	filter: brightness(1.05);
+}
+
+/* Vevő: ellenőrzőlista doboz (szöveg + letöltés) és „Mire figyelj” (legalul) — manó nélkül, a tartalom a teljes szélességet kitölti */
+body.kmae-offer-thread-active .kmae-chat-checklist,
+body.kmae-offer-thread-active .kmae-chat-tips {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	border: 1.5px solid var(--ot-blue-line);
+	border-radius: 16px;
+	background: linear-gradient(135deg, var(--ot-blue-soft), #fff);
+	box-shadow: 0 8px 22px rgba(22, 63, 122, 0.08);
+}
+
+body.kmae-offer-thread-active .kmae-chat-checklist__body {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-checklist__text {
+	margin: 0;
+	color: var(--ot-ink);
+	font-size: 13.5px;
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+body.kmae-offer-thread-active .kmae-chat-checklist__form {
+	margin: 0;
+}
+
+body.kmae-offer-thread-active .kmae-chat-checklist__btn {
+	width: 100%;
+	padding: 9px 14px;
+	border: 0;
+	border-radius: 999px;
+	background: linear-gradient(110deg, var(--ot-blue-2), var(--ot-blue));
+	box-shadow: 0 6px 16px rgba(28, 105, 213, 0.24);
+	color: #fff;
+	font-size: 13.5px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-chat-checklist__btn:hover {
+	filter: brightness(1.06);
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips {
+	margin-top: auto;
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips__btn {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+	margin: 0;
+	padding: 5px 12px 5px 5px;
+	border: 1.5px solid var(--ot-blue-line);
+	border-radius: 14px;
+	background: #fff;
+	color: var(--ot-ink);
+	text-align: left;
+	cursor: zoom-in;
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips__btn:hover {
+	background: var(--ot-blue-soft);
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips__thumb {
+	flex: none;
+	width: 44px;
+	height: 44px;
+	border-radius: 10px;
+	object-fit: cover;
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips__text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.25;
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips__title {
+	color: var(--ot-blue);
+	font-size: 14px;
+	font-weight: 850;
+}
+
+body.kmae-offer-thread-active .kmae-chat-tips__note {
+	color: var(--ot-muted);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* „Mire figyelj” nagyító */
+body.kmae-offer-thread-active .kmae-tips-viewer {
+	position: fixed;
+	inset: 0;
+	z-index: 100002;
+	display: flex;
+	flex-direction: column;
+	background: radial-gradient(ellipse at top, rgba(28, 105, 213, 0.28), rgba(8, 18, 34, 0.94) 70%);
+	animation: ot-fade 180ms ease-out;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 18px;
+	color: #fff;
+	box-shadow: inset 0 -2px 0 var(--ot-orange);
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__title {
+	margin-right: auto;
+	font-size: 16px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 40px;
+	height: 40px;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	font-size: 22px;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__btn:hover {
+	background: rgba(255, 255, 255, 0.24);
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__save {
+	margin-left: 8px;
+	border-color: var(--ot-orange-2);
+	background: var(--ot-orange);
+	box-shadow: 0 6px 16px rgba(241, 100, 10, 0.35);
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__save:hover {
+	background: var(--ot-orange-2);
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__stage {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	min-height: 0;
+	padding: 16px;
+	overflow: auto;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer__stage img {
+	box-sizing: border-box;
+	max-width: 100%;
+	max-height: 100%;
+	padding: 0;
+	border: 10px solid #fff;
+	border-radius: 18px;
+	background: #fff;
+	box-shadow: 0 0 0 3px var(--ot-blue-2), 0 0 0 9px rgba(58, 143, 240, 0.25), 0 24px 60px rgba(0, 0, 0, 0.45);
+	cursor: zoom-in;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer.is-zoomed .kmae-tips-viewer__stage {
+	align-items: flex-start;
+	justify-content: flex-start;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer.is-zoomed .kmae-tips-viewer__stage img {
+	max-width: none;
+	max-height: none;
+	margin: auto;
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+}
+
+body.kmae-offer-thread-active .kmae-tips-viewer.is-dragging .kmae-tips-viewer__stage img {
+	cursor: grabbing;
+}
+
+/* ---------- 5. Üzenetíró sáv ---------- */
+body.kmae-offer-thread-active .kmae-free-chat {
+	flex: none;
+	padding: 10px 16px 14px;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__form {
+	margin: 0;
+}
+
+/* Ajánlatot teszek (csak vevőnél) */
+body.kmae-offer-thread-active .kmae-chat-offer {
+	margin: 0 0 12px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 38px;
+	padding: 0 18px;
+	border-radius: 999px;
+	background: linear-gradient(110deg, #ffad41, #ff6e25);
+	box-shadow: 0 8px 20px rgba(255, 110, 37, 0.28);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 800;
+	list-style: none;
+	cursor: pointer;
+	transition: transform 160ms ease, filter 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__toggle::-webkit-details-marker {
+	display: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__toggle:hover {
+	transform: translateY(-1px);
+	filter: brightness(1.06);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__form {
+	position: relative;
+	margin: 10px 0 0;
+	padding: 14px 16px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 110, 37, 0.6);
+	border-radius: 18px;
+	background:
+		radial-gradient(circle at 7% 0%, rgba(255, 110, 37, 0.16), transparent 42%),
+		linear-gradient(135deg, rgba(255, 239, 226, 0.95), rgba(255, 255, 255, 0.86));
+	box-shadow: 0 10px 26px rgba(38, 68, 90, 0.1), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__form::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 5%;
+	width: 50%;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, #ff6e25, transparent);
+	box-shadow: 0 0 16px rgba(255, 110, 37, 0.9);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1;
+	display: grid;
+	width: 30px;
+	height: 30px;
+	place-items: center;
+	padding: 0;
+	border: 1px solid rgba(255, 110, 37, 0.45);
+	border-radius: 10px;
+	background: #fff;
+	color: #ff6e25;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__close:hover,
+body.kmae-offer-thread-active .kmae-chat-offer__close:focus-visible {
+	background: #fff1e8;
+	outline: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__label {
+	display: block;
+	margin: 0 0 8px;
+	color: #202936;
+	font-size: 14px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__field {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	max-width: 320px;
+	height: 44px;
+	padding: 0 14px;
+	border: 1.5px solid rgba(255, 110, 37, 0.45);
+	border-radius: 12px;
+	background: #fff;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__field:focus-within {
+	border-color: #ff6e25;
+	box-shadow: 0 0 0 3px rgba(255, 110, 37, 0.14);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__field input {
+	flex: 1 1 auto;
+	min-width: 0;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: #202936;
+	font: inherit;
+	font-size: 17px;
+	font-weight: 800;
+	outline: none;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__unit {
+	color: #465463;
+	font-size: 14px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__send {
+	flex: none;
+	height: 44px;
+	min-height: 0;
+	margin: 0;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 12px;
+	background: linear-gradient(110deg, #ffad41, #ff6e25);
+	box-shadow: 0 8px 24px rgba(255, 110, 37, 0.3);
+	color: #fff;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 800;
+	cursor: pointer;
+	transition: transform 160ms ease, filter 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__send:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.08);
+}
+
+body.kmae-offer-thread-active .kmae-chat-offer__hint {
+	margin: 8px 2px 0;
+	color: #465463;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* Infó sor a beíró alatt, középen */
+body.kmae-offer-thread-active .kmae-free-chat__hint {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: fit-content;
+	max-width: 100%;
+	margin: 10px auto 0;
+	padding: 5px 14px;
+	border-radius: 999px;
+	background: rgba(224, 240, 255, 0.85);
+	color: #465463;
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__hint-icon {
+	display: inline-grid;
+	color: #1c69d5;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__bar {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border: 1px solid rgba(0, 199, 247, 0.22);
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.78);
+	box-shadow: 0 6px 18px rgba(38, 68, 90, 0.06), inset 0 1px 0 #fff;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__tool {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 1px solid rgba(0, 143, 189, 0.16);
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 4px 10px rgba(38, 68, 90, 0.08);
+	color: #465463;
+	cursor: pointer;
+	transition: color 160ms ease, border-color 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__tool:hover,
+body.kmae-offer-thread-active .kmae-free-chat__tool[aria-expanded="true"] {
+	border-color: rgba(0, 199, 247, 0.5);
+	color: #1c69d5;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__file {
+	display: none;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__bar textarea {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 44px;
+	max-height: 140px;
+	margin: 0 0 0 4px;
+	padding: 11px 18px;
+	border: 1px solid rgba(0, 143, 189, 0.16);
+	border-radius: 22px;
+	background: #fff;
+	box-shadow: none;
+	color: #202936;
+	font: inherit;
+	font-size: 14px;
+	line-height: 1.4;
+	resize: none;
+	outline: none;
+	transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-shell--buyer .kmae-free-chat__bar textarea:focus {
+	border-color: var(--ot-blue);
+	box-shadow: 0 0 0 3px rgba(28, 105, 213, 0.12);
+}
+
+body.kmae-offer-thread-active .kmae-chat-shell--seller .kmae-free-chat__bar textarea:focus {
+	border-color: var(--ot-orange);
+	box-shadow: 0 0 0 3px rgba(241, 100, 10, 0.12);
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__bar textarea::placeholder {
+	color: #8aa0b6;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__emoji {
+	position: absolute;
+	left: 112px;
+	bottom: calc(100% + 8px);
+	z-index: 5;
+	display: grid;
+	grid-template-columns: repeat(4, 38px);
+	gap: 4px;
+	padding: 8px;
+	border: 1px solid rgba(0, 199, 247, 0.3);
+	border-radius: 16px;
+	background: #fff;
+	box-shadow: 0 14px 30px rgba(38, 68, 90, 0.16);
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__emoji[hidden] {
+	display: none;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__emoji-btn {
+	width: 38px;
+	height: 38px;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 10px;
+	background: transparent;
+	box-shadow: none;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__emoji-btn:hover {
+	background: #eefaff;
+}
+
+/* Küldés: a néző szerepének színe (vevő kék, eladó narancs) */
+body.kmae-offer-thread-active .kmae-free-chat__send {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 8px;
+	height: 44px;
+	min-height: 0;
+	margin: 0;
+	padding: 0 24px;
+	border: 0;
+	border-radius: 999px;
+	color: #fff;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 800;
+	cursor: pointer;
+	transition: transform 160ms ease, filter 160ms ease;
+}
+
+body.kmae-offer-thread-active .kmae-chat-shell--buyer .kmae-free-chat__send {
+	background: linear-gradient(110deg, #007fb8, #00c7f7);
+	box-shadow: 0 8px 24px rgba(0, 199, 247, 0.3);
+}
+
+body.kmae-offer-thread-active .kmae-chat-shell--seller .kmae-free-chat__send {
+	background: linear-gradient(110deg, #ffad41, #ff6e25);
+	box-shadow: 0 8px 24px rgba(255, 110, 37, 0.3);
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__send:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.08);
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__file-name {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 6px 0;
+	color: var(--ot-text);
+	font-size: 12.5px;
+	font-weight: 700;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__file-name[hidden] {
+	display: none;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__file-name.is-error {
+	color: var(--ot-red);
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__file-ttl {
+	color: var(--ot-muted);
+	font-weight: 600;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat--closed {
+	margin: 0 16px 14px;
+	padding: 14px;
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.8);
+	text-align: center;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__closed-title {
+	margin: 0 0 4px;
+	color: var(--ot-red);
+	font-size: 14px;
+	font-weight: 800;
+}
+
+body.kmae-offer-thread-active .kmae-free-chat__closed-note {
+	margin: 0;
+	color: var(--ot-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+/* ---------- 6. Képnagyító ---------- */
+body.kmae-offer-thread-active .kmae-chat-lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 100002;
+	display: grid;
+	place-items: center;
+	padding: 24px;
+	background: rgba(8, 18, 34, 0.86);
+	cursor: zoom-out;
+	animation: ot-fade 180ms ease-out;
+}
+
+body.kmae-offer-thread-active .kmae-chat-lightbox img {
+	max-width: 92vw;
+	max-height: 90vh;
+	border-radius: 14px;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes ot-fade {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+/* ---------- Bejelentés + Tiltás ablak (natív <dialog>) ---------- */
+body.kmae-offer-thread-active .kmae-report-entry {
+	display: block;
+}
+
+body.kmae-offer-thread-active .kmae-report {
+	width: min(480px, calc(100vw - 32px));
+	max-height: calc(100vh - 48px);
+	margin: auto;
+	padding: 0;
+	border: 1px solid rgba(0, 169, 216, 0.34);
+	border-radius: 22px;
+	background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(240, 250, 255, 0.96));
+	box-shadow: 0 26px 60px rgba(16, 44, 72, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+	color: #202936;
+	font-weight: 600;
+	overflow: auto;
+}
+body.kmae-offer-thread-active .kmae-report::backdrop {
+	background: rgba(14, 34, 56, 0.42);
+	backdrop-filter: blur(3px);
+}
+body.kmae-offer-thread-active .kmae-report__form {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0 22px 20px;
+	border-top: 4px solid transparent;
+	border-image: linear-gradient(90deg, #ff6e25, #00c7f7) 1;
+}
+body.kmae-offer-thread-active .kmae-report__head {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-top: 18px;
+}
+body.kmae-offer-thread-active .kmae-report__head-icon {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 38px;
+	height: 38px;
+	border: 1px solid rgba(255, 110, 37, 0.5);
+	border-radius: 50%;
+	background: #fff2e8;
+	color: #e95e13;
+}
+body.kmae-offer-thread-active .kmae-report__head-copy {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+body.kmae-offer-thread-active .kmae-report__title {
+	margin: 2px 0 3px;
+	color: #16324f;
+	font-size: 18px;
+	font-weight: 850;
+	letter-spacing: -0.01em;
+	line-height: 1.25;
+}
+body.kmae-offer-thread-active .kmae-report__lead {
+	margin: 0;
+	color: #5b6b7d;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+body.kmae-offer-thread-active .kmae-report__x {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid rgba(0, 169, 216, 0.3);
+	border-radius: 50%;
+	background: #fff;
+	color: #5b6b7d;
+	cursor: pointer;
+	box-shadow: none;
+}
+body.kmae-offer-thread-active .kmae-report__x:hover {
+	border-color: #ff6e25;
+	color: #e95e13;
+}
+body.kmae-offer-thread-active .kmae-report__reasons {
+	display: grid;
+	gap: 7px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+body.kmae-offer-thread-active .kmae-report__label {
+	margin: 0 0 2px;
+	padding: 0;
+	color: #16324f;
+	font-size: 14px;
+	font-weight: 800;
+}
+body.kmae-offer-thread-active .kmae-report__reason {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	padding: 9px 12px;
+	border: 1px solid rgba(0, 169, 216, 0.28);
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.9);
+	color: #2a3f55;
+	font-size: 14px;
+	font-weight: 650;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background 0.15s ease;
+}
+body.kmae-offer-thread-active .kmae-report__reason:hover {
+	border-color: rgba(0, 169, 216, 0.6);
+	background: #f2fbff;
+}
+body.kmae-offer-thread-active .kmae-report__reason:has(input:checked) {
+	border-color: #ff6e25;
+	background: #fff4ec;
+	box-shadow: 0 0 0 3px rgba(255, 110, 37, 0.14);
+	color: #16324f;
+}
+body.kmae-offer-thread-active .kmae-report__reason input {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	accent-color: #ff6e25;
+}
+body.kmae-offer-thread-active .kmae-report__details {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 92px;
+	margin: 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(0, 169, 216, 0.34);
+	border-radius: 12px;
+	background: #fff;
+	color: #202936;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.45;
+	resize: vertical;
+}
+body.kmae-offer-thread-active .kmae-report__details:focus {
+	border-color: #00a9d8;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(0, 199, 247, 0.18);
+}
+body.kmae-offer-thread-active .kmae-report__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 2px;
+}
+body.kmae-offer-thread-active .kmae-report__cancel,
+body.kmae-offer-thread-active .kmae-report__submit {
+	margin: 0;
+	padding: 10px 18px;
+	border-radius: 999px;
+	font-size: 14px;
+	font-weight: 800;
+	line-height: 1.2;
+	cursor: pointer;
+}
+body.kmae-offer-thread-active .kmae-report__cancel {
+	border: 1px solid rgba(0, 169, 216, 0.4);
+	background: #fff;
+	color: #008fbd;
+	box-shadow: none;
+}
+body.kmae-offer-thread-active .kmae-report__submit {
+	border: 1px solid #e95e13;
+	background: linear-gradient(135deg, #ff8a3c, #ff6e25);
+	color: #fff;
+	box-shadow: 0 8px 18px rgba(255, 110, 37, 0.28);
+}
+body.kmae-offer-thread-active .kmae-report__submit:hover {
+	background: linear-gradient(135deg, #ff7a2a, #e95e13);
+}
