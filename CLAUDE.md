@@ -68,7 +68,7 @@ Ne csak a tünetet javítsd. Pl. "a wizard 13 lépést mutat" → ne cseréld ki
 - A lehető legkisebb, de teljes értékű javítás; célzott megoldás (feature-/oldal-/komponens-/szelektor-specifikus).
 - Nincs indokolatlan refaktor, globális CSS, közös hook vagy backend logika átírása frontend hiba miatt, függőség- vagy struktúraváltoztatás.
 - Meglévő működést ne törölj és ne írj felül a szerepének megértése nélkül.
-- A felhasználói preferenciákat lásd az auto-memory fájlokban (scope-stop, csak kért dolog, csak PC, stb.).
+- A felhasználói preferenciákat lásd az auto-memory fájlokban (scope-stop, csak kért dolog, csak PC, stb.). Felhős/más gépen futó munkamenetben ezek másolata: `.claude-memory/` (indexe `MEMORY.md`) — olvasd el munka előtt.
 
 ## 7. Kockázati zónák
 

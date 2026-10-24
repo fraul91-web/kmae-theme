@@ -1,0 +1,19 @@
+- [Scope-stop rule](feedback_scope_stop_rule.md) — stop and ask before touching anything unrequested or changing working behavior
+- [Simplest fix first](feedback_simplest_fix_first.md) — try one CSS value before restructuring markup or layering
+- [User profile: Raul](user_profile.md) — non-programmer, Hungarian, owns KMAE WordPress project
+- [Wizard UI swap](project_wizard_ui_swap.md) — step-by-step wizard restyle; the step-scoped CSS convention it established
+- [Ne tesztelgess magadtól](feedback_no_self_testing.md) — csináld meg és zipeld, Raul ellenőrzi; csak hibajelzésre vizsgálódj
+- [Alapnézet TELEFON](feedback_pc_only.md) — 2026-10-14-től telefonra fejlesztünk; PC-hez soha nem nyúlni, csak ha Raul „pc-re…”-vel jelöli
+- [Arculat (ÉRVÉNYES)](project_design_system.md) — világoskék+narancs üveg, neon csík; minta: Főoldal (home-cards.css) + Hogyan működik (how-it-works.css)
+- [Kérdezz, ne találgass](feedback_ask_when_ambiguous.md) — homályos kérés esetén előbb kérdés, csak utána szerkesztés
+- [A kérés = felhatalmazás](feedback_request_is_authorization.md) — ne kérj jóváhagyást arra, amit már kért
+- [Fehér .kmae-hint csapda](project_legacy_white_hint.md) — a plugin !important-tal fehérre festi; világos oldalon saját osztálynév kell
+- [Pontosan azt, amit kértem](feedback_execute_exactly.md) — 1. számú szabály: tilos a dominóeffektus, sosem univerzális/megosztott fájlban globális módosítás; csak a kért dolgot, oldal-specifikus szelektorral
+- [Teljes átvizsgálás](project_full_audit.md) — A–F mind kész (2026-09-25); visszatérő minta, nyitott üzleti döntések, nincs helyi WordPress
+- [Gyorsítás állapota](project_performance_work.md) — poll→jelzőfájl+Web Push kész; Cloudflare aktív; RackForest belépő csomag; LiteSpeed oldal-cache régi ?ver= CSS-t adhat
+- [Törlés, majd új](feedback_delete_then_rebuild.md) — átdolgozásnál a régit törölni, nem felülírni; vevő kék, eladó narancs fix
+- [Ajánlat-rendszer törölve](project_offer_system_removed.md) — 2026-10-10 csak chat maradt, maradványok is kitakarítva, újraépítés jön; mit tartott meg Raul
+- [Minimális jelentés](feedback_minimal_report.md) — csak ZIP/MEMORY/CLAUDE.md updated; homályos kérésnél előre kérdezz, tanulságot csendben CLAUDE.md-be
+- [Adatlap jellemző-színek](feedback_listing_pill_colors.md) — Jellemzők pirulák egységes szín (#0b3a66, mint a cím); nincs kódonkénti szín
+- [Auto-feltöltés](feedback_auto_upload.md) — kész munka automatikusan az élő albira.hu-ra SSH-n; jelentés ZIP: Uploaded/Unuploaded
+- [Telefonos Lapozó terv](project_phone_lapozo.md) — böngészés telefonon: Raul 8 döntése (2026-10-24), élőn, 2026-10-24
