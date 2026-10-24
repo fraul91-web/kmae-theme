@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'KMAE_THEME_VERSION', '3.25.658' );
+define( 'KMAE_THEME_VERSION', '3.25.659' );
 if ( ! defined( 'KMAE_VERSION' ) ) {
 	define( 'KMAE_VERSION', KMAE_THEME_VERSION );
 }
