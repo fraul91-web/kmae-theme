@@ -19,48 +19,56 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	/* ---- Vendég fejléc: logó balra, a két gomb jobbra, kisebb méretben ---- */
+	/* ---- Vendég fejléc = landing (52px üvegsáv). landing.css 72px-e után töltődik. ---- */
+	body.kmae-marketing.kmae-contact-page-view {
+		--kmae-header-h: 52px;
+	}
+
+	body.kmae-marketing.kmae-contact-page-view .kmae-header {
+		position: fixed;
+		height: var(--kmae-header-h);
+		background: rgba(244, 251, 255, 0.72);
+		backdrop-filter: blur(20px) saturate(170%);
+		-webkit-backdrop-filter: blur(20px) saturate(170%);
+		border-bottom: 1px solid rgba(0, 199, 247, 0.28);
+		box-shadow: 0 8px 24px rgba(38, 68, 90, 0.1);
+	}
+
 	body.kmae-marketing.kmae-contact-page-view .kmae-header__inner {
-		display: flex;
+		grid-template-columns: auto minmax(0, 1fr);
 		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
-		padding-left: max(var(--ct-gutter), env(safe-area-inset-left, 0px)) !important;
-		padding-right: max(var(--ct-gutter), env(safe-area-inset-right, 0px)) !important;
+		gap: 8px;
+		height: 100%;
+		padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+		padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
 	}
 
 	body.kmae-marketing.kmae-contact-page-view .kmae-logo--desktop {
-		flex: 0 1 auto;
+		display: flex;
+		align-items: center;
 		min-width: 0;
 	}
 
+	body.kmae-marketing.kmae-contact-page-view .kmae-logo--desktop img,
 	body.kmae-marketing.kmae-contact-page-view .kmae-logo--desktop .kmae-logo__img {
-		display: block;
+		height: 22px;
 		width: auto;
-		height: 32px;
-		max-width: 100%;
+		max-width: 98px;
+		border-radius: 0;
+		filter: drop-shadow(0 1px 1px rgba(11, 58, 102, 0.14));
 	}
 
 	body.kmae-marketing.kmae-contact-page-view .kmae-header__actions--desktop {
-		display: flex;
-		flex: 0 0 auto;
+		grid-column: 2;
 		gap: 8px;
 	}
 
-	body.kmae-marketing.kmae-contact-page-view .kmae-header__actions .kmae-btn--login,
-	body.kmae-marketing.kmae-contact-page-view .kmae-header__actions .kmae-btn--register {
-		min-height: 36px;
-		padding: 0 13px;
-		font-size: 13.5px;
-		white-space: nowrap;
-	}
-
-	/* ---- Oldal-héj: teljes szélesség, saját gutter ---- */
+	/* ---- Oldal-héj: tartalom a fix fejléc alatt ---- */
 	body.kmae-contact-page-view .kmae-page {
 		box-sizing: border-box;
 		width: 100%;
 		margin: 0;
-		padding: calc(var(--kmae-header-h, 64px) + 8px) var(--ct-gutter) calc(32px + env(safe-area-inset-bottom, 0px));
+		padding: calc(var(--kmae-header-h, 52px) + 14px) var(--ct-gutter) calc(32px + env(safe-area-inset-bottom, 0px));
 		background: transparent;
 	}
 

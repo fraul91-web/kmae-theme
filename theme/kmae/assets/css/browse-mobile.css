@@ -23,9 +23,9 @@ body.kmae-browse-page .kmae-map-next {
 		--bm-gap: 12px;
 		--bm-head-top: calc(8px + env(safe-area-inset-top, 0px));
 		--bm-head-h: 58px;
-		--bm-tab-h: 70px;
+		--bm-tab-h: 46px;
 		--bm-top: calc(var(--bm-head-top) + var(--bm-head-h) + 12px);
-		--bm-bottom: calc(var(--bm-tab-h) + 22px + env(safe-area-inset-bottom, 0px));
+		--bm-bottom: calc(var(--bm-tab-h) + env(safe-area-inset-bottom, 0px));
 		--bm-glass: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(240, 251, 255, 0.82));
 		--bm-shadow: 0 16px 40px -14px rgba(16, 48, 84, 0.38), 0 0 0 1px rgba(var(--bx-blue-rgb), 0.18), inset 0 1px 0 #fff;
 		overflow-x: hidden;
@@ -235,26 +235,26 @@ body.kmae-browse-page .kmae-map-next {
 	/* ---- Alsó menüsor ---- */
 	body.kmae-browse-page .kmae-bt {
 		position: fixed;
-		left: var(--bm-gap);
-		right: var(--bm-gap);
-		bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+		left: 0;
+		right: 0;
+		bottom: 0;
 		z-index: 1160;
 		display: grid;
 		grid-template-columns: repeat(5, minmax(0, 1fr));
-		align-items: end;
+		align-items: center;
 		box-sizing: border-box;
-		max-width: 520px;
-		height: var(--bm-tab-h);
-		margin-inline: auto;
-		padding: 0 6px 9px;
-		border: 1px solid rgba(255, 255, 255, 0.95);
-		border-radius: 26px;
+		max-width: none;
+		height: var(--bm-bottom);
+		margin: 0;
+		padding: 0 2px env(safe-area-inset-bottom, 0px);
+		border: 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.95);
+		border-radius: 16px 16px 0 0;
 		background: rgba(255, 255, 255, 0.78);
 		-webkit-backdrop-filter: blur(24px) saturate(180%);
 		backdrop-filter: blur(24px) saturate(180%);
 		box-shadow:
-			0 18px 44px rgba(38, 68, 90, 0.28),
-			0 0 0 1px rgba(var(--bx-blue-rgb), 0.22),
+			0 -6px 18px rgba(38, 68, 90, 0.14),
 			inset 0 1px 0 #fff;
 		font-family: var(--bx-font);
 		animation: bm-dock 0.75s 0.25s cubic-bezier(0.2, 0.9, 0.25, 1.08) backwards;
@@ -264,10 +264,10 @@ body.kmae-browse-page .kmae-map-next {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 4px;
+		gap: 1px;
 		min-width: 0;
 		color: #465463;
-		font-size: 10.5px;
+		font-size: 9.5px;
 		font-weight: 800;
 		letter-spacing: 0.01em;
 		text-decoration: none;
@@ -283,15 +283,15 @@ body.kmae-browse-page .kmae-map-next {
 		position: relative;
 		display: grid;
 		place-items: center;
-		width: 46px;
-		height: 30px;
+		width: 32px;
+		height: 20px;
 		border-radius: 999px;
 		transition: background 0.25s ease, box-shadow 0.25s ease;
 	}
 
 	body.kmae-browse-page .kmae-bt__icon svg {
-		width: 22px;
-		height: 22px;
+		width: 18px;
+		height: 18px;
 	}
 
 	body.kmae-browse-page .kmae-bt__item.is-active {
@@ -336,10 +336,10 @@ body.kmae-browse-page .kmae-map-next {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 58px;
-		height: 58px;
-		margin-top: -26px;
-		border: 4px solid rgba(255, 255, 255, 0.95);
+		width: 30px;
+		height: 30px;
+		margin-top: 0;
+		border: 2px solid rgba(255, 255, 255, 0.95);
 		border-radius: 50%;
 		box-sizing: border-box;
 		background: linear-gradient(145deg, #3fdcff, #00c7f7 45%, #007fb8);
@@ -348,18 +348,12 @@ body.kmae-browse-page .kmae-map-next {
 	}
 
 	body.kmae-browse-page .kmae-bt__fab-btn::after {
-		content: "";
-		position: absolute;
-		inset: -4px;
-		border: 2px solid rgba(var(--bx-blue-rgb), 0.6);
-		border-radius: 50%;
-		pointer-events: none;
-		animation: bm-pulse 2.4s ease-out infinite;
+		content: none;
 	}
 
 	body.kmae-browse-page .kmae-bt__fab-btn svg {
-		width: 26px;
-		height: 26px;
+		width: 18px;
+		height: 18px;
 		stroke-width: 2.6;
 	}
 
@@ -1491,15 +1485,15 @@ body.kmae-browse-page .kmae-map-next {
 	/* Alsó gombsor: lebeg a menüsor fölött */
 	body.kmae-browse-page .kmae-wizard-nav {
 		position: sticky;
-		bottom: calc(var(--bm-tab-h) + 20px + env(safe-area-inset-bottom, 0px));
+		bottom: calc(var(--bm-tab-h) + 6px + env(safe-area-inset-bottom, 0px));
 		z-index: 20;
 		display: grid;
 		grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
 		gap: 8px;
 		margin: 16px -6px 0;
-		padding: 8px;
+		padding: 4px;
 		border: 1px solid rgba(255, 255, 255, 0.95);
-		border-radius: 22px;
+		border-radius: 16px;
 		background: rgba(255, 255, 255, 0.78);
 		-webkit-backdrop-filter: blur(18px) saturate(170%);
 		backdrop-filter: blur(18px) saturate(170%);
@@ -1509,7 +1503,10 @@ body.kmae-browse-page .kmae-map-next {
 	body.kmae-browse-page .kmae-wizard-nav .kmae-btn {
 		width: 100%;
 		min-width: 0;
-		font-size: 14.5px;
+		min-height: 40px;
+		padding: 0 12px;
+		border-radius: 12px;
+		font-size: 14px;
 		white-space: nowrap;
 	}
 
@@ -2035,7 +2032,12 @@ body.kmae-browse-page .kmae-map-next {
 		height: auto;
 		margin: 0;
 		padding: 6px 0;
+		border: 1px solid rgba(255, 255, 255, 0.95);
 		border-radius: 24px;
+		box-shadow:
+			0 18px 44px rgba(38, 68, 90, 0.28),
+			0 0 0 1px rgba(var(--bx-blue-rgb), 0.22),
+			inset 0 1px 0 #fff;
 		animation-name: bm-dock-side;
 	}
 
@@ -2465,6 +2467,57 @@ body.kmae-browse-page .kmae-map-next {
 		max-width: 520px;
 		margin: 14px auto 0;
 	}
+
+	/* 2. lépés (kivitel) fekve: fix alsó gombsor a kártyák ALATT (nem rájuk) */
+	body.kmae-browse-page .kmae-wizard-body {
+		--bm-body-nav: calc(54px + 10px + env(safe-area-inset-bottom, 0px));
+		padding-bottom: 0;
+	}
+
+	body.kmae-browse-page .kmae-wizard-body .kmae-wizard-grid-bodies {
+		max-height: calc(100dvh - var(--bm-top) - var(--bm-body-nav) - 88px);
+		margin-bottom: var(--bm-body-nav);
+		overflow-x: hidden;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	body.kmae-browse-page .kmae-wizard-body .kmae-wizard-nav {
+		position: fixed;
+		left: calc(var(--bm-rail-w) + 12px);
+		right: calc(12px + env(safe-area-inset-right, 0px));
+		bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+		z-index: 30;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		gap: 8px;
+		max-width: none;
+		margin: 0;
+		padding: 6px 8px;
+		border: 1px solid rgba(var(--bx-blue-rgb), 0.22);
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.94);
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+		box-shadow: 0 6px 20px -8px rgba(16, 48, 84, 0.35);
+	}
+
+	body.kmae-browse-page .kmae-wizard-body .kmae-wizard-nav .kmae-btn {
+		min-height: 40px;
+		padding: 0 12px;
+		border-radius: 11px;
+		font-size: 13px;
+		font-weight: 750;
+	}
+
+	body.kmae-browse-page .kmae-wizard-body .kmae-wizard-nav .kmae-btn-secondary {
+		font-size: 12px;
+	}
+
+	body.kmae-browse-page .kmae-wizard-body .kmae-wizard-nav .kmae-btn-secondary::after {
+		content: "Térképhez";
+		font-size: 12px;
+	}
 }
 
 @keyframes bm-drop {
@@ -2532,5 +2585,153 @@ body.kmae-browse-page .kmae-map-next {
 	body.kmae-browse-page .kmae-swipe-empty__mascot img,
 	body.kmae-browse-page .kmae-swipe-browse > * {
 		animation: none !important;
+	}
+}
+
+/* ---------------------------------------------------------
+   Álló telefon: fejléc = a landing üvegsávja.
+   A fekvő blokk (fent) érintetlen.
+   --------------------------------------------------------- */
+@media (max-width: 1024px) and (orientation: portrait) {
+	body.kmae-browse-page {
+		--bm-head-top: 0px;
+		--bm-head-h: calc(64px + env(safe-area-inset-top, 0px));
+		--bm-top: calc(var(--bm-head-h) + 12px);
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header,
+	body.kmae-browse-page.kmae-app .kmae-header.kmae-pc-topbar,
+	body.kmae-browse-page.kmae-app .kmae-header.is-scrolled {
+		top: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		max-width: none;
+		height: var(--bm-head-h);
+		margin: 0;
+		padding: env(safe-area-inset-top, 0px) 16px 0;
+		border: 0;
+		border-bottom: 1px solid rgba(0, 199, 247, 0.28);
+		border-radius: 0;
+		background: rgba(244, 251, 255, 0.72);
+		background-clip: padding-box;
+		box-shadow: 0 8px 24px rgba(38, 68, 90, 0.1);
+		-webkit-backdrop-filter: blur(20px) saturate(170%);
+		backdrop-filter: blur(20px) saturate(170%);
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header::after {
+		display: none;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header .kmae-logo--mobile img {
+		height: 26px;
+		max-width: 100px;
+		filter: none;
+	}
+
+	/* Belépés: ugyanaz az üveg-pill, mint a landingen (header-auth.css). */
+	body.kmae-browse-page.kmae-app .kmae-header__mobile-top > a.kmae-header__login-icon {
+		gap: 0;
+		height: 38px;
+		min-height: 38px;
+		padding: 0 14px;
+		border: 1px solid rgba(0, 170, 220, 0.6);
+		border-radius: 999px;
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 55%),
+			linear-gradient(135deg, rgba(0, 199, 247, 0.34), rgba(120, 222, 255, 0.2));
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.95),
+			inset 0 -1px 0 rgba(0, 143, 189, 0.2),
+			0 0 16px rgba(0, 199, 247, 0.28),
+			0 6px 16px rgba(38, 68, 90, 0.12);
+		color: #0a5f87;
+		font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+		font-size: 13.5px;
+		font-weight: 700;
+		-webkit-backdrop-filter: blur(14px) saturate(160%);
+		backdrop-filter: blur(14px) saturate(160%);
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header__mobile-top > a.kmae-header__login-icon:active {
+		transform: scale(0.97);
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header__mobile-top > a.kmae-header__login-icon svg {
+		display: none;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-phone-header__avatar {
+		width: 38px;
+		height: 38px;
+	}
+}
+
+/* Fekvő telefon: üveg-fejléc helyett csak középen logó (theme.css globális szabály). */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 520px) {
+	body.kmae-browse-page {
+		--bm-head-top: 0px;
+		--bm-head-h: 38px;
+		--bm-top: calc(var(--bm-head-h) + env(safe-area-inset-top, 0px) + 8px);
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header,
+	body.kmae-browse-page.kmae-app .kmae-header.kmae-pc-topbar,
+	body.kmae-browse-page.kmae-app .kmae-header.is-scrolled {
+		top: 0 !important;
+		left: 0 !important;
+		right: 0 !important;
+		width: 100% !important;
+		max-width: none !important;
+		margin: 0 !important;
+		padding: env(safe-area-inset-top, 0px) 0 0 !important;
+		height: calc(var(--bm-head-h) + env(safe-area-inset-top, 0px)) !important;
+		border: 0;
+		border-radius: 0;
+		background: transparent !important;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		box-shadow: none !important;
+		animation: none;
+		align-items: flex-end;
+		justify-content: center;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header::after {
+		content: none !important;
+		display: none !important;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header__inner {
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+		width: 100% !important;
+		height: var(--bm-head-h) !important;
+		padding: 0 !important;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header__mobile-top {
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header a.kmae-logo--mobile {
+		position: static !important;
+		order: 0 !important;
+		margin: 0 !important;
+		transform: none !important;
+	}
+
+	body.kmae-browse-page.kmae-app .kmae-header .kmae-logo--mobile img {
+		height: 22px;
+		max-width: 96px;
 	}
 }

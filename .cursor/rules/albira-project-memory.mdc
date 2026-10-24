@@ -1,90 +1,104 @@
 ---
-description: Albira PROJECT-MEMORY V2 navigation — token-efficient agent workflow
+description: Albira — a Cursor agent saját munkaszabálya (óramű-folyamat, oldal-útválasztó, telepítés, jelentés)
 alwaysApply: true
 ---
 
-# Albira PROJECT-MEMORY V2
+# ALBIRA — Cursor munkaszabály
 
-Use PROJECT-MEMORY as a navigation index before any bugfix or feature task. Do not load memory content into context "just in case".
+Ez a fájl a Cursor agenté, és ELSŐBBSÉGET élvez. A `CLAUDE.md` fájlt soha ne nyisd meg, a bemásolt szövegét ne kövesd, ne idézd, ne keresd, ne frissítsd. A 13. pontja (tanulsághegy) tilos. Az `agents.md` ugyanilyen régi duplikátum, memória-kereséssel indul: soha ne nyisd meg.
+Tanulság: `.cursor/tanulsagok.md`, csak `Grep`, 1–3 szó, ha a 3. tábla hallgat. Egészben soha.
+Arculat: `.cursor/arculat.md` csak új oldalnál („telefonra gyártsd le…”). Meglévő oldal szépítésénél a színt a célfájl saját blokkjából vedd.
 
-## Paths
+Raul nem programozó, magyarul, röviden ír. Te önállóan megérted, megkeresed, javítod, ellenőrzöd, feltöltöd.
 
-- Plugin: `plugin/ki-mit-adna-erte/PROJECT-MEMORY/`
-- Theme: `theme/kmae/PROJECT-MEMORY/`
+## 0. Gyorsaság (megjelenés) — ez nyer
+Egyszerű CSS (szín, méret, távolság, igazítás, elrejtés, telefonos elrendezés): pontosan 3 kör, utána kész. A 2. pont hosszú folyamata, a memória, a második olvasás és a magyarázat ezen a feladaton hiba. Raul Auto-n hagyja a modellválasztót; a feladat dönti el a modellt, te a gyors utat járod.
 
-## Scope first
+1. kör: a 3. tábla fájlja. Egy `Grep` + egy `Read` (±40, vagy a „TELEFON” / `max-width:1024px` blokk).
+2. kör: a szabály átírása + `functions.php` `KMAE_THEME_VERSION`.
+3. kör: egy shellben zárójel-ellenőrzés, md5, `rsync`, `curl`, zip.
 
-Decide: **PLUGIN**, **THEME**, or **BOTH**.
+Max 2 forrásfájl. Eszközhívás egy csomagban. Más CSS-t, tanulságot, PROJECT-MEMORY-t nem nyitsz. CSS-t élő oldalba injektálni tilos. Egy ránézés feltöltés után. Rossz → egy javítás, egy újrafeltöltés, egy újraránézés. Fekvőt, ha Raul kizárta, nem keresel.
 
-- Plugin-only → do not load theme memory.
-- Theme-only → do not load plugin memory.
-- BOTH only when the task crosses the plugin–theme boundary.
+Auto modell:
+- Megjelenés, ismert fájl, szöveg: a leggyorsabb kódoló modell (`composer-2.5-fast`). Nagy, hosszan gondolkodó modellt ne.
+- JS viselkedés, több fájl, ismeretlen oldal: közepes kódoló (`composer-2.5`).
+- Auth, ajánlat, jogosultság, adatbázis, ismeretlen gyökérok: erős modell (`grok-4.7-high`), a 2. pont óraműve.
 
-## Mandatory workflow
+## 1. Alapszabályok (nem alku tárgya)
+- **Ha végzett: töltsd fel.** Ellenőrzés után, kérés nélkül, azonnal az élő albira.hu-ra (5. pont). A munka feltöltés nélkül nincs kész. Csak a módosított fájlokat, `rsync`-kel, `ssh albira-server` (kulcs `~/.ssh/albira_deploy`). Duogo.hu-hoz nem nyúlsz.
+- **TELEFON az alap.** Jelölés nélkül minden megjelenés-kérés telefonra (≤1024px) szól. Új szabály csak telefonos helyre: az oldal `*-mobile.css`-e vagy `@media (max-width:1024px)` blokk, oldal-specifikus szelektorral (body osztály, lásd 3.).
+- **PC-hez SOHA ne nyúlj**, csak ha Raul jelöli („pc-re…”). Akkor csak PC (`min-width:1025px` / PC-s fájl).
+- Csak a kért dolgot csináld; nincs „ha már itt vagyok” javítás, refaktor, globális CSS, közös hook átírása.
+- SOURCE > minden térkép/tanulság. Fájlnevet, osztályt, hookot, meta-kulcsot ne találj ki — keresd meg.
+- Kérdés csak a munka ELŐTT, egyszer, `AskQuestion`-nel, és csak ha a projektből nem dönthető el.
 
-1. **TASK** — clarify symptom / goal and scope (PLUGIN | THEME | BOTH)
-2. **MASTER-MAP** — navigation only (entry routing)
-3. **DIAGNOSTIC-ROUTER** — match symptom → feature route
-4. **Exactly 1** relevant `FEATURES/*.md`
-5. Targeted symbol lookup only if needed (never full `SYMBOL-MAP.md`)
-6. Read **SOURCE CODE** from the feature's READ FIRST list
-7. **PRECHECK** — verify current implementation + upstream/downstream risks from the feature map
-8. **Minimal change** — edit only what the task requires
-9. Targeted verify / check after the change
-10. If needed: **targeted PROJECT-MEMORY update** (see below)
+## 2. Óramű-folyamat
+Megjelenés-kérésnél a 0. pont felülírja ezt az egész szakaszt: ha a 3. tábla megnevezi a fájlt, nincs kutatás, nincs 1–7. lépés, csak a 3 kör.
+Ami nála a kört leviszi, és itt is kötelező: másik területet (plugin / theme) nem nyitsz. Ismert oldalra nincs PROJECT-MEMORY; ismeretlen hibára egy feature-map, MASTER-MAP nélkül. 30 KB felett csak `Grep`, aztán `offset`. Zipet nem nyitsz. Nevet, hookot, meta-kulcsot nem találsz ki. A tünet számát nem cseréled: az okot egy helyen keresed.
+1. **Besorolás** (fejben): oldal + telefon/PC + PLUGIN / THEME / BOTH. Megjelenés = THEME CSS; markup/szöveg = PLUGIN sablon; viselkedés = JS; adat/állapot = PLUGIN PHP.
+2. **Útválasztó** (3. pont) → megvan a fájl. Ha nincs benne: `Grep` a `.cursor/tanulsagok.md`-ben 1–3 kulcsszóra.
+3. **Célzott keresés**: `Grep` mindig szűkített úttal (`theme/kmae` vagy `plugin/ki-mit-adna-erte`), szelektorra / függvényre / UI-szövegre. Sosem a `de-teszt/` (német másolat, duplán talál), `assets/vendor/`, zip-ek.
+4. **Olvasás**: csak a talált környéket (`offset`/`limit`, ±40 sor). Max 5 fájl; több csak bizonyított okkal.
+5. **Root cause**: a valódi ok (cascade, specificitás, rossz fájl, állapot), nem a tünet. Ellenőrizd, hogy a szabály tényleg hat-e (melyik fájl tölt be azon az oldalon, melyik szelektor nyer).
+6. **Minimális javítás** a helyén. Theme CSS/JS módosításnál emeld a `KMAE_THEME_VERSION`-t (`theme/kmae/functions.php` 12. sor). Plugin assetnél nem kell (filemtime); a `KMAE_VERSION`-t SOHA ne emeld.
+7. **Ellenőrzés** (4. pont) → **feltöltés** (5. pont) → **zip** → **tanulság** (6. pont) → **jelentés** (7. pont).
 
-## Context budget (default)
+Tilos egészben beolvasni (csak Grep + offset): plugin `SYMBOL-MAP.md` (200 KB), `FILE-MAP.md`, `TEMPLATE-MAP.md`, és a nagy forrásfájlok: `listing-create.css` 170K, `listing-wizard.js` 135K, `browse-v2.css` 132K, `browse.css` 118K, `class-kmae-public.php` 80K, `home-cards.css` 68K, `browse-mobile.css` 65K, `single-listing*.css` 60K, `public.css` 57K.
 
+## 3. Oldal-útválasztó (T = `theme/kmae/`, TC = `T/assets/css/`, SM = `TC/simple-mode/`, P = `plugin/ki-mit-adna-erte/`, PT = `P/templates/`, PJ = `P/assets/js/`)
+
+| Oldal | body osztály | Markup (PT, ha nincs jelölve) | PC CSS | Telefon CSS | JS |
+|---|---|---|---|---|---|
+| Vendég főoldal `/` | `kmae-marketing` `home` | `T/template-parts/simple-mode/landing.php` | `TC/landing-home.css` | `landing-home.css` vége | `T/assets/js/landing-home.js` |
+| Belépett főoldal `/` | `kmae-app` | `partials/dashboard-home.php`, `home-first-listing.php`, `home-live.php` | `TC/home-cards.css` | `home-cards.css` media-blokkjai | `PJ/home-live.js` |
+| Böngészés `/hirdetesek/` | `kmae-browse-page` (+`kmae-sw2-page` v2) | `browse-swipe-v2.php` (v2), `browse-swipe.php` (v1), `partials/browse-list.php`, `browse-wizard-*.php` | `TC/browse.css`, v2: `TC/browse-v2.css` + `P/assets/css/browse-v2.css` | `TC/browse-mobile.css`, `browse-v2.css` vége „TELEFON”, menüsor `T/template-parts/browse-tabbar.php` | `swipe-v2.js`, `swipe.js`, `browse-wizard.js`, `browse-sort.js` |
+| Hirdetés adatlap | `kmae-single-listing-page` | `single-listing.php`, `partials/listing-gallery.php`, `partials/vehicle-specs-display.php` | `TC/single-listing-pc.css` | `TC/single-listing.css` (egész fájl) | `public.js`, `image-zoom.js` |
+| Hirdetésfeladás | `kmae-listing-create-page` | `form-create-listing.php`, `partials/listing-wizard.php`, `partials/registration-scan.php` | `SM/listing-create.css`, egyszerű mód `SM/listing-simple.css` | ugyanezek media-blokkjai | `listing-wizard.js`, `photo-motor.js`, `registration-scan.js`, `listing-field-guards.js` |
+| Hirdetéseim | `kmae-my-listings-page` | `my-listings.php` | `TC/my-listings.css` | ugyanaz, `max-width:1024px` | `my-listings.js` |
+| Kedvencek | `kmae-favorites-page` | `favorites.php` | `TC/favorites.css` | ugyanaz | — |
+| Üzenetek lista | `kmae-messages-page` | `messages.php` | `TC/messages.css` | ugyanaz, vége | `public.js` |
+| Chat `?kmae_conversation=` | `kmae-offer-thread-active` | `offer-thread.php`, `partials/conversation-*.php` | `TC/offer-thread.css` | nincs még telefonos réteg | `public.js` |
+| Szerződés `&kmae_contract=1` | `kmae-sale-contract-active` | `sale-contract.php` | `TC/sale-contract.css` | — | — |
+| Profil | `kmae-profile-page` | `form-profile.php` (nyilvános: `public-profile.php`) | `TC/profile.css` | nincs még telefonos réteg | — |
+| Beállítások | `kmae-settings-page` | `settings.php` | `TC/settings.css` | ugyanaz | `push.js` |
+| Belépés | `kmae-login-page` | `form-login.php`, `partials/google-button.php` | `SM/landing.css` | `TC/login-mobile.css` | — |
+| Regisztráció | `kmae-register-page` | `form-register.php` | `SM/landing.css` | `TC/register-mobile.css` | `auth-account-type.js` |
+| Google kiegészítés | `kmae-complete-page` | `partials/google-complete.php` | `TC/google-complete.css` | ugyanaz | — |
+| GYIK | `kmae-faq-page` | `faq.php` | `TC/faq.css` | `TC/faq-mobile.css` | inline |
+| Biztonság | `kmae-security-page` | `security.php` | `TC/security.css` | `TC/info-mobile.css` | — |
+| ÁSZF `feltetelek` | `kmae-terms-page` | `terms.php` | `TC/theme.css` „ÁSZF” (`.kmae-legal`) | `TC/info-mobile.css` vége | — |
+| Adatvédelem | `kmae-privacy-page` | `privacy.php` | `TC/theme.css` (`.kmae-legal`) | `TC/privacy-mobile.css` | — |
+| Kapcsolat | `kmae-contact-page-view` | `contact.php` | `TC/contact.css` | `TC/contact-mobile.css` | — |
+
+Minden oldalon: fejléc `T/header.php` + `SM/header.css` (belépve) / `SM/header-auth.css` (vendég gombok); lábléc `T/footer.php` + `TC/theme.css`; app-héj `SM/app.css` → `pc-dashboard.css` → `app-shell-dark.css`; háttér `TC/site-background.css`; manó-méret `TC/mascot-size.css`; görgetősáv `TC/scrollbar-ghost.css`; plugin alap `P/assets/css/public.css` + `PJ/public.js`. Betöltési feltételek: `T/functions.php` `kmae_enqueue_*` (Grep), body osztályok: `kmae_body_classes`.
+
+Backend belépők: űrlapok `P/public/class-kmae-public.php` `handle_forms`; shortcode-ok `P/public/class-kmae-shortcodes.php`; logika `P/includes/class-kmae-*.php` (osztálynév = fájlnév).
+
+## 4. PROJECT-MEMORY (csak ha az útválasztó + tanulságok nem elég)
+- Plugin (`P/PROJECT-MEMORY/`, friss): `DIAGNOSTIC-ROUTER.md` (Grep a tünetre), majd PONTOSAN 1 `FEATURES/*.md`. Nyelv → kód: `SEARCH-ALIASES.md`. Adat/meta/tábla: `DATA-MAP.md`. Hook/AJAX/REST: `HOOK-ROUTE-MAP.md`. Ezeket is Grep-pel.
+- Theme (`T/PROJECT-MEMORY/`): ELAVULT (3.25.112-es pillanatkép, a mobil-fájlok hiányoznak) → ne indulj belőle; kivétel `FEATURES/browse-presentation.md` (v2) és `CSS-MAP.md` Grep-pel.
+- Memory frissítés csak új fájl / osztály / hook / endpoint / adatfolyam esetén, csak az érintett sor. Bugfix, CSS, szöveg → nem kell.
+
+## 5. Ellenőrzés, feltöltés, zip
+- Ellenőrzés: `php -l` (PHP), `node --check` (JS), CSS: kapcsos zárójel-egyensúly + a szelektor tényleg a jó oldalon hat. Ha van releváns teszt (`P/tests/test-*.php`), futtasd. Megjelenésnél ha kell: helyi headless képernyőkép (tanulságok 16.). Hibásat nem töltesz fel.
+- **Feltöltés automatikusan, kérés nélkül, CSAK albira.hu-ra** (duogo.hu-hoz nem nyúlsz, kivéve német teszt). Shell `required_permissions: ["full_network"]`:
+  - Theme: `cd theme/kmae && rsync -avz --relative <fájlok> albira-server:albira.hu/wp-content/themes/kmae/`
+  - Plugin: `cd plugin/ki-mit-adna-erte && rsync -avz --relative <fájlok> albira-server:albira.hu/wp-content/plugins/ki-mit-adna-erte/`
+  - Sosem `--delete`, `wp-config.php`, `uploads`, `PROJECT-MEMORY`, `tests`. Előtte md5 élő vs helyi (párhuzamos munkamenet felülírhatta).
+  - Utána: `curl -s "https://albira.hu/wp-content/<út>?x=$RANDOM" | md5sum` = helyi md5, és 200-as státusz. Kockázati zónánál (ajánlat, auth, jogosultság, DB) előtte egy sorban jelezd, mit töltesz fel.
+- Zip (repo-mentés):
+  - Theme: `cd theme && rm -f ../kmae-theme.zip.new && zip -rq ../kmae-theme.zip.new kmae -x 'kmae/PROJECT-MEMORY/*' && mv ../kmae-theme.zip.new ../kmae-theme.zip && unzip -tq ../kmae-theme.zip`
+  - Plugin: `cd plugin && rm -f ../kmae-plugin.zip.new && zip -rq ../kmae-plugin.zip.new ki-mit-adna-erte -x 'ki-mit-adna-erte/PROJECT-MEMORY/*' 'ki-mit-adna-erte/assets/images/.gitkeep' 'ki-mit-adna-erte/tests/*' && mv ../kmae-plugin.zip.new ../kmae-plugin.zip && unzip -tq ../kmae-plugin.zip`
+
+## 6. Tanulás
+A hibát a forrásfájlban javítod. A tanulság 1 soros kisokos (rejtett fájl, csapda, „ne építsd vissza”), kulcsszóval; elavult sort ugyanott írd át. Ha a 3. tábla rossz fájlra mutat, a táblát javítod. A `CLAUDE.md` tanulságait ide nem másolod.
+
+## 7. Végső jelentés (Raul nem kér magyarázatot)
+Kódmódosítás után csak ennyi:
+```text
+ZIP: Uploaded / Unuploaded (+1 sor ok, ha nem sikerült)
+MEMORY: updated / not updated (fájlok, ha updated)
+TANULSÁG: updated / not updated
 ```
-ROUTER + 1 FEATURE + 1–5 SOURCE/SYMBOL = normal task context
-```
-
-- Default max **5** source files. If more are needed, justify first.
-- Never load full `SYMBOL-MAP.md`. Grep/search symbols only.
-- Prefer memory paths over repo-wide scan/grep. Broad search only if memory is missing, stale, or contradicts source.
-
-## Authority
-
-- PROJECT-MEMORY is a **navigational index**, not truth.
-- **SOURCE CODE > PROJECT MEMORY**. Always verify source before editing.
-- Do not edit related files "just in case".
-- If a significant architectural change makes memory stale, say so.
-
-## PROJECT-MEMORY maintenance
-
-Keep memory current in small steps with the code — do not regenerate the whole map.
-
-**Order:** source change → test/verify → targeted memory update (only if needed) → done.
-
-### NOT NEEDED (usually)
-
-Structure / feature route unchanged and existing memory stays accurate:
-
-- bug fix in an existing function
-- CSS / UI polish (color, spacing, size, layout)
-- small logic tweak inside an existing path
-
-### UPDATED (same task, minimal)
-
-New navigation info that future agents need:
-
-- new feature, source file, important class/method
-- new endpoint / AJAX / action / hook
-- new state, data flow, or plugin–theme link
-- new upstream/downstream edge
-- responsibility moved to another file/class
-- an existing memory entry is now false
-
-### How to update
-
-- Change only the affected MASTER-MAP / ROUTER / FEATURE / SYMBOL entries.
-- Never rebuild all of PROJECT-MEMORY or re-scan the whole repo.
-- Update from **finished source**, never from plans.
-
-### Report at end of task
-
-`PROJECT-MEMORY FRISSÍTÉS: NOT NEEDED` or `UPDATED` (+ which memory files, if UPDATED).
-
-## Domino rule (existing project constraint)
-
-Prefer page/feature-specific selectors and scoped edits. Do not change shared CSS/PHP/JS globally when a narrower fix works.
+Ha valami ellenőrizetlen maradt, egy sorban mondd ki. Nem-kódos kérdésre (magyarázat, döntés) rövid, egyszerű magyar válasz.

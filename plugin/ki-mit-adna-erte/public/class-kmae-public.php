@@ -67,10 +67,18 @@ class KMAE_Public {
 				KMAE_VERSION,
 				true
 			);
+			/* Céges telephely: irányítószám + település-lista (a Google-kiegészítő űrlap is itt jelenik meg). */
+			KMAE_Settlements::enqueue_picker();
 		}
 
 		if ( ! $this->should_enqueue_public_assets() ) {
 			return;
+		}
+
+		/* Település-választó: hirdetés-űrlap (megye + város) és profil (céges telephely). */
+		$picker_post = get_post();
+		if ( $this->is_create_listing_page() || ( is_user_logged_in() && $picker_post && has_shortcode( (string) $picker_post->post_content, 'kmae_profile' ) ) ) {
+			KMAE_Settlements::enqueue_picker();
 		}
 
 		$public_deps = array();
@@ -105,6 +113,8 @@ class KMAE_Public {
 			/* Böngészés v2 kártyák (templates/browse-swipe-v2.php; lista nézetben a JS magától kilép). */
 			wp_enqueue_style( 'kmae-browse-v2', KMAE_PLUGIN_URL . 'assets/css/browse-v2.css', array(), KMAE_VERSION );
 			wp_enqueue_script( 'kmae-swipe-v2', KMAE_PLUGIN_URL . 'assets/js/swipe-v2.js', array(), KMAE_VERSION, true );
+			/* Lapozó (telefon): a v2 kártyák és a lista nézet fölötti lapozó; a ver-t az asset_version_src filemtime-ra cseréli. */
+			wp_enqueue_script( 'kmae-browse-lapozo', KMAE_PLUGIN_URL . 'assets/js/browse-lapozo.js', array(), KMAE_VERSION, true );
 		}
 		wp_enqueue_script( 'kmae-map', KMAE_PLUGIN_URL . 'assets/js/map.js', array(), KMAE_VERSION, true );
 
@@ -190,6 +200,14 @@ class KMAE_Public {
 			|| has_shortcode( (string) $current_post->post_content, 'kmae_create_listing' )
 		) ) {
 			wp_enqueue_script( 'kmae-my-listings', KMAE_PLUGIN_URL . 'assets/js/my-listings.js', array(), KMAE_VERSION, true );
+		}
+
+		if ( is_user_logged_in() && $current_post && class_exists( 'KMAE_Dealer_Leads' ) && (
+			has_shortcode( (string) $current_post->post_content, 'kmae_my_listings' )
+			|| has_shortcode( (string) $current_post->post_content, 'kmae_notifications' )
+		) ) {
+			/* Kereskedők megkeresése: eladói küldő ablak (partials/dealer-leads-dialog.php). */
+			wp_enqueue_script( 'kmae-dealer-leads', KMAE_PLUGIN_URL . 'assets/js/dealer-leads.js', array(), KMAE_VERSION, true );
 		}
 
 		wp_localize_script(
@@ -424,8 +442,9 @@ class KMAE_Public {
 		/* kmae_browse: belépve felhasználónként más (Tiltó lista, nézet-meta, kedvencek, átlapozott) — régi cache-elt változat ne jöjjön.
 		   kmae_favorites: a „Foglalt” címke a kedvenc nélkül is változik.
 		   kmae_create_listing / kmae_profile / kmae_settings: az e-mail megerősítés után a régi
-		   „Erősítsd meg” képernyő ne jöjjön vissza a cache-ből. */
-		foreach ( array( 'kmae_messages', 'kmae_my_listings', 'kmae_browse', 'kmae_favorites', 'kmae_create_listing', 'kmae_profile', 'kmae_settings' ) as $tag ) {
+		   „Erősítsd meg” képernyő ne jöjjön vissza a cache-ből.
+		   kmae_notifications: a kereskedői megkeresések állapota (válasz, lejárat) percenként változhat. */
+		foreach ( array( 'kmae_messages', 'kmae_my_listings', 'kmae_browse', 'kmae_favorites', 'kmae_create_listing', 'kmae_profile', 'kmae_settings', 'kmae_notifications' ) as $tag ) {
 			if ( has_shortcode( $content, $tag ) || false !== strpos( $content, '[' . $tag ) ) {
 				$is_live = true;
 			}
@@ -566,6 +585,11 @@ class KMAE_Public {
 		/* Az élő oldalak kérése a menü számlálóját is viszi — így oldalanként
 		   egyetlen háttérkérés fut (public.js élő frissítés). */
 		$response['unseen'] = (int) KMAE_Database::count_unread_conversations( get_current_user_id() );
+
+		/* Fejléc-csengő (kereskedői megkeresések): ugyanebben a válaszban, külön kérés nélkül. */
+		if ( class_exists( 'KMAE_Dealer_Leads' ) ) {
+			$response['notif_pending'] = (int) KMAE_Dealer_Leads::bell_count( get_current_user_id() );
+		}
 
 		wp_send_json_success( $response );
 	}
@@ -790,16 +814,19 @@ class KMAE_Public {
 		KMAE_Auth::sync_phone( $user_id, $phone );
 
 		if ( KMAE_Auth::is_company( $user_id ) ) {
-			$company_result = KMAE_Company::save_profile_fields(
-				$user_id,
-				array(
-					'company_name' => isset( $_POST['kmae_company_name'] ) ? wp_unslash( $_POST['kmae_company_name'] ) : $display_name,
-					'address'      => isset( $_POST['kmae_company_address'] ) ? wp_unslash( $_POST['kmae_company_address'] ) : '',
-					'county'       => isset( $_POST['kmae_company_county'] ) ? wp_unslash( $_POST['kmae_company_county'] ) : '',
-					'city'         => isset( $_POST['kmae_company_city'] ) ? wp_unslash( $_POST['kmae_company_city'] ) : '',
-					'intro'        => isset( $_POST['kmae_company_intro'] ) ? wp_unslash( $_POST['kmae_company_intro'] ) : '',
-				)
+			$company_data = array(
+				'company_name' => isset( $_POST['kmae_company_name'] ) ? wp_unslash( $_POST['kmae_company_name'] ) : $display_name,
+				'address'      => isset( $_POST['kmae_company_address'] ) ? wp_unslash( $_POST['kmae_company_address'] ) : '',
+				'county'       => isset( $_POST['kmae_company_county'] ) ? wp_unslash( $_POST['kmae_company_county'] ) : '',
+				'city'         => isset( $_POST['kmae_company_city'] ) ? wp_unslash( $_POST['kmae_company_city'] ) : '',
+				'intro'        => isset( $_POST['kmae_company_intro'] ) ? wp_unslash( $_POST['kmae_company_intro'] ) : '',
 			);
+			/* Autóátvétel: csak ha az űrlapon ott volt a blokk (a jelölő mező jelzi). */
+			if ( ! empty( $_POST['kmae_company_offer_flags'] ) ) {
+				$company_data['buys']    = ! empty( $_POST['kmae_company_buys'] );
+				$company_data['tradein'] = ! empty( $_POST['kmae_company_tradein'] );
+			}
+			$company_result = KMAE_Company::save_profile_fields( $user_id, $company_data );
 			if ( is_wp_error( $company_result ) ) {
 				$this->redirect_profile( $company_result->get_error_code(), true );
 			}
@@ -1100,8 +1127,7 @@ class KMAE_Public {
 			exit;
 		}
 
-		$result = KMAE_Auth::register(
-			array(
+		$register_data = array(
 				'display_name'     => isset( $_POST['kmae_display_name'] ) ? wp_unslash( $_POST['kmae_display_name'] ) : '',
 				'email'            => isset( $_POST['kmae_email'] ) ? wp_unslash( $_POST['kmae_email'] ) : '',
 				'phone'            => isset( $_POST['kmae_phone'] ) ? wp_unslash( $_POST['kmae_phone'] ) : '',
@@ -1114,8 +1140,13 @@ class KMAE_Public {
 				'city'             => isset( $_POST['kmae_company_city'] ) ? wp_unslash( $_POST['kmae_company_city'] ) : '',
 				'email_news'       => true,
 				'email_offers'     => true,
-			)
 		);
+		/* Autóátvétel (céges regisztráció): csak ha a blokk az űrlapon volt. */
+		if ( ! empty( $_POST['kmae_company_offer_flags'] ) ) {
+			$register_data['buys']    = ! empty( $_POST['kmae_company_buys'] );
+			$register_data['tradein'] = ! empty( $_POST['kmae_company_tradein'] );
+		}
+		$result = KMAE_Auth::register( $register_data );
 
 		if ( is_wp_error( $result ) ) {
 			wp_safe_redirect( add_query_arg( 'kmae_error', $result->get_error_code(), KMAE_Auth::register_url() ) );
@@ -1311,9 +1342,11 @@ class KMAE_Public {
 			$city   = KMAE_Company::get_city( $user_id );
 		}
 
-		if ( empty( $title ) || empty( $desc ) || ! KMAE_Counties::validate_listing_location( $county, $city ) ) {
+		$location_error = self::listing_location_error_code( $user_id, $county, $city );
+		if ( empty( $title ) || empty( $desc ) || '' !== $location_error ) {
 			$redirect = ! empty( $_POST['kmae_redirect'] ) ? esc_url_raw( wp_unslash( $_POST['kmae_redirect'] ) ) : add_query_arg( 'kmae_edit', $listing_id, home_url( '/hirdetes-feladasa/' ) );
-			wp_safe_redirect( add_query_arg( 'kmae_error', 'missing_fields', $redirect ) );
+			$code     = ( ! empty( $title ) && ! empty( $desc ) && '' !== $location_error ) ? $location_error : 'missing_fields';
+			wp_safe_redirect( add_query_arg( 'kmae_error', $code, $redirect ) );
 			exit;
 		}
 
@@ -1483,6 +1516,26 @@ class KMAE_Public {
 		exit;
 	}
 
+	/**
+	 * Hirdetés helyszíne → hibakód a `form-listing.php` üzenettömbjéhez ('' = jó).
+	 * Magánszemély: a beírt megye + település; cég: a profil telephelye.
+	 *
+	 * @param int    $user_id User.
+	 * @param string $county  Megye slug.
+	 * @param string $city    Település.
+	 * @return string
+	 */
+	private static function listing_location_error_code( $user_id, $county, $city ) {
+		$problem = KMAE_Counties::location_error( $county, $city );
+		if ( '' === $problem ) {
+			return '';
+		}
+		if ( KMAE_Auth::is_company( $user_id ) ) {
+			return 'mismatch' === $problem ? 'company_location_mismatch' : 'company_location_required';
+		}
+		return 'mismatch' === $problem ? 'location_mismatch' : 'missing_fields';
+	}
+
 	private function process_create_listing() {
 		if ( ! $this->verify_nonce( 'kmae_create_listing_nonce' ) ) {
 			return;
@@ -1507,8 +1560,10 @@ class KMAE_Public {
 			$city   = KMAE_Company::get_city( $user_id );
 		}
 
-		if ( empty( $title ) || empty( $desc ) || ! KMAE_Counties::validate_listing_location( $county, $city ) ) {
-			wp_safe_redirect( add_query_arg( 'kmae_error', 'missing_fields', $referer ) );
+		$location_error = self::listing_location_error_code( $user_id, $county, $city );
+		if ( empty( $title ) || empty( $desc ) || '' !== $location_error ) {
+			$code = ( ! empty( $title ) && ! empty( $desc ) && '' !== $location_error ) ? $location_error : 'missing_fields';
+			wp_safe_redirect( add_query_arg( 'kmae_error', $code, $referer ) );
 			exit;
 		}
 

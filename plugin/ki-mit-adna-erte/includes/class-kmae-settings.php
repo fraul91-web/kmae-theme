@@ -114,6 +114,17 @@ class KMAE_Settings {
 		);
 		register_setting(
 			'kmae_settings',
+			KMAE_Dealer_Leads::OPTION,
+			array(
+				'type'              => 'boolean',
+				'sanitize_callback' => function ( $value ) {
+					return ! empty( $value ) ? 1 : 0;
+				},
+				'default'           => 0,
+			)
+		);
+		register_setting(
+			'kmae_settings',
 			'kmae_contact_form_email',
 			array(
 				'type'              => 'string',

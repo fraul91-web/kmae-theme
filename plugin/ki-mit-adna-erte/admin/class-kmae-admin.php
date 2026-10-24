@@ -425,5 +425,13 @@ class KMAE_Admin {
 		if ( str_contains( $hook, 'kmae' ) || in_array( $hook, array( 'edit.php', 'post.php', 'user-edit.php', 'profile.php' ), true ) ) {
 			wp_enqueue_style( 'kmae-admin', KMAE_PLUGIN_URL . 'assets/css/admin.css', array(), KMAE_VERSION );
 		}
+
+		/* Hirdetés-szerkesztő: irányítószám + település-lista a helyszín mezőkhöz. */
+		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( $screen && 'kmae_listing' === $screen->post_type ) {
+				KMAE_Settlements::enqueue_picker();
+			}
+		}
 	}
 }

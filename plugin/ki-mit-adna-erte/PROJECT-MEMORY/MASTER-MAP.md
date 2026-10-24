@@ -37,6 +37,8 @@ The whole offer engine (cash / official / counter offers, accept / reject / with
 | Event notifications and email | [`FEATURES/NOTIFICATIONS.md`](FEATURES/NOTIFICATIONS.md) | `includes/class-kmae-notifications.php`, `includes/class-kmae-brand.php` |
 | Dashboard, hubs and statistics | [`FEATURES/DASHBOARD-HUBS.md`](FEATURES/DASHBOARD-HUBS.md) | `includes/class-kmae-dashboard.php`, `templates/partials/dashboard-home.php`, `templates/hub-section.php` |
 | Live polling, navigation and badges | [`FEATURES/LIVE-NAV.md`](FEATURES/LIVE-NAV.md) | `includes/class-kmae-live-page.php`, `includes/class-kmae-nav.php`, `public/class-kmae-public.php` |
+| Csoportos kereskedői megkeresés + Értesítések oldal (kész, élesen) | [`FEATURES/DEALER-LEADS.md`](FEATURES/DEALER-LEADS.md) | `includes/class-kmae-dealer-leads.php`, `templates/notifications.php`, `templates/partials/dealer-leads-dialog.php`, `assets/js/dealer-leads.js` |
+| Helyszín: települési lista, irányítószám-választó (megye∈település) | [`FEATURES/PROFILE-COMPANY-SETTINGS.md`](FEATURES/PROFILE-COMPANY-SETTINGS.md) | `includes/class-kmae-settlements.php`, `assets/js/settlement-picker.js`, `assets/data/settlements.json` |
 | Bejelentések (hirdetés + chat → admin Jelentések) | [`FEATURES/REPORTS.md`](FEATURES/REPORTS.md) | `includes/class-kmae-reports.php`, `templates/partials/report-form.php`, `admin/views/reports.php` |
 | WordPress admin integration | [`FEATURES/ADMIN.md`](FEATURES/ADMIN.md) | `admin/class-kmae-admin.php`, `admin/views/dashboard.php`, `admin/views/meta-box-listing.php` |
 | Public contact form | [`FEATURES/CONTACT-FORM.md`](FEATURES/CONTACT-FORM.md) | `public/class-kmae-public.php`, `templates/contact.php`, `includes/class-kmae-settings.php` |

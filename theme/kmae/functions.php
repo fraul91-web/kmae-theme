@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'KMAE_THEME_VERSION', '3.25.622' );
+define( 'KMAE_THEME_VERSION', '3.25.658' );
 if ( ! defined( 'KMAE_VERSION' ) ) {
 	define( 'KMAE_VERSION', KMAE_THEME_VERSION );
 }
@@ -182,6 +182,27 @@ function kmae_is_favorites_page() {
 		|| false !== strpos( $content, '[kmae_favorites' );
 }
 
+/**
+ * Értesítések oldal (kereskedői megkeresések).
+ *
+ * @return bool
+ */
+function kmae_is_notifications_page() {
+	if ( ! is_page() ) {
+		return false;
+	}
+
+	$post_id = get_queried_object_id();
+	if ( 'ertesitesek' === (string) get_post_field( 'post_name', $post_id ) ) {
+		return true;
+	}
+
+	$content = (string) get_post_field( 'post_content', $post_id );
+
+	return has_shortcode( $content, 'kmae_notifications' )
+		|| false !== strpos( $content, '[kmae_notifications' );
+}
+
 function kmae_is_my_listings_page() {
 	if ( ! is_page() ) {
 		return false;
@@ -256,6 +277,24 @@ function kmae_is_security_page() {
 	return 'biztonsag' === $slug
 		|| has_shortcode( $content, 'kmae_security' )
 		|| false !== strpos( $content, '[kmae_security' );
+}
+
+/**
+ * Vendég telefonos alsó menüsor: főoldal + GYIK / Biztonság / Kapcsolat / ÁSZF / Adatvédelem.
+ *
+ * @return bool
+ */
+function kmae_show_guest_tabbar() {
+	if ( is_user_logged_in() ) {
+		return false;
+	}
+
+	return is_front_page()
+		|| kmae_is_faq_page()
+		|| kmae_is_security_page()
+		|| kmae_is_contact_page()
+		|| is_page( 'feltetelek' )
+		|| is_page( 'adatvedelem' );
 }
 
 function kmae_is_profile_page() {
@@ -384,6 +423,9 @@ function kmae_body_classes( $classes ) {
 	if ( kmae_is_messages_page() ) {
 		$classes[] = 'kmae-messages-page';
 	}
+	if ( kmae_is_notifications_page() ) {
+		$classes[] = 'kmae-notifications-page';
+	}
 	if ( kmae_is_faq_page() ) {
 		$classes[] = 'kmae-faq-page';
 	}
@@ -398,6 +440,9 @@ function kmae_body_classes( $classes ) {
 	}
 	if ( kmae_is_contact_page() ) {
 		$classes[] = 'kmae-contact-page-view';
+	}
+	if ( kmae_show_guest_tabbar() ) {
+		$classes[] = 'kmae-guest-tabbar';
 	}
 	if ( kmae_is_profile_page() ) {
 		$classes[] = 'kmae-profile-page';
@@ -583,6 +628,25 @@ function kmae_enqueue_app_shell() {
 				KMAE_THEME_VERSION
 			);
 		}
+	}
+
+	if ( kmae_is_notifications_page() && is_user_logged_in() ) {
+		wp_enqueue_style(
+			'kmae-notifications',
+			KMAE_URI . '/assets/css/notifications.css',
+			array( 'kmae-header' ),
+			KMAE_THEME_VERSION
+		);
+	}
+
+	if ( ( kmae_is_my_listings_page() || kmae_is_notifications_page() ) && is_user_logged_in() ) {
+		/* Kereskedők megkeresése: eladói küldő ablak. */
+		wp_enqueue_style(
+			'kmae-dealer-leads',
+			KMAE_URI . '/assets/css/dealer-leads.css',
+			array( 'kmae-header' ),
+			KMAE_THEME_VERSION
+		);
 	}
 
 	if ( kmae_is_profile_page() ) {
@@ -798,6 +862,23 @@ function kmae_enqueue_contact_mobile() {
 add_action( 'wp_enqueue_scripts', 'kmae_enqueue_contact_mobile', 101 );
 
 /**
+ * Vendég alsó menüsor (telefon): főoldal + infó oldalak.
+ */
+function kmae_enqueue_guest_tabbar() {
+	if ( ! kmae_show_guest_tabbar() ) {
+		return;
+	}
+
+	wp_enqueue_style(
+		'kmae-guest-tabbar',
+		KMAE_URI . '/assets/css/guest-tabbar.css',
+		array( 'kmae-theme' ),
+		KMAE_THEME_VERSION
+	);
+}
+add_action( 'wp_enqueue_scripts', 'kmae_enqueue_guest_tabbar', 102 );
+
+/**
  * Manók egységes mérete (200×200), telefonon és PC-n. Csak CSS.
  */
 function kmae_enqueue_mascot_size() {
@@ -845,6 +926,24 @@ function kmae_enqueue_browse_mobile() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'kmae_enqueue_browse_mobile', 101 );
+
+/**
+ * Böngészés „Lapozó” (telefon): a lapozó nézet stílusa, a böngészés telefonos
+ * CSS-e után töltődik. Csak a böngészés oldalon.
+ */
+function kmae_enqueue_browse_lapozo() {
+	if ( ! kmae_is_browse_page() ) {
+		return;
+	}
+
+	wp_enqueue_style(
+		'kmae-browse-lapozo',
+		KMAE_URI . '/assets/css/browse-lapozo.css',
+		array( 'kmae-browse-mobile' ),
+		KMAE_THEME_VERSION
+	);
+}
+add_action( 'wp_enqueue_scripts', 'kmae_enqueue_browse_lapozo', 103 );
 
 /**
  * Böngészés v2 kártyás nézet (plugin KMAE_Browse_Feed::use_card_index): a régi

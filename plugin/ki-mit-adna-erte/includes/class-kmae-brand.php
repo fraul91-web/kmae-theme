@@ -18,18 +18,17 @@ class KMAE_Brand {
 	const LOGO_GUEST = self::LOGO;
 	const LOGO_APP   = self::LOGO;
 
-	/* Levélképek: a pluginban élő PNG-k, a levélbe ágyazva (cid:) mennek ki,
-	   így letöltés nélkül, azonnal látszanak. Kulcs = Content-ID. */
+	/* Levélképek: a médiatárban élő képekre mutató linkek (nem csatolmány,
+	   nem beágyazott). Kulcs = a manó/logó azonosítója. */
 	const EMAIL_IMAGES = array(
-		'albira-logo'         => array( 'file' => 'logo.png', 'url' => 'https://albira.hu/wp-content/uploads/2026/09/logoemail.webp', 'width' => 168 ),
-		'albira-mano-info'    => array( 'file' => 'info.png', 'url' => 'https://albira.hu/wp-content/uploads/2026/10/info3.webp', 'width' => 96 ),
-		'albira-mano-ezaz'    => array( 'file' => 'ezaz.png', 'url' => 'https://albira.hu/wp-content/uploads/2026/10/ezaz2.webp', 'width' => 126 ),
-		'albira-mano-szomoru' => array( 'file' => 'sad.png', 'url' => 'https://albira.hu/wp-content/uploads/2026/10/szomoru3.webp', 'width' => 120 ),
+		'albira-logo'         => array( 'url' => 'https://albira.hu/wp-content/uploads/2026/09/logoemail.webp', 'width' => 168 ),
+		'albira-mano-info'    => array( 'url' => 'https://albira.hu/wp-content/uploads/2026/10/info3.webp', 'width' => 96 ),
+		'albira-mano-ezaz'    => array( 'url' => 'https://albira.hu/wp-content/uploads/2026/10/ezaz7.webp', 'width' => 126 ),
+		'albira-mano-szomoru' => array( 'url' => 'https://albira.hu/wp-content/uploads/2026/10/szomoru3.webp', 'width' => 120 ),
 	);
 
 	public static function init() {
 		add_filter( 'wp_mail', array( __CLASS__, 'ensure_html_headers' ) );
-		add_action( 'phpmailer_init', array( __CLASS__, 'embed_email_images' ) );
 	}
 
 	public static function logo_guest() {
@@ -111,48 +110,13 @@ class KMAE_Brand {
 	}
 
 	/**
-	 * @param string $cid Content-ID.
-	 * @return string Helyi fájl útvonala.
-	 */
-	private static function email_image_path( $cid ) {
-		return KMAE_PLUGIN_DIR . 'assets/images/email/' . self::EMAIL_IMAGES[ $cid ]['file'];
-	}
-
-	/**
-	 * A kép forrása a levélben: beágyazott kép, ha a fájl megvan, különben a távoli kép.
+	 * A kép forrása a levélben: a kép nyilvános linkje.
 	 *
-	 * @param string $cid Content-ID.
+	 * @param string $cid Kép azonosítója.
 	 * @return string
 	 */
 	private static function email_image_src( $cid ) {
-		return is_readable( self::email_image_path( $cid ) ) ? 'cid:' . $cid : self::EMAIL_IMAGES[ $cid ]['url'];
-	}
-
-	/**
-	 * A levélben hivatkozott képeket csatolja beágyazottként (inline, cid:).
-	 * A PHPMailer minden wp_mail előtt üríti a csatolmányokat, így nem halmozódnak.
-	 *
-	 * @param PHPMailer\PHPMailer\PHPMailer $phpmailer Mailer.
-	 */
-	public static function embed_email_images( $phpmailer ) {
-		$body = (string) $phpmailer->Body;
-		if ( false === strpos( $body, 'cid:albira-' ) ) {
-			return;
-		}
-		foreach ( self::EMAIL_IMAGES as $cid => $image ) {
-			if ( false === strpos( $body, 'cid:' . $cid . '"' ) ) {
-				continue;
-			}
-			$path = self::email_image_path( $cid );
-			if ( ! is_readable( $path ) ) {
-				continue;
-			}
-			try {
-				$phpmailer->addEmbeddedImage( $path, $cid, $image['file'], 'base64', 'image/png', 'inline' );
-			} catch ( Exception $e ) {
-				unset( $e );
-			}
-		}
+		return self::EMAIL_IMAGES[ $cid ]['url'];
 	}
 
 	/**
@@ -410,10 +374,10 @@ body, table, td, a, p, h1 { font-family: Arial, Helvetica, sans-serif !important
 			|| false !== strpos( $message, 'logo-1.webp' )
 			|| false !== strpos( $message, 'logoemail-1.webp' )
 			|| false !== strpos( $message, 'info3.webp' )
-			|| false !== strpos( $message, 'szia3.webp' )
+			|| false !== strpos( $message, 'szia7.webp' )
 			|| false !== strpos( $message, 'szomoru3.webp' )
-			|| false !== strpos( $message, 'csakigytovabb3.webp' )
-			|| false !== strpos( $message, 'ezaz2.webp' );
+			|| false !== strpos( $message, 'csakigytovabb7.webp' )
+			|| false !== strpos( $message, 'ezaz7.webp' );
 		if ( ! $is_branded ) {
 			return $args;
 		}

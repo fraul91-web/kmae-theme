@@ -500,8 +500,10 @@ class KMAE_Google_Auth {
 				wp_safe_redirect( add_query_arg( 'kmae_error', 'company_name_required', $redirect ) );
 				exit;
 			}
-			if ( '' === $company_address || ! KMAE_Counties::validate_listing_location( $company_county, $company_city ) ) {
-				wp_safe_redirect( add_query_arg( 'kmae_error', 'company_location_required', $redirect ) );
+			$location_problem = KMAE_Counties::location_error( $company_county, $company_city );
+			if ( '' === $company_address || '' !== $location_problem ) {
+				$code = ( '' !== $company_address && 'mismatch' === $location_problem ) ? 'company_location_mismatch' : 'company_location_required';
+				wp_safe_redirect( add_query_arg( 'kmae_error', $code, $redirect ) );
 				exit;
 			}
 			/* A típus a profilsorban és a metában egyszerre váljon céges-ré, mielőtt a
@@ -515,15 +517,18 @@ class KMAE_Google_Auth {
 				)
 			);
 			if ( class_exists( 'KMAE_Company' ) && method_exists( 'KMAE_Company', 'save_profile_fields' ) ) {
-				KMAE_Company::save_profile_fields(
-					$user_id,
-					array(
-						'company_name' => $company_name,
-						'address'      => $company_address,
-						'county'       => $company_county,
-						'city'         => $company_city,
-					)
+				$company_fields = array(
+					'company_name' => $company_name,
+					'address'      => $company_address,
+					'county'       => $company_county,
+					'city'         => $company_city,
 				);
+				/* Autóátvétel: csak ha a blokk az űrlapon volt (jelölő mező). */
+				if ( ! empty( $_POST['kmae_company_offer_flags'] ) ) {
+					$company_fields['buys']    = ! empty( $_POST['kmae_company_buys'] );
+					$company_fields['tradein'] = ! empty( $_POST['kmae_company_tradein'] );
+				}
+				KMAE_Company::save_profile_fields( $user_id, $company_fields );
 			}
 		}
 

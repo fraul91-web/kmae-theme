@@ -22,6 +22,7 @@ foreach ( $listings as $listing_item ) {
 }
 $create_url = home_url( '/hirdetes-feladasa/' );
 $reserved_ids = KMAE_Chat_Offers::reserved_listing_ids();
+$dl_ids = array(); // Kereskedői megkeresés ablak: a gombot kapó hirdetések.
 $ml_stats = array(
 	array( 'key' => 'total', 'icon' => 'car', 'label' => __( 'Összes hirdetés', 'ki-mit-adna-erte' ), 'value' => $total_count, 'unit' => __( 'db', 'ki-mit-adna-erte' ), 'note' => __( 'Minden hirdetésed egy helyen', 'ki-mit-adna-erte' ) ),
 	array( 'key' => 'active', 'icon' => 'check', 'label' => __( 'Aktív hirdetések', 'ki-mit-adna-erte' ), 'value' => $active_count, 'unit' => __( 'db', 'ki-mit-adna-erte' ), 'note' => __( 'Most is látják a vevők a Böngészésben', 'ki-mit-adna-erte' ) ),
@@ -272,6 +273,15 @@ $ml_stats = array(
 								<?php if ( $can_reactivate ) : ?>
 									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><?php wp_nonce_field( 'kmae_reactivate_listing', 'kmae_reactivate_listing_nonce' ); ?><input type="hidden" name="action" value="kmae_reactivate_listing" /><input type="hidden" name="kmae_listing_id" value="<?php echo esc_attr( $listing->ID ); ?>" /><button class="kmae-my-listing-card__button kmae-my-listing-card__button--primary" type="submit"><?php echo KMAE_Icons::render( 'repeat', array( 'size' => 18 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php esc_html_e( 'Újraaktiválás', 'ki-mit-adna-erte' ); ?></span></button></form>
 								<?php endif; ?>
+								<?php
+								if ( ! $is_draft && KMAE_Meta::STATUS_ACTIVE === $status && class_exists( 'KMAE_Dealer_Leads' ) && true === KMAE_Dealer_Leads::can_start( $listing->ID, get_current_user_id() ) ) :
+									$dl_ids[] = (int) $listing->ID;
+									?>
+									<button type="button" class="kmae-my-listing-card__button kmae-my-listing-card__button--secondary kmae-my-listing-card__button--dealers" data-kmae-dealer-leads-open="<?php echo esc_attr( $listing->ID ); ?>">
+										<?php echo KMAE_Icons::render( 'tag', array( 'size' => 16 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+										<span><?php esc_html_e( 'Kereskedők megkeresése', 'ki-mit-adna-erte' ); ?></span>
+									</button>
+								<?php endif; ?>
 								<?php if ( ( $can_edit && ! $is_draft ) || $show_delete ) : ?>
 									<div class="kmae-my-listing-card__subactions">
 										<?php if ( $can_edit && ! $is_draft ) : ?>
@@ -305,7 +315,7 @@ $ml_stats = array(
 					<span class="kmae-my-listings__empty-spark kmae-my-listings__empty-spark--a"><?php echo KMAE_Icons::render( 'sparkles', array( 'size' => 22 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					<span class="kmae-my-listings__empty-spark kmae-my-listings__empty-spark--b"><?php echo KMAE_Icons::render( 'sparkles', array( 'size' => 16 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 					<span class="kmae-my-listings__empty-spark kmae-my-listings__empty-spark--c"><?php echo KMAE_Icons::render( 'car', array( 'size' => 20 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-					<img class="kmae-my-listings__empty-mascot" src="https://albira.hu/wp-content/uploads/2026/10/szia3.webp" alt="" width="220" height="250" decoding="async" />
+					<img class="kmae-my-listings__empty-mascot" src="https://albira.hu/wp-content/uploads/2026/10/szia7.webp" alt="" width="220" height="250" decoding="async" />
 				</div>
 				<div class="kmae-my-listings__empty-copy">
 					<p class="kmae-my-listings__empty-eyebrow"><?php esc_html_e( 'Még üres a garázsod', 'ki-mit-adna-erte' ); ?></p>
@@ -367,4 +377,10 @@ $ml_stats = array(
 			<span class="kmae-draft-radial__label"><?php echo wp_kses( __( 'Albira<br>Wizard', 'ki-mit-adna-erte' ), array( 'br' => array() ) ); ?></span>
 		</a>
 	</div>
+	<?php
+	if ( $dl_ids ) {
+		$dealer_leads_listing_ids = $dl_ids;
+		include KMAE_PLUGIN_DIR . 'templates/partials/dealer-leads-dialog.php';
+	}
+	?>
 </section>

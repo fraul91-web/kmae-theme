@@ -46,6 +46,25 @@ class KMAE_Meta {
 	public function __construct() {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post_kmae_listing', array( $this, 'save_listing_meta' ), 10, 2 );
+		add_action( 'admin_notices', array( $this, 'location_notice' ) );
+	}
+
+	/**
+	 * Mentés után: az érvénytelen helyszín (megye + település) nem íródott át — jelezzük.
+	 */
+	public function location_notice() {
+		if ( empty( $_GET['kmae_loc_error'] ) || ! current_user_can( 'edit_posts' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || 'kmae_listing' !== $screen->post_type ) {
+			return;
+		}
+		$code = sanitize_key( wp_unslash( $_GET['kmae_loc_error'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$text = 'mismatch' === $code
+			? __( 'A helyszín nem mentődött el: a megadott település nem a kiválasztott megyében van. Válassz a listából, vagy add meg az irányítószámot.', 'ki-mit-adna-erte' )
+			: __( 'A helyszín nem mentődött el: a megyét és a települést is meg kell adni.', 'ki-mit-adna-erte' );
+		echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $text ) . '</p></div>';
 	}
 
 	public function add_meta_boxes() {
@@ -93,13 +112,30 @@ class KMAE_Meta {
 
 		if ( KMAE_Counties::validate_listing_location( $county, $city ) ) {
 			KMAE_Counties::save_listing_location( $post_id, $county, $city );
-		} elseif ( isset( $_POST['kmae_location'] ) ) {
-			update_post_meta( $post_id, '_kmae_location', sanitize_text_field( wp_unslash( $_POST['kmae_location'] ) ) );
+		} else {
+			if ( '' !== $county || '' !== $city ) {
+				/* A megadott helyszín nem érvényes (a település nem a megyéé): ne maradjon szó nélkül. */
+				$problem = KMAE_Counties::location_error( $county, $city );
+				add_filter(
+					'redirect_post_location',
+					static function ( $location ) use ( $problem ) {
+						return add_query_arg( 'kmae_loc_error', 'mismatch' === $problem ? 'mismatch' : 'required', $location );
+					}
+				);
+			}
+			if ( isset( $_POST['kmae_location'] ) ) {
+				update_post_meta( $post_id, '_kmae_location', sanitize_text_field( wp_unslash( $_POST['kmae_location'] ) ) );
+			}
 		}
 
 		$prev_status = self::get_status( $post_id );
 		update_post_meta( $post_id, '_kmae_condition', $condition );
 		update_post_meta( $post_id, '_kmae_status', $status );
+
+		/* Aktívból bármi másba (admin szerkesztő): a nyitott kereskedői megkeresések nem maradhatnak válaszra várva (idempotens). */
+		if ( self::STATUS_ACTIVE === $prev_status && self::STATUS_ACTIVE !== $status && class_exists( 'KMAE_Dealer_Leads' ) ) {
+			KMAE_Dealer_Leads::on_listing_ended( $post_id );
+		}
 
 		$offer_types = KMAE_Taxonomies::default_offer_types();
 		update_post_meta( $post_id, '_kmae_offer_types', $offer_types );

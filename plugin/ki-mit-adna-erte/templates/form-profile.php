@@ -54,6 +54,7 @@ $messages = array(
 		'nonce_failed'          => __( 'A mentés nem sikerült — frissítsd az oldalt és próbáld újra.', 'ki-mit-adna-erte' ),
 	'company_name_required' => __( 'Add meg a cégnevet.', 'ki-mit-adna-erte' ),
 	'company_location_required' => __( 'Add meg a céges telephelyet.', 'ki-mit-adna-erte' ),
+	'company_location_mismatch' => __( 'A telephely települése nem ebben a megyében van — válaszd ki a listából vagy írd be az irányítószámot.', 'ki-mit-adna-erte' ),
 		'phone_invalid'         => __( 'A telefonszám kilenc számjegy, például 30 111 11 11.', 'ki-mit-adna-erte' ),
 		'delete_confirm_failed' => __( 'A törléshez írd be pontosan: TÖRLÖM.', 'ki-mit-adna-erte' ),
 		'delete_admin_blocked'  => __( 'Adminisztrátori fiók itt nem törölhető.', 'ki-mit-adna-erte' ),
@@ -317,6 +318,13 @@ $icon = static function ( $name, $size = 18 ) {
 					</p>
 					<div class="kmae-profile-field-row">
 						<div class="kmae-profile-field">
+							<label for="kmae_company_zip"><?php esc_html_e( 'Irányítószám', 'ki-mit-adna-erte' ); ?></label>
+							<input type="text" id="kmae_company_zip" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="<?php esc_attr_e( 'Például: 6720', 'ki-mit-adna-erte' ); ?>" data-kmae-zip data-county="#kmae_company_county" data-city="#kmae_company_city" />
+							<div class="kmae-sp-zip-result" data-kmae-zip-result role="status" aria-live="polite"></div>
+						</div>
+					</div>
+					<div class="kmae-profile-field-row">
+						<div class="kmae-profile-field">
 							<label for="kmae_company_county"><?php esc_html_e( 'Telephely megyéje *', 'ki-mit-adna-erte' ); ?></label>
 							<select name="kmae_company_county" id="kmae_company_county" required>
 								<option value=""><?php esc_html_e( 'Válassz megyét', 'ki-mit-adna-erte' ); ?></option>
@@ -327,13 +335,40 @@ $icon = static function ( $name, $size = 18 ) {
 						</div>
 						<div class="kmae-profile-field">
 							<label for="kmae_company_city"><?php esc_html_e( 'Telephely városa *', 'ki-mit-adna-erte' ); ?></label>
-							<input type="text" name="kmae_company_city" id="kmae_company_city" value="<?php echo esc_attr( KMAE_Company::get_city( $user->ID ) ); ?>" required />
+							<input type="text" name="kmae_company_city" id="kmae_company_city" autocomplete="off" data-kmae-city-picker="#kmae_company_county" value="<?php echo esc_attr( KMAE_Company::get_city( $user->ID ) ); ?>" required />
 						</div>
 					</div>
 					<div class="kmae-profile-field">
 						<label for="kmae_company_address"><?php esc_html_e( 'Cím *', 'ki-mit-adna-erte' ); ?></label>
 						<input type="text" name="kmae_company_address" id="kmae_company_address" value="<?php echo esc_attr( KMAE_Company::get_address( $user->ID ) ); ?>" placeholder="<?php esc_attr_e( 'utca, házszám', 'ki-mit-adna-erte' ); ?>" required />
 					</div>
+
+					<?php if ( class_exists( 'KMAE_Dealer_Leads' ) && KMAE_Dealer_Leads::is_enabled() ) : ?>
+						<?php /* Autóátvétel: a jelölő mező jelzi a szervernek, hogy a blokk az űrlapon volt (a kipipálatlan doboz nem küld semmit). */ ?>
+						<div class="kmae-profile-offer-flags">
+							<input type="hidden" name="kmae_company_offer_flags" value="1" />
+							<p class="kmae-profile-subhead">
+								<?php echo $icon( 'car', 15 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<?php esc_html_e( 'Autóátvétel', 'ki-mit-adna-erte' ); ?>
+							</p>
+							<label class="kmae-profile-offer-flag">
+								<input type="checkbox" name="kmae_company_buys" value="1" <?php checked( KMAE_Company::buys_cars( $user->ID ) ); ?> />
+								<span class="kmae-profile-offer-flag__switch" aria-hidden="true"></span>
+								<span class="kmae-profile-offer-flag__copy">
+									<strong><?php esc_html_e( 'Autófelvásárlást vállalunk', 'ki-mit-adna-erte' ); ?></strong>
+									<span><?php esc_html_e( 'Magánszemélyek elküldhetik nektek az eladó autójukat.', 'ki-mit-adna-erte' ); ?></span>
+								</span>
+							</label>
+							<label class="kmae-profile-offer-flag">
+								<input type="checkbox" name="kmae_company_tradein" value="1" <?php checked( KMAE_Company::accepts_tradein( $user->ID ) ); ?> />
+								<span class="kmae-profile-offer-flag__switch" aria-hidden="true"></span>
+								<span class="kmae-profile-offer-flag__copy">
+									<strong><?php esc_html_e( 'Beszámítást vállalunk', 'ki-mit-adna-erte' ); ?></strong>
+									<span><?php esc_html_e( 'Fogadtok autót beszámításba egy másik autó vásárlásánál.', 'ki-mit-adna-erte' ); ?></span>
+								</span>
+							</label>
+						</div>
+					<?php endif; ?>
 				<?php endif; ?>
 
 				<div class="kmae-profile-field">

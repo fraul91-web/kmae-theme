@@ -235,6 +235,13 @@ if ( $is_simple && $is_vehicle && $is_edit && $listing ) {
 								<?php else : ?>
 									<div class="kmae-field-row">
 										<div class="kmae-field">
+											<label for="kmae_zip"><?php esc_html_e( 'Irányítószám', 'ki-mit-adna-erte' ); ?></label>
+											<input type="text" id="kmae_zip" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="<?php esc_attr_e( 'Például: 6720', 'ki-mit-adna-erte' ); ?>" data-kmae-zip data-county="#kmae_county" data-city="#kmae_city" />
+											<div class="kmae-sp-zip-result" data-kmae-zip-result role="status" aria-live="polite"></div>
+										</div>
+									</div>
+									<div class="kmae-field-row">
+										<div class="kmae-field">
 											<label for="kmae_county"><?php esc_html_e( 'Megye *', 'ki-mit-adna-erte' ); ?></label>
 											<select name="kmae_county" id="kmae_county" required>
 												<option value=""><?php esc_html_e( 'Válassz megyét', 'ki-mit-adna-erte' ); ?></option>
@@ -245,7 +252,7 @@ if ( $is_simple && $is_vehicle && $is_edit && $listing ) {
 										</div>
 										<div class="kmae-field">
 											<label for="kmae_city"><?php esc_html_e( 'Város *', 'ki-mit-adna-erte' ); ?></label>
-											<input type="text" name="kmae_city" id="kmae_city" required value="<?php echo esc_attr( $city_val ); ?>" placeholder="<?php esc_attr_e( 'Például: Szeged', 'ki-mit-adna-erte' ); ?>" />
+											<input type="text" name="kmae_city" id="kmae_city" required autocomplete="off" data-kmae-city-picker="#kmae_county" value="<?php echo esc_attr( $city_val ); ?>" placeholder="<?php esc_attr_e( 'Például: Szeged', 'ki-mit-adna-erte' ); ?>" />
 										</div>
 									</div>
 									<?php /* Wizard és egyszerű szerkesztő: megye + város kitöltése a böngésző helymeghatározásából (KMAE_Counties::ajax_locate, listing-locate.js). */ ?>

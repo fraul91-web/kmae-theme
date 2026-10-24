@@ -28,7 +28,7 @@
 		box-sizing: border-box;
 		width: 100%;
 		margin: 0;
-		padding: calc(var(--kmae-header-h, 64px) + 14px) var(--im-gutter) calc(40px + env(safe-area-inset-bottom, 0px));
+		padding: calc(var(--kmae-header-h, 52px) + 14px) var(--im-gutter) calc(40px + env(safe-area-inset-bottom, 0px));
 		background: transparent;
 	}
 
@@ -78,22 +78,31 @@
 		display: none;
 	}
 
-	/* Vendég fejléc: a rejtett menü helyére ne a gombok csússzanak
-	   (különben a logóra kerülnek) — logó balra, gombok jobbra. */
+	/* Vendég fejléc: méret = landing (52px). A landing.css 72px + 32px
+	   gutter felülírja a header-auth-t — itt vissza a tömör sávra. */
+	body.kmae-security-page.kmae-marketing {
+		--kmae-header-h: 52px;
+	}
+
+	body.kmae-security-page.kmae-marketing .kmae-header,
+	body.kmae-security-page.kmae-marketing .kmae-header.is-scrolled {
+		height: var(--kmae-header-h);
+	}
+
 	body.kmae-security-page.kmae-marketing .kmae-header__inner {
+		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
-		gap: 10px;
+		align-items: center;
+		gap: 8px;
+		height: 100%;
+		padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+		padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
 	}
 
 	body.kmae-security-page.kmae-marketing .kmae-header__actions--desktop {
 		grid-column: 2;
+		justify-self: end;
 		gap: 8px;
-	}
-
-	body.kmae-security-page.kmae-marketing .kmae-header__actions .kmae-btn {
-		min-height: 38px;
-		padding: 0 14px;
-		font-size: 13.5px;
 	}
 
 	.kmae-sec-page__intro {
@@ -171,7 +180,7 @@
 	}
 
 	.kmae-sec-block {
-		scroll-margin-top: calc(var(--kmae-header-h, 64px) + 10px);
+		scroll-margin-top: calc(var(--kmae-header-h, 52px) + 10px);
 		padding: 18px 14px 14px;
 		box-sizing: border-box;
 		border: 1px solid rgba(var(--im-blue-rgb), 0.5);
@@ -374,9 +383,9 @@
 		color: var(--im-copy);
 	}
 
-	/* Adatvédelem: a fejléc alatti távolság 18px (telefon). Csak ezen az oldalon (kmae-privacy-page). */
+	/* Adatvédelem: a saját privacy-mobile.css adja a héjat; itt csak fallback. */
 	body.kmae-privacy-page .kmae-page {
-		padding-top: calc(var(--kmae-header-h, 64px) + 18px);
+		padding-top: calc(var(--kmae-header-h, 52px) + 14px);
 	}
 
 	/* =====================================================
@@ -454,7 +463,7 @@
 	}
 
 	.kmae-legal h2 {
-		scroll-margin-top: calc(var(--kmae-header-h, 64px) + 12px);
+		scroll-margin-top: calc(var(--kmae-header-h, 52px) + 12px);
 		font-size: 17px;
 	}
 
@@ -477,11 +486,11 @@
 	@media (orientation: landscape) {
 		body.kmae-security-page .kmae-page,
 		body:has(.kmae-legal) .kmae-page {
-			padding-top: calc(var(--kmae-header-h, 58px) + 10px);
+			padding-top: calc(var(--kmae-header-h, 52px) + 10px);
 		}
 
 		body.kmae-privacy-page .kmae-page {
-			padding-top: calc(var(--kmae-header-h, 58px) + 18px);
+			padding-top: calc(var(--kmae-header-h, 52px) + 14px);
 		}
 
 		body.kmae-security-page .kmae-page > .kmae-container {
@@ -516,32 +525,32 @@
    Fekvő: bal oldali tapadó tartalomjegyzék + jobb oldali szöveg.
    ========================================================= */
 @media (max-width: 1024px) {
-	/* ---- Fejléc: logó balra, gombok jobbra (keskeny telefonon se fedjék egymást) ---- */
-	body.kmae-terms-page.kmae-marketing .kmae-header__inner {
-		grid-template-columns: auto minmax(0, 1fr);
-		gap: 10px;
-		padding-left: max(14px, env(safe-area-inset-left, 0px)) !important;
-		padding-right: max(14px, env(safe-area-inset-right, 0px)) !important;
+	/* ---- Fejléc: ugyanaz a 52px üvegsáv, mint a landingen. ---- */
+	body.kmae-terms-page.kmae-marketing {
+		--kmae-header-h: 52px;
 	}
 
-	body.kmae-terms-page.kmae-marketing .kmae-logo--desktop .kmae-logo__img {
-		width: auto;
-		height: 28px;
+	body.kmae-terms-page.kmae-marketing .kmae-header {
+		height: var(--kmae-header-h);
+	}
+
+	body.kmae-terms-page.kmae-marketing .kmae-header__inner {
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 8px;
+		height: 100%;
+		padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+		padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
 	}
 
 	body.kmae-terms-page.kmae-marketing .kmae-header__actions--desktop {
+		grid-column: 2;
 		justify-self: end;
 		gap: 8px;
 	}
 
-	body.kmae-terms-page.kmae-marketing .kmae-header__actions .kmae-btn {
-		min-height: 36px;
-		padding: 0 14px;
-		font-size: 13px;
-	}
-
 	body.kmae-terms-page .kmae-page {
-		padding-top: calc(var(--kmae-header-h, 64px) + 4px);
+		padding-top: calc(var(--kmae-header-h, 52px) + 14px);
 	}
 
 	body.kmae-terms-page.kmae-app .kmae-page {
@@ -589,10 +598,10 @@
 		line-height: 1.45;
 	}
 
-	/* ---- Tartalomjegyzék (álló): tapadó, vízszintes fejezet-sáv ---- */
+	/* ---- Tartalomjegyzék (álló): tapad a fix fejléc alatt ---- */
 	body.kmae-terms-page .kmae-legal__toc {
 		position: sticky;
-		top: env(safe-area-inset-top, 0px);
+		top: 0;
 		z-index: 5;
 		margin: 0 calc(-1 * var(--im-gutter, 14px)) 12px;
 		padding: 8px 0;
@@ -603,6 +612,10 @@
 		box-shadow: 0 8px 18px rgba(38, 68, 90, 0.08);
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
+	}
+
+	body.kmae-terms-page.kmae-marketing .kmae-legal__toc {
+		top: var(--kmae-header-h, 52px);
 	}
 
 	body.kmae-terms-page .kmae-legal__toc-title {
@@ -815,7 +828,7 @@
 	   ===================================================== */
 	@media (orientation: landscape) {
 		body.kmae-terms-page .kmae-page {
-			padding-top: calc(var(--kmae-header-h, 64px) + 2px);
+			padding-top: calc(var(--kmae-header-h, 52px) + 12px);
 		}
 
 		body.kmae-terms-page.kmae-app .kmae-page {
@@ -856,9 +869,9 @@
 			grid-column: 1;
 			grid-row: span 60;
 			position: sticky;
-			top: calc(10px + env(safe-area-inset-top, 0px));
-			max-height: calc(100vh - 20px);
-			max-height: calc(100dvh - 20px);
+			top: calc(var(--kmae-header-h, 52px) + 8px);
+			max-height: calc(100vh - var(--kmae-header-h, 52px) - 16px);
+			max-height: calc(100dvh - var(--kmae-header-h, 52px) - 16px);
 			margin: 0;
 			padding: 12px 8px 12px 12px;
 			overflow-y: auto;

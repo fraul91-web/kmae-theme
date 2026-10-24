@@ -38,10 +38,14 @@ class KMAE_Notifications {
 	 * Kapcsolható levelek. A kulcs a mentett kapcsoló; ami nincs a listában
 	 * (megerősítés, jelszó, e-mail csere), az mindig kimegy.
 	 *
+	 * A `company_only` csoport (cégeknek szóló levél) csak céges fióknak látszik,
+	 * ha a hívó megadja a felhasználót; user nélkül a teljes lista jön.
+	 *
+	 * @param int $user_id 0 = minden kulcs (mentés/ellenőrzés), > 0 = az ő beállítás-felülete.
 	 * @return array<int, array{id:string,label:string,items:array<int,array{key:string,label:string,hint:string}>}>
 	 */
-	public static function mail_catalog() {
-		return array(
+	public static function mail_catalog( $user_id = 0 ) {
+		$catalog = array(
 			array(
 				'id'    => 'listing',
 				'label' => __( 'Hirdetés', 'ki-mit-adna-erte' ),
@@ -80,15 +84,45 @@ class KMAE_Notifications {
 					),
 				),
 			),
+			array(
+				'id'           => 'dealer',
+				'label'        => __( 'Cégeknek', 'ki-mit-adna-erte' ),
+				'company_only' => true,
+				'items'        => array(
+					array(
+						'key'   => 'dealer_lead',
+						'label' => __( 'Új autó-megkeresés', 'ki-mit-adna-erte' ),
+						'hint'  => __( 'Ha a környéketeken egy magánszemély ajánlatot kér az autójára.', 'ki-mit-adna-erte' ),
+					),
+				),
+			),
 		);
+
+		$user_id = (int) $user_id;
+		if ( $user_id > 0 ) {
+			/* A cégeknek szóló csoport csak céges fióknak ÉS bekapcsolt megkeresés-funkciónál látszik (a mentett kapcsolók érintetlenek: user 0 = minden kulcs). */
+			$show_company = KMAE_Auth::is_company( $user_id ) && class_exists( 'KMAE_Dealer_Leads' ) && KMAE_Dealer_Leads::is_enabled();
+			if ( ! $show_company ) {
+				$catalog = array_values(
+					array_filter(
+						$catalog,
+						static function ( $group ) {
+							return empty( $group['company_only'] );
+						}
+					)
+				);
+			}
+		}
+		return $catalog;
 	}
 
 	/**
+	 * @param int $user_id 0 = minden kulcs; > 0 = csak ami neki látszik (mail_catalog).
 	 * @return array<int, string>
 	 */
-	public static function mail_catalog_keys() {
+	public static function mail_catalog_keys( $user_id = 0 ) {
 		$keys = array();
-		foreach ( self::mail_catalog() as $group ) {
+		foreach ( self::mail_catalog( $user_id ) as $group ) {
 			foreach ( $group['items'] as $item ) {
 				$keys[] = $item['key'];
 			}
@@ -103,19 +137,24 @@ class KMAE_Notifications {
 	 * @return array<string, bool>
 	 */
 	public static function mail_prefs( $user_id ) {
+		$saved = self::saved_mail_prefs( $user_id );
+		$prefs = array();
+		foreach ( self::mail_catalog_keys( (int) $user_id ) as $key ) {
+			$prefs[ $key ] = ! array_key_exists( $key, $saved ) || ! empty( $saved[ $key ] );
+		}
+		return $prefs;
+	}
+
+	/**
+	 * @param int $user_id User.
+	 * @return array<string, mixed> A mentett kapcsolók (kulcs => 0|1).
+	 */
+	private static function saved_mail_prefs( $user_id ) {
 		$saved = get_user_meta( (int) $user_id, 'kmae_mail_prefs', true );
 		if ( is_string( $saved ) && '' !== $saved ) {
 			$saved = json_decode( $saved, true );
 		}
-		if ( ! is_array( $saved ) ) {
-			$saved = array();
-		}
-
-		$prefs = array();
-		foreach ( self::mail_catalog_keys() as $key ) {
-			$prefs[ $key ] = ! array_key_exists( $key, $saved ) || ! empty( $saved[ $key ] );
-		}
-		return $prefs;
+		return is_array( $saved ) ? $saved : array();
 	}
 
 	/**
@@ -127,8 +166,8 @@ class KMAE_Notifications {
 		if ( ! in_array( $key, self::mail_catalog_keys(), true ) ) {
 			return true;
 		}
-		$prefs = self::mail_prefs( $user_id );
-		return ! empty( $prefs[ $key ] );
+		$saved = self::saved_mail_prefs( $user_id );
+		return ! array_key_exists( $key, $saved ) || ! empty( $saved[ $key ] );
 	}
 
 	/**
@@ -137,8 +176,9 @@ class KMAE_Notifications {
 	 */
 	public static function save_mail_prefs( $user_id, $posted ) {
 		$posted = is_array( $posted ) ? $posted : array();
-		$out    = array();
-		foreach ( self::mail_catalog_keys() as $key ) {
+		/* A neki nem látszó kulcsok (pl. cégeknek szóló levél magánszemélynél) megtartják a mentett értéküket. */
+		$out = array_intersect_key( self::saved_mail_prefs( $user_id ), array_flip( self::mail_catalog_keys() ) );
+		foreach ( self::mail_catalog_keys( (int) $user_id ) as $key ) {
 			$out[ $key ] = empty( $posted[ $key ] ) ? 0 : 1;
 		}
 		update_user_meta( (int) $user_id, 'kmae_mail_prefs', wp_json_encode( $out ) );
@@ -193,6 +233,28 @@ class KMAE_Notifications {
 					__( 'Visszavonták az ajánlatot', 'ki-mit-adna-erte' ),
 					(int) $conversation->id,
 					'sad'
+				),
+				'message'
+			);
+			return;
+		}
+
+		/* Kereskedő „Érdekel”-je (KMAE_Dealer_Leads::answer): a rendszerüzenet az eladónak megy. */
+		if ( 'dealer_lead' === $kind ) {
+			$message = KMAE_Conversations::get_message( (int) $message_id );
+			self::send_offer_email(
+				$recipient_id,
+				__( 'Egy kereskedés érdeklődik az autód iránt', 'ki-mit-adna-erte' ),
+				sprintf(
+					__( "Szia!\n\nEgy kereskedés érdeklődik a „%1\$s” hirdetésed iránt.\n\n%2\$s\n\n— Albira", 'ki-mit-adna-erte' ),
+					$title,
+					$message ? (string) $message->message_text : ''
+				),
+				self::thread_email_args(
+					__( 'Kereskedői érdeklődés', 'ki-mit-adna-erte' ),
+					__( 'Egy kereskedés érdeklődik', 'ki-mit-adna-erte' ),
+					(int) $conversation->id,
+					'cheer'
 				),
 				'message'
 			);
@@ -610,6 +672,75 @@ class KMAE_Notifications {
 				'listing_unfinished'
 			);
 		}
+	}
+
+	/**
+	 * Csoportos kereskedői megkeresés: egy levél EGY cégnek (a cégek egymásról nem tudnak).
+	 * Az eladó neve / elérhetősége nincs benne; a gomb a cég saját tokenjével az Értesítések oldalra visz.
+	 * Kapcsolható (`dealer_lead`). Hívó: KMAE_Dealer_Leads::send_queued_notifications (a válasz után).
+	 *
+	 * @param array  $lead  KMAE_Dealer_Leads sor (row() formában).
+	 * @param string $facts Rövid adatsor (évjárat · km · üzemanyag), hirdetésenként egyszer számolva.
+	 * @return bool
+	 */
+	public static function notify_dealer_lead( array $lead, $facts = '' ) {
+		$dealer_id = (int) ( $lead['dealer_id'] ?? 0 );
+		$token     = (string) ( $lead['token'] ?? '' );
+		if ( $dealer_id <= 0 || ! KMAE_Dealer_Leads::is_token( $token ) ) {
+			return false;
+		}
+
+		$title = trim( (string) ( $lead['listing_title'] ?? '' ) );
+		if ( '' === $title ) {
+			$title = __( 'Autó', 'ki-mit-adna-erte' );
+		}
+		$purpose = (string) ( $lead['purpose'] ?? '' );
+		if ( KMAE_Dealer_Leads::PURPOSE_BOTH === $purpose ) {
+			$intro = __( 'Egy magánszemély eladná vagy beszámíttatná az autóját, és szeretné, ha ajánlatot tennétek rá.', 'ki-mit-adna-erte' );
+		} elseif ( KMAE_Dealer_Leads::PURPOSE_TRADEIN === $purpose ) {
+			$intro = __( 'Egy magánszemély beszámíttatná az autóját, és szeretné, ha ajánlatot tennétek rá.', 'ki-mit-adna-erte' );
+		} else {
+			$intro = __( 'Egy magánszemély eladná az autóját, és szeretné, ha ajánlatot tennétek rá.', 'ki-mit-adna-erte' );
+		}
+
+		$car   = array( '„' . $title . '”' );
+		$facts = trim( (string) $facts );
+		if ( '' !== $facts ) {
+			$car[] = $facts;
+		}
+		if ( isset( $lead['distance_km'] ) && null !== $lead['distance_km'] ) {
+			$car[] = sprintf( __( 'Kb. %d km-re van tőletek.', 'ki-mit-adna-erte' ), max( 1, (int) round( (float) $lead['distance_km'] ) ) );
+		}
+
+		/* A magánszemély külön, kereskedői árat ad meg (a nyilvános hirdetési ár nem szerepel). */
+		$price_line = '';
+		$price      = (int) ( $lead['dealer_price'] ?? 0 );
+		if ( $price > 0 ) {
+			$price_line = ( KMAE_Dealer_Leads::PURPOSE_TRADEIN === $purpose
+				? __( 'Beszámításra ennyiért adná:', 'ki-mit-adna-erte' )
+				: __( 'Kereskedőnek ennyiért adná:', 'ki-mit-adna-erte' ) )
+				. ' ' . KMAE_Vehicle::format_value( $price ) . "\n\n";
+		}
+
+		$body = "Szia!\n\n" . $intro . "\n\n" . implode( "\n", $car ) . "\n\n"
+			. $price_line
+			. __( 'Ne utasítsátok el csak az ár vagy a képek miatt. Ha az autó érdekes, nyomjatok az Érdekel gombra, és alkudjatok a chatben.', 'ki-mit-adna-erte' ) . "\n\n"
+			. sprintf( __( '%d napig válaszolhattok.', 'ki-mit-adna-erte' ), KMAE_Dealer_Leads::TTL_DAYS )
+			. "\n\n— Albira";
+
+		return self::send_offer_email(
+			$dealer_id,
+			sprintf( __( 'Új autó-megkeresés: %s', 'ki-mit-adna-erte' ), $title ),
+			$body,
+			array(
+				'tone'         => 'info',
+				'eyebrow'      => __( 'Autó-megkeresés', 'ki-mit-adna-erte' ),
+				'title'        => __( 'Ajánlatot várnak tőletek', 'ki-mit-adna-erte' ),
+				'button_label' => __( 'Megnézem', 'ki-mit-adna-erte' ),
+				'button_url'   => KMAE_Dealer_Leads::lead_url( $token ),
+			),
+			KMAE_Dealer_Leads::MAIL_KEY
+		);
 	}
 
 	private static function send_offer_email( $user_id, $subject, $body, $wrap_args = array(), $mail_key = '' ) {

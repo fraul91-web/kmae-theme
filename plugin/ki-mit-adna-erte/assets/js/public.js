@@ -572,6 +572,20 @@
         }
       }
 
+      /* Fejléc-csengő (kereskedői megkeresések): PC jelvény + telefonos kis jelvény,
+         mindkettő [data-kmae-notif-badge]; 0 = rejtve. */
+      function updateNotifBadges(count) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-kmae-notif-badge]'), function (el) {
+          el.setAttribute('data-kmae-notif-badge', String(count));
+          if (count > 0) {
+            el.textContent = String(count);
+            el.removeAttribute('hidden');
+          } else {
+            el.setAttribute('hidden', '');
+          }
+        });
+      }
+
       function isIdle() {
         return Date.now() - lastActivity > idleAfter;
       }
@@ -670,6 +684,9 @@
             if (typeof data.data.unseen !== 'undefined') {
               updateBadge(parseInt(data.data.unseen, 10) || 0);
             }
+            if (typeof data.data.notif_pending !== 'undefined') {
+              updateNotifBadges(parseInt(data.data.notif_pending, 10) || 0);
+            }
             if (root && data.data.fingerprint && data.data.fingerprint !== initialFingerprint) {
               if (!composing() && !modalOpen()) {
                 window.location.reload();
@@ -686,6 +703,18 @@
             inFlight = false;
             schedule();
           });
+      }
+
+      /* Értesítések oldal: az eladói ablak sikeres küldése után azonnali ellenőrzés
+         (a küldés csak a cégeknek ad jelzést, az eladó összesítője nem kapna). A nyitott
+         ablak alatt az újratöltés halasztódik (modalOpen), bezárás után a következő kör pótolja. */
+      if (context === 'notifications') {
+        document.addEventListener('kmae:dealer-leads-sent', function () {
+          lastSignal = '';
+          if (!inFlight) {
+            fullPoll();
+          }
+        });
       }
 
       /* Tétlenségből visszatérve azonnal kérdezünk, hogy ne kelljen a

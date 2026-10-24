@@ -309,6 +309,10 @@ class KMAE_Chat_Offers {
 			update_post_meta( (int) $listing_id, '_kmae_status', KMAE_Meta::STATUS_CLOSED );
 		}
 		KMAE_Conversations::close_for_listing( (int) $listing_id );
+		/* Eladás / lejárt Foglalt: a kereskedői megkeresések nyitott sorai megszűnnek (néma jelzés a cégeknek). */
+		if ( class_exists( 'KMAE_Dealer_Leads' ) ) {
+			KMAE_Dealer_Leads::on_listing_ended( (int) $listing_id );
+		}
 		self::purge_page_cache( (int) $listing_id );
 	}
 
@@ -370,10 +374,10 @@ class KMAE_Chat_Offers {
 	 * @param int    $conversation_id Conversation ID.
 	 * @param int    $author_id       Message author (seller, or buyer on retract).
 	 * @param string $text            Notice text.
-	 * @param string $key             Unique event key.
+	 * @param string $key             Unique event key (without the `system:` prefix).
 	 * @return bool
 	 */
-	private static function post_system_message( $conversation_id, $author_id, $text, $key ) {
+	public static function post_system_message( $conversation_id, $author_id, $text, $key ) {
 		$message = KMAE_Conversations::save_message( (int) $conversation_id, (int) $author_id, $text, self::SYSTEM_KEY . $key, 0, true );
 		if ( is_wp_error( $message ) || ! $message ) {
 			return false;
@@ -386,7 +390,7 @@ class KMAE_Chat_Offers {
 	 * What a chat message is, for the notice texts (e-mail, push).
 	 *
 	 * @param int $message_id Message ID.
-	 * @return string offer|offer_retracted|system|message
+	 * @return string offer|offer_retracted|dealer_lead|system|message
 	 */
 	public static function message_kind( $message_id ) {
 		$message = KMAE_Conversations::get_message( (int) $message_id );
@@ -396,6 +400,10 @@ class KMAE_Chat_Offers {
 		}
 		if ( 0 === strpos( $key, self::SYSTEM_KEY . 'offer_retracted:' ) ) {
 			return 'offer_retracted';
+		}
+		/* Kereskedő „Érdekel”-je (KMAE_Dealer_Leads::answer), a kereskedő nevében. */
+		if ( 0 === strpos( $key, self::SYSTEM_KEY . 'dealer_lead:' ) ) {
+			return 'dealer_lead';
 		}
 		return 0 === strpos( $key, self::SYSTEM_KEY ) ? 'system' : 'message';
 	}

@@ -4194,38 +4194,6 @@ html.kmae-photo-camera-open {
 	color: #a3123a;
 }
 
-/* Álló fotó tipp (photo-motor.js): kedves javaslat, nem tiltás — elforduló telefon ikon. */
-.kmae-create-page .kmae-shots__tip {
-	display: flex;
-	align-items: flex-start;
-	gap: 10px;
-	margin: 8px 0 0;
-	padding: 11px 15px;
-	border: 1px solid rgba(255, 110, 37, 0.38);
-	border-radius: 12px;
-	background: linear-gradient(135deg, rgba(255, 246, 239, 0.95), rgba(238, 251, 255, 0.92));
-	font-family: "Outfit", system-ui, sans-serif;
-	font-size: 13px;
-	font-weight: 650;
-	line-height: 1.45;
-	color: #34404d;
-}
-
-.kmae-create-page .kmae-shots__tip::before {
-	content: "";
-	flex: none;
-	width: 22px;
-	height: 22px;
-	margin-top: 1px;
-	background: #ff6e25;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='9' width='14' height='9' rx='2'/%3E%3Cpath d='M5 13.5h.01'/%3E%3Cpath d='M13 3a8 8 0 0 1 8 8'/%3E%3Cpath d='m21 7v4h-4'/%3E%3C/svg%3E") center / contain no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='9' width='14' height='9' rx='2'/%3E%3Cpath d='M5 13.5h.01'/%3E%3Cpath d='M13 3a8 8 0 0 1 8 8'/%3E%3Cpath d='m21 7v4h-4'/%3E%3C/svg%3E") center / contain no-repeat;
-}
-
-.kmae-create-page .kmae-shots__tip[hidden] {
-	display: none;
-}
-
 @media (max-width: 560px) {
 .kmae-create-page .kmae-uploader {
 		flex-wrap: wrap;

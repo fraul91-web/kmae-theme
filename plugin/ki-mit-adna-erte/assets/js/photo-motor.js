@@ -712,40 +712,6 @@
     /* Az ítéletek a kártyák sorrendjében, hogy az összegzés tudja, mi a helyzet. */
     var verdicts = [];
     var summaryEl = null;
-    /* Állítva fotózott képek (a kártyák sorrendjében): ezekhez egy kedves tipp jár
-       (fordítsd el a telefont), de feltölteni így is lehet. */
-    var upright = [];
-    var tipEl = null;
-
-    function ensureTip() {
-      var box = ensureSummary();
-      if (tipEl || !box) {
-        return tipEl;
-      }
-      tipEl = document.createElement('p');
-      tipEl.className = 'kmae-shots__tip';
-      tipEl.hidden = true;
-      box.parentNode.insertBefore(tipEl, box.nextSibling);
-      return tipEl;
-    }
-
-    function updateTip() {
-      var tip = ensureTip();
-      if (!tip) {
-        return;
-      }
-      var count = 0;
-      for (var i = 0; i < picked.length; i++) {
-        if (upright[i]) {
-          count++;
-        }
-      }
-      tip.textContent = count
-        ? (count === 1 ? '1 fotó' : count + ' fotó') + ' állítva készült. Tipp: fordítsd el a telefont, és fektetve fotózd az autót. Így az egész autó belefér, és a hirdetésed telefonon és gépen is szebben mutat. Így is feltöltheted.'
-        : '';
-      tip.hidden = !count;
-    }
-
     function ensureSummary() {
       if (summaryEl || !genericPreview || !genericPreview.parentNode) {
         return summaryEl;
@@ -764,7 +730,6 @@
       if (!box) {
         return;
       }
-      updateTip();
       if (!picked.length) {
         box.hidden = true;
         return;
@@ -888,7 +853,6 @@
         /* Dokumentumoldal: nem fotó, a fény/élesség-mérce nem vonatkozik rá. */
         var verdict = isDoc ? null : judgeImage(image);
         verdicts[index] = verdict;
-        upright[index] = !isDoc && image.naturalHeight > image.naturalWidth * 1.1;
         if (!verdict) {
           updateSummary();
           return;
@@ -912,7 +876,6 @@
     function renderPreview() {
       genericPreview.innerHTML = '';
       verdicts.length = picked.length;
-      upright.length = 0;
       picked.forEach(function (file, index) {
         genericPreview.appendChild(buildCard(file, index));
       });

@@ -644,6 +644,24 @@ class KMAE_Browse_Feed {
 	}
 
 	/**
+	 * A kliens (swipe-v2.js / browse-lapozo.js) közös `cfg` tömbje a szövegek (`t`) nélkül.
+	 *
+	 * @return array
+	 */
+	public static function client_cfg() {
+		$logged_in = is_user_logged_in();
+		return array(
+			'feedUrl'       => rest_url( self::REST_NS . '/feed' ),
+			'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+			'loggedIn'      => $logged_in,
+			'nonce'         => $logged_in ? wp_create_nonce( 'kmae_browse_pass' ) : '',
+			'favoriteNonce' => $logged_in ? wp_create_nonce( 'kmae_favorite_add' ) : '',
+			'reportNonce'   => $logged_in ? wp_create_nonce( 'kmae_report_nonce' ) : '',
+			'loginUrl'      => KMAE_Auth::login_url( KMAE_Pages::browse_page_url() ),
+		);
+	}
+
+	/**
 	 * A v2 kártyás oldal beágyazott adata: az első feed-oldal (ids + ranks), belépve a /me/browse
 	 * tartalma és a `base` feed ids-e (a kliens ebből szab személyre, extra kérés nélkül), valamint
 	 * az első megjelenő kártya (a szerver ezt rendereli kész HTML-ként).

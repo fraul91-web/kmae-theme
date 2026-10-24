@@ -7,6 +7,9 @@
  * - Mentéskor egyszeri háttérfeladat geokódolja a hirdetést; a régi hirdetéseket
  *   óránkénti háttérfeladat pótolja (Nominatim: legfeljebb 1 kérés / mp).
  * - Amíg nincs pontos adat, a megyeszékhely koordinátája számít.
+ * - Elsődleges forrás a hivatalos településlista (KMAE_Settlements): ha a megye +
+ *   település benne van, a koordináta azonnal megvan, Nominatim nélkül. A fenti
+ *   lánc csak a listában nem szereplő régi adatokra marad.
  *
  * @package KMAE
  */
@@ -66,6 +69,15 @@ class KMAE_Geo {
 	 * @param int $post_id Listing.
 	 */
 	public static function location_changed( $post_id ) {
+		/* Hivatalos településlista: pontos koordináta azonnal, háttérfeladat nélkül. */
+		$official = self::dataset_coords(
+			(string) get_post_meta( $post_id, '_kmae_county', true ),
+			(string) get_post_meta( $post_id, '_kmae_city', true )
+		);
+		if ( $official ) {
+			update_post_meta( $post_id, self::META, $official );
+			return;
+		}
 		delete_post_meta( $post_id, self::META );
 		if ( ! wp_next_scheduled( self::CRON_SINGLE, array( (int) $post_id ) ) ) {
 			wp_schedule_single_event( time() + 5, self::CRON_SINGLE, array( (int) $post_id ) );
@@ -73,23 +85,56 @@ class KMAE_Geo {
 	}
 
 	/**
-	 * A hirdetés koordinátája: pontos (meta / település-gyorsítótár), különben a megyeszékhely.
+	 * A hirdetés koordinátája: a hivatalos településlistából (megye + település
+	 * egyezik), különben a régi lánc: meta / település-gyorsítótár / megyeszékhely.
 	 *
 	 * @param int $post_id Listing.
 	 * @return array{0:float,1:float}|null
 	 */
 	public static function listing_coords( $post_id ) {
+		$county   = sanitize_key( (string) get_post_meta( $post_id, '_kmae_county', true ) );
+		$city     = (string) get_post_meta( $post_id, '_kmae_city', true );
+		$official = self::dataset_coords( $county, $city );
+		if ( $official ) {
+			return $official;
+		}
 		$saved = get_post_meta( $post_id, self::META, true );
 		if ( is_array( $saved ) && isset( $saved[0], $saved[1] ) ) {
 			return array( (float) $saved[0], (float) $saved[1] );
 		}
-		$county = sanitize_key( (string) get_post_meta( $post_id, '_kmae_county', true ) );
-		$city   = (string) get_post_meta( $post_id, '_kmae_city', true );
 		$cached = self::cached_city( $county, $city );
 		if ( $cached ) {
 			return $cached;
 		}
 		return isset( self::COUNTY_SEATS[ $county ] ) ? self::COUNTY_SEATS[ $county ] : null;
+	}
+
+	/**
+	 * Céges felhasználó telephelyének koordinátája (KMAE_Company megye + település,
+	 * a hivatalos listából). Null, ha nem céges, vagy a telephely nincs a listában.
+	 *
+	 * @param int $user_id User.
+	 * @return array{0:float,1:float}|null
+	 */
+	public static function user_coords( $user_id ) {
+		$user_id = (int) $user_id;
+		if ( $user_id <= 0 || ! class_exists( 'KMAE_Company' ) ) {
+			return null;
+		}
+		if ( class_exists( 'KMAE_Auth' ) && ! KMAE_Auth::is_company( $user_id ) ) {
+			return null;
+		}
+		return self::dataset_coords( KMAE_Company::get_county( $user_id ), KMAE_Company::get_city( $user_id ) );
+	}
+
+	/**
+	 * @return array{0:float,1:float}|null
+	 */
+	private static function dataset_coords( $county, $city ) {
+		if ( ! class_exists( 'KMAE_Settlements' ) || '' === trim( (string) $city ) ) {
+			return null;
+		}
+		return KMAE_Settlements::coords( sanitize_key( (string) $county ), $city );
 	}
 
 	/**
@@ -114,7 +159,11 @@ class KMAE_Geo {
 		}
 		$county = sanitize_key( (string) get_post_meta( $post_id, '_kmae_county', true ) );
 		$city   = (string) get_post_meta( $post_id, '_kmae_city', true );
-		$coords = self::resolve_city( $county, $city );
+		/* Hivatalos lista előbb; Nominatim csak a listában nem szereplő régi adatnál. */
+		$coords = self::dataset_coords( $county, $city );
+		if ( ! $coords ) {
+			$coords = self::resolve_city( $county, $city );
+		}
 		if ( $coords ) {
 			update_post_meta( $post_id, self::META, $coords );
 		} elseif ( isset( self::COUNTY_SEATS[ $county ] ) ) {

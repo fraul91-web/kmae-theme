@@ -160,7 +160,7 @@ $reserved_ids = $list_idx ? array() : KMAE_Chat_Offers::reserved_listing_ids();
 				$row_km       = KMAE_Browse::distance_for( $row_id );
 			}
 			?>
-			<article class="kmae-browse-row<?php echo $row_reserved ? ' is-reserved' : ''; ?>">
+			<article class="kmae-browse-row<?php echo $row_reserved ? ' is-reserved' : ''; ?>" data-id="<?php echo esc_attr( (string) $row_id ); ?>">
 				<div class="kmae-browse-row__glass">
 					<a class="kmae-browse-row__photo" href="<?php echo esc_url( $row_url ); ?>" tabindex="-1" aria-hidden="true">
 						<?php if ( $row_thumb ) : ?>

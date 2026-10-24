@@ -41,6 +41,12 @@ class KMAE_Counties {
 		$cache_key = 'kmae_locate_' . md5( round( $lat, 3 ) . ',' . round( $lon, 3 ) );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
+			/* Régebbi (lista előtti) gyorsítótár-bejegyzés is kanonikus alakban menjen ki. */
+			$official = self::locate_official( (string) ( $cached['county'] ?? '' ), array( (string) ( $cached['city'] ?? '' ) ) );
+			if ( $official ) {
+				$cached['county'] = $official['county'];
+				$cached['city']   = $official['name'];
+			}
 			wp_send_json_success( $cached );
 		}
 
@@ -79,17 +85,28 @@ class KMAE_Counties {
 		$data    = json_decode( wp_remote_retrieve_body( $response ), true );
 		$address = ( is_array( $data ) && isset( $data['address'] ) && is_array( $data['address'] ) ) ? $data['address'] : array();
 
-		$city = '';
+		$city       = '';
+		$candidates = array();
 		foreach ( array( 'city', 'town', 'village', 'municipality', 'hamlet' ) as $key ) {
 			if ( ! empty( $address[ $key ] ) ) {
-				$city = sanitize_text_field( $address[ $key ] );
-				break;
+				$candidates[] = sanitize_text_field( $address[ $key ] );
 			}
+		}
+		if ( $candidates ) {
+			$city = $candidates[0];
 		}
 
 		$county = 'Budapest' === $city ? 'budapest' : self::match_county( $address['county'] ?? '' );
 		if ( '' === $county ) {
 			$county = self::match_county( $address['state'] ?? '' );
+		}
+
+		/* A hivatalos településlista dönt: kanonikus név, és a megye is onnan jön,
+		   ha a Nominatim mást mond (a település neve országosan egyedi). */
+		$official = self::locate_official( $county, $candidates );
+		if ( $official ) {
+			$county = $official['county'];
+			$city   = $official['name'];
 		}
 
 		if ( '' === $county && '' === $city ) {
@@ -102,6 +119,33 @@ class KMAE_Counties {
 		);
 		set_transient( $cache_key, $result, 30 * DAY_IN_SECONDS );
 		wp_send_json_success( $result );
+	}
+
+	/**
+	 * Helymeghatározás eredménye → hivatalos település (előbb a megadott megyében,
+	 * aztán országosan). A jelöltek sorrendje: city, town, village, municipality, hamlet.
+	 *
+	 * @param string   $county     Nominatim alapján egyeztetett megye slug (lehet üres).
+	 * @param string[] $candidates Településnév-jelöltek.
+	 * @return array|null KMAE_Settlements sor.
+	 */
+	private static function locate_official( $county, $candidates ) {
+		if ( ! class_exists( 'KMAE_Settlements' ) ) {
+			return null;
+		}
+		foreach ( $candidates as $name ) {
+			$row = '' !== $county ? KMAE_Settlements::find( $county, $name ) : null;
+			if ( $row ) {
+				return $row;
+			}
+		}
+		foreach ( $candidates as $name ) {
+			$row = KMAE_Settlements::find_anywhere( $name );
+			if ( $row ) {
+				return $row;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -236,16 +280,41 @@ class KMAE_Counties {
 		return (string) get_post_meta( $post_id, '_kmae_location', true );
 	}
 
+	/**
+	 * Megye + település: a település a hivatalos listában van, és ebben a megyében.
+	 */
 	public static function validate_listing_location( $county, $city ) {
-		if ( ! self::is_listing_county( $county ) ) {
-			return false;
+		return '' === self::location_error( $county, $city );
+	}
+
+	/**
+	 * Miért nem jó a helyszín?
+	 *
+	 * @return string '' = jó; 'required' = hiányzik a megye vagy a település;
+	 *                'mismatch' = a település nem ennek a megyének a települése
+	 *                (vagy nincs ilyen település).
+	 */
+	public static function location_error( $county, $city ) {
+		if ( ! self::is_listing_county( $county ) || '' === trim( (string) $city ) ) {
+			return 'required';
 		}
-		return '' !== trim( (string) $city );
+		if ( class_exists( 'KMAE_Settlements' ) && null === KMAE_Settlements::find( $county, $city ) ) {
+			return 'mismatch';
+		}
+		return '';
+	}
+
+	/**
+	 * A hivatalos (KSH) településnév, ha a megyében megvan; különben a beírt szöveg.
+	 */
+	public static function canonical_city( $county, $city ) {
+		$canonical = class_exists( 'KMAE_Settlements' ) ? KMAE_Settlements::canonical_name( $county, $city ) : null;
+		return null !== $canonical ? $canonical : (string) $city;
 	}
 
 	public static function save_listing_location( $post_id, $county, $city ) {
 		$county = sanitize_text_field( $county );
-		$city   = sanitize_text_field( $city );
+		$city   = sanitize_text_field( self::canonical_city( $county, $city ) );
 
 		$old_county = (string) get_post_meta( $post_id, '_kmae_county', true );
 		$old_city   = (string) get_post_meta( $post_id, '_kmae_city', true );

@@ -1187,20 +1187,6 @@
 	line-height: 1.35;
 }
 
-.kmae-create-page.is-simple .kmae-shots__tip {
-	gap: 8px;
-	margin: 6px 0 0;
-	padding: 8px 10px;
-	border-radius: 10px;
-	font-size: 12px;
-	line-height: 1.35;
-}
-
-.kmae-create-page.is-simple .kmae-shots__tip::before {
-	width: 18px;
-	height: 18px;
-}
-
 /* Alacsony feltöltőgomb */
 .kmae-create-page.is-simple .kmae-simple-drop {
 	box-sizing: border-box;

@@ -19,7 +19,7 @@ if ( $kmae_bt_logged ) {
 	$kmae_bt_uid   = get_current_user_id();
 	$kmae_bt_items = array(
 		array( 'home', __( 'Főoldal', 'kmae' ), home_url( '/' ), false, 0 ),
-		array( 'search', __( 'Autók', 'kmae' ), kmae_page_url( 'hirdetesek' ), true, 0 ),
+		array( 'search', __( 'Böngészés', 'kmae' ), kmae_page_url( 'hirdetesek' ), true, 0 ),
 		array( 'heart', __( 'Kedvencek', 'kmae' ), kmae_page_url( 'kedvencek' ), false, class_exists( 'KMAE_Browse' ) ? (int) KMAE_Browse::count_unseen_favorites( $kmae_bt_uid ) : 0 ),
 		array( 'message-square', __( 'Üzenetek', 'kmae' ), kmae_page_url( 'uzenetek' ), false, class_exists( 'KMAE_Database' ) ? (int) KMAE_Database::count_unread_conversations( $kmae_bt_uid ) : 0 ),
 	);
@@ -27,9 +27,9 @@ if ( $kmae_bt_logged ) {
 } else {
 	$kmae_bt_items = array(
 		array( 'home', __( 'Kezdő', 'kmae' ), home_url( '/' ), false, 0 ),
-		array( 'search', __( 'Autók', 'kmae' ), kmae_page_url( 'hirdetesek' ), true, 0 ),
+		array( 'search', __( 'Böngészés', 'kmae' ), kmae_page_url( 'hirdetesek' ), true, 0 ),
+		array( 'circle-help', __( 'GYIK', 'kmae' ), kmae_page_url( 'gyik' ), false, 0 ),
 		array( 'mail', __( 'Kapcsolat', 'kmae' ), kmae_page_url( 'kapcsolat' ), false, 0 ),
-		array( 'user', __( 'Belépés', 'kmae' ), kmae_page_url( 'belepes' ), false, 0 ),
 	);
 	$kmae_bt_fab = array( __( 'Eladás', 'kmae' ), kmae_page_url( 'belepes' ) );
 }

@@ -48,6 +48,9 @@ class KMAE_Live_Signal {
 		if ( 'offer_retracted' === $kind ) {
 			return array( __( 'Ajánlat visszavonva', 'ki-mit-adna-erte' ), __( 'a vevő visszavonta az ajánlatát.', 'ki-mit-adna-erte' ) );
 		}
+		if ( 'dealer_lead' === $kind ) {
+			return array( __( 'Egy kereskedés érdeklődik az autód iránt', 'ki-mit-adna-erte' ), __( 'nézd meg a chatben.', 'ki-mit-adna-erte' ) );
+		}
 		$map = array(
 			'kmae_conversation_message_created' => array( __( 'Új üzenet', 'ki-mit-adna-erte' ), __( 'új üzeneted érkezett.', 'ki-mit-adna-erte' ) ),
 		);

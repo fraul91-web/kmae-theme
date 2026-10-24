@@ -47,6 +47,9 @@ class KMAE_Activator {
 		if ( ! wp_next_scheduled( 'kmae_expire_listings' ) ) {
 			wp_schedule_event( time(), 'hourly', 'kmae_expire_listings' );
 		}
+		if ( ! wp_next_scheduled( 'kmae_expire_dealer_leads' ) ) {
+			wp_schedule_event( time(), 'hourly', 'kmae_expire_dealer_leads' );
+		}
 	}
 
 	private static function create_tables() {
@@ -172,6 +175,7 @@ class KMAE_Activator {
 		dbDelta( $sql_chat_offers );
 		dbDelta( $sql_reports );
 		KMAE_Browse_Index::create_table();
+		KMAE_Dealer_Leads::create_table();
 
 		// Existing installs: add account_type if missing.
 		$profiles_table = $prefix . 'kmae_user_profiles';
@@ -316,6 +320,8 @@ class KMAE_Activator {
 		}
 		/* Böngészés v2 index: saját séma-verzió, így a KMAE_VERSION emelése (és mellékhatásai) nélkül jön létre. */
 		KMAE_Browse_Index::maybe_create();
+		/* Csoportos kereskedői megkeresés tábla: szintén saját séma-verzió. */
+		KMAE_Dealer_Leads::maybe_create();
 		if ( ! get_option( 'kmae_cover_studio_removed' ) ) {
 			add_action( 'init', array( __CLASS__, 'remove_cover_studio' ), 30 );
 		}

@@ -3827,3 +3827,288 @@
 		max-width: 22vw;
 	}
 }
+
+/* ===================================================================
+   ÁLLÓ telefon (2026-10-24): a kártya jeges üveg, a fotó a kártya tetejéig
+   ér. A fekvő blokk (fölötte) nem örökli ezt — az csak landscape-re szól.
+   A szív ::before abszolút közép: a gomb „Mentés” szövege külön rácscella,
+   place-items azzal feljebb tolja az ikont.
+   =================================================================== */
+@media (max-width: 1024px) and (orientation: portrait) {
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-card {
+		border: 1px solid rgba(0, 199, 247, 0.4);
+		border-radius: 28px;
+		background: linear-gradient(180deg, #f4fbff 0%, #ffffff 46%, #f7fbff 100%);
+		box-shadow:
+			0 18px 40px rgba(38, 68, 90, 0.14),
+			inset 0 1px 0 #fff;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-media {
+		margin: 0;
+		border-radius: 0;
+		background: linear-gradient(180deg, #c9f1ff 0%, #effaff 72%, #e3f0f7 100%);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-nophoto {
+		color: #5a6b80;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-card[data-fit="gallery"] .kmae-sw2-media {
+		background: linear-gradient(180deg, #d7f4ff 0%, #f4fbff 70%, #e7f1f6 100%);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-card[data-fit="gallery"] .kmae-sw2-open {
+		border: 3px solid #fff;
+		box-shadow: 0 14px 28px rgba(38, 68, 90, 0.22);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-card[data-fit="gallery"] .kmae-sw2-side {
+		border-color: rgba(255, 255, 255, 0.95);
+		opacity: 0.85;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-brand {
+		top: 12px;
+		left: 12px;
+		width: 40px;
+		height: 40px;
+		background: #fff;
+		box-shadow: 0 8px 18px rgba(38, 68, 90, 0.18);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-brand img {
+		width: 26px;
+		height: 26px;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-like {
+		top: 12px;
+		right: 12px;
+		display: block;
+		width: 44px;
+		min-width: 44px;
+		height: 44px;
+		min-height: 44px;
+		border: 0;
+		background: #fff;
+		box-shadow: 0 8px 18px rgba(38, 68, 90, 0.18);
+		color: transparent;
+		font-size: 0;
+		line-height: 0;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-like::before {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 22px;
+		height: 22px;
+		margin: 0;
+		transform: translate(-50%, -50%);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-like[aria-pressed="true"] {
+		border: 0;
+		background: linear-gradient(145deg, #ff4d6d, #e11d48);
+		box-shadow: 0 8px 18px rgba(225, 29, 72, 0.35);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-like[aria-pressed="true"]::before {
+		background: #fff;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-like:active {
+		transform: scale(0.94);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse :is(.kmae-sw2-photo-prev, .kmae-sw2-photo-next) {
+		border: 0;
+		background: #fff;
+		box-shadow: 0 8px 18px rgba(38, 68, 90, 0.2);
+		font-size: 0;
+		line-height: 0;
+		color: transparent;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse :is(.kmae-sw2-photo-prev, .kmae-sw2-photo-next)::before {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 18px;
+		height: 18px;
+		margin: 0;
+		transform: translate(-50%, -50%);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-photo-count {
+		padding: 5px 10px;
+		background: rgba(255, 255, 255, 0.92);
+		color: #0b3a66;
+		font-weight: 800;
+		box-shadow: 0 4px 12px rgba(38, 68, 90, 0.16);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-dot {
+		background: #fff;
+		box-shadow: 0 0 0 1px rgba(11, 58, 102, 0.25);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-dot[data-current] {
+		background: #00c7f7;
+		box-shadow: 0 0 8px rgba(0, 199, 247, 0.8);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-info {
+		gap: 8px 12px;
+		padding: 14px 16px 16px;
+		background: linear-gradient(#00c7f7, #00c7f7) 18% 0 / 34% 2px no-repeat;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-title {
+		display: -webkit-box;
+		overflow: hidden;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		color: #0b3a66;
+		font-size: 20px;
+		line-height: 1.15;
+		letter-spacing: -0.03em;
+		white-space: normal;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-lead {
+		margin-top: 0;
+		color: #5a6b80;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-price-value {
+		color: #0b3a66;
+		font-size: 26px;
+		font-weight: 800;
+		letter-spacing: -0.03em;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-price[data-mode="open"] .kmae-sw2-price-value {
+		display: inline-flex;
+		align-items: center;
+		min-height: 28px;
+		padding: 0 12px;
+		border-radius: 999px;
+		background: linear-gradient(110deg, #ffad41, #ff6e25);
+		box-shadow: 0 6px 16px rgba(255, 110, 37, 0.35);
+		color: #fff;
+		font-size: 12px;
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-price-label {
+		border-color: rgba(0, 199, 247, 0.35);
+		color: #008fbd;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-cta {
+		height: 40px;
+		padding: 0 16px;
+		background-image: linear-gradient(110deg, #007fb8, #00c7f7 55%, #3fdcff);
+		background-size: 160% 100%;
+		box-shadow: 0 8px 18px rgba(0, 199, 247, 0.34);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-cta::after {
+		content: "Részletek";
+		font-size: 14px;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-cta:active {
+		transform: scale(0.97);
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse :is(.kmae-sw2-place, .kmae-sw2-seller) {
+		color: #465463;
+		font-size: 13px;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-facts {
+		gap: 8px;
+		margin-top: 2px;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-fact {
+		display: grid;
+		grid-template-columns: 16px minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		align-items: center;
+		column-gap: 6px;
+		min-height: 0;
+		padding: 7px 6px 7px 7px;
+		border: 1px solid rgba(0, 199, 247, 0.28);
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.94);
+		box-shadow:
+			0 6px 14px rgba(38, 68, 90, 0.06),
+			inset 0 1px 0 #fff;
+		text-align: left;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-fact::before {
+		display: block;
+		grid-row: 1 / 3;
+		width: 16px;
+		height: 16px;
+		margin: 0;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-fact strong {
+		color: #0b3a66;
+		font-size: 12.5px;
+		line-height: 1.15;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-fact small {
+		color: #5a6b80;
+		font-size: 10px;
+		font-weight: 700;
+		line-height: 1.15;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse .kmae-sw2-nav {
+		display: flex;
+		gap: 10px;
+		height: auto;
+		margin: 12px 0 0;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse :is(.kmae-sw2-prev, .kmae-sw2-next):not([hidden]) {
+		position: static;
+		display: inline-flex;
+		flex: 1 1 auto;
+		align-items: center;
+		justify-content: center;
+		height: 48px;
+		margin: 0;
+		padding: 0 18px;
+		border: 1px solid rgba(0, 170, 220, 0.45);
+		border-radius: 999px;
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 55%),
+			linear-gradient(135deg, rgba(0, 199, 247, 0.28), rgba(255, 255, 255, 0.92));
+		box-shadow:
+			inset 0 1px 0 #fff,
+			0 8px 18px rgba(38, 68, 90, 0.1);
+		color: #0a5f87;
+		font-family: var(--m-font);
+		font-size: 15px;
+		font-weight: 800;
+		letter-spacing: 0.01em;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	body.kmae-browse-page .kmae-sw2-browse :is(.kmae-sw2-prev, .kmae-sw2-next):not([hidden]):active {
+		transform: scale(0.97);
+	}
+}

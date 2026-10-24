@@ -197,6 +197,18 @@ Default debug context: **this router + 1 matching FEATURE map + 1–5 source sym
 **PLUGIN BOUNDARY:** plugin-owned unless the checkpoint explicitly reaches WordPress mail/theme/external service.  
 **VERIFY:** VERIFIED against source snapshot.
 
+### Kereskedői megkeresés / Értesítések nem jelenik meg vagy nem megy ki
+**SYMPTOM:** Nincs „Kereskedők megkeresése” gomb, vagy a cég nem kapja meg a megkeresést / Értesítések üres  
+**FEATURE:** DEALER-LEADS  
+**START HERE:** `includes/class-kmae-dealer-leads.php :: is_enabled()` + `can_start()`  
+**EXPECTED:** kapcsoló BE (`kmae_dealer_leads_enabled`), eladó magánszemély, aktív hirdetés, van koordináta.  
+**NEXT IF TRUE:** `match()` (cég: `KMAE_Company::buys_cars` / `accepts_tradein`, sugár).  
+**NEXT IF FALSE:** a kapcsoló / `can_start` magyar hibakódját nézd.  
+**SEARCH TERMS:** `can_start match insert_batch kmae_dealer_leads_enabled`  
+**DO NOT LOAD:** Ne a böngészést; a megkeresés nem befolyásolja a hirdetés láthatóságát.  
+**PLUGIN BOUNDARY:** plugin-owned unless the checkpoint explicitly reaches WordPress mail/theme/external service.  
+**VERIFY:** VERIFIED against source snapshot.
+
 ### Céges hirdetés helye rossz
 **SYMPTOM:** Céges hirdetés helye rossz  
 **FEATURE:** PROFILE-COMPANY-SETTINGS + LISTINGS  

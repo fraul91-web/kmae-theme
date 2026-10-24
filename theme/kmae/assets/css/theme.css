@@ -1881,11 +1881,27 @@ body.kmae-privacy-page .kmae-legal {
 	}
 
 	body.kmae-app {
-		--kmae-bottom-nav-h: 64px;
+		--kmae-bottom-nav-h: 46px;
 	}
 
 	body.logged-in .kmae-bottom-nav {
 		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0;
+		padding: 2px 2px calc(2px + env(safe-area-inset-bottom, 0px));
+	}
+
+	body.logged-in .kmae-bottom-nav__item {
+		min-height: 0;
+		gap: 1px;
+		padding: 2px 2px 1px;
+		border-radius: 10px;
+		font-size: 10px;
+	}
+
+	body.logged-in .kmae-bottom-nav__item svg {
+		width: 18px;
+		height: 18px;
 	}
 
 	/* Az oldal legalján a menüsor lecsúszik, hogy a lábléc nyila kattintható legyen. */
@@ -1941,7 +1957,113 @@ body.kmae-privacy-page .kmae-legal {
 	}
 }
 
-@media (max-width: 1024px) and (orientation: landscape) {
+/* Fekvő telefon: minden oldalon csak kisebb, középre igazított logó (kivéve a kezdőlap). */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 520px) {
+	body:not(.home.kmae-marketing) {
+		--kmae-header-h: 38px;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header,
+	body:not(.home.kmae-marketing) .kmae-header.kmae-pc-topbar,
+	body:not(.home.kmae-marketing) .kmae-header.is-scrolled {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 1100;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: none;
+		height: calc(var(--kmae-header-h) + env(safe-area-inset-top, 0px));
+		min-height: 0;
+		margin: 0;
+		padding: env(safe-area-inset-top, 0px) 0 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent !important;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		box-shadow: none !important;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header::before,
+	body:not(.home.kmae-marketing) .kmae-header::after {
+		content: none !important;
+		display: none !important;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header__inner {
+		position: static !important;
+		display: flex !important;
+		align-items: center;
+		justify-content: center !important;
+		width: 100%;
+		max-width: none;
+		height: var(--kmae-header-h);
+		margin: 0;
+		padding: 0;
+		gap: 0;
+		background: none;
+		border: 0;
+		box-shadow: none;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header__inner > .kmae-logo--desktop,
+	body:not(.home.kmae-marketing) .kmae-header__inner > .kmae-pc-logo,
+	body:not(.home.kmae-marketing) .kmae-header__inner > .kmae-header__sep,
+	body:not(.home.kmae-marketing) .kmae-header__inner > nav,
+	body:not(.home.kmae-marketing) .kmae-header__inner > .kmae-header__tools,
+	body:not(.home.kmae-marketing) .kmae-header__nav,
+	body:not(.home.kmae-marketing) .kmae-header__actions,
+	body:not(.home.kmae-marketing) .kmae-header__actions--desktop {
+		display: none !important;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header__mobile-top {
+		display: flex !important;
+		align-items: center;
+		justify-content: center !important;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header__mobile-top > :not(.kmae-logo--mobile):not(.kmae-logo--phone):not(.kmae-logo--header),
+	body:not(.home.kmae-marketing) .kmae-phone-header__tools {
+		display: none !important;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header a.kmae-logo--mobile,
+	body:not(.home.kmae-marketing) .kmae-header a.kmae-logo--phone,
+	body:not(.home.kmae-marketing) .kmae-header a.kmae-logo--desktop.kmae-logo--header {
+		position: static !important;
+		left: auto !important;
+		top: auto !important;
+		right: auto !important;
+		display: flex !important;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		margin: 0 !important;
+		padding: 0;
+		transform: none !important;
+	}
+
+	body:not(.home.kmae-marketing) .kmae-header .kmae-logo--mobile img,
+	body:not(.home.kmae-marketing) .kmae-header .kmae-logo--phone img,
+	body:not(.home.kmae-marketing) .kmae-header .kmae-logo--header img,
+	body:not(.home.kmae-marketing) .kmae-header .kmae-logo__img {
+		display: block;
+		width: auto;
+		height: 22px;
+		max-width: 96px;
+		object-fit: contain;
+		filter: drop-shadow(0 1px 4px rgba(7, 16, 29, 0.28));
+	}
 }
 
 /* ---------- Portrait density tweaks ---------- */

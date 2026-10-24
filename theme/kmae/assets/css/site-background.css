@@ -43,3 +43,215 @@ body.kmae-app.kmae-theme-dark::after {
 body:not(.kmae-marketing) .kmae-main {
 	background: transparent !important;
 }
+
+/* Telefon fekvő: minden oldalon állóba kell fordítani. PC-n és állóban rejtve. */
+.kmae-browse-rotate {
+	display: none;
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+	html,
+	body {
+		overflow: hidden;
+		height: 100%;
+	}
+
+	body {
+		position: fixed;
+		inset: 0;
+		width: 100%;
+		overscroll-behavior: none;
+	}
+
+	.kmae-browse-rotate {
+		display: flex;
+		position: fixed;
+		inset: 0;
+		z-index: 100000;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		width: auto;
+		height: auto;
+		max-width: none;
+		max-height: none;
+		margin: 0;
+		border: 0;
+		padding:
+			calc(12px + env(safe-area-inset-top, 0px))
+			calc(16px + env(safe-area-inset-right, 0px))
+			calc(12px + env(safe-area-inset-bottom, 0px))
+			calc(16px + env(safe-area-inset-left, 0px));
+		overflow: hidden;
+		color: #0b3a66;
+		background-color: #eef6ff;
+		background-image:
+			radial-gradient(circle at 14% 18%, rgba(255, 156, 54, 0.34), transparent 42%),
+			radial-gradient(circle at 86% 82%, rgba(0, 158, 204, 0.28), transparent 46%);
+		pointer-events: auto;
+		touch-action: none;
+	}
+
+	.kmae-browse-rotate::before,
+	.kmae-browse-rotate::after {
+		content: "";
+		position: absolute;
+		width: 240px;
+		height: 240px;
+		border-radius: 50%;
+		filter: blur(42px);
+		pointer-events: none;
+	}
+
+	.kmae-browse-rotate::before {
+		top: -70px;
+		left: 8%;
+		background: rgba(255, 148, 42, 0.55);
+	}
+
+	.kmae-browse-rotate::after {
+		right: 6%;
+		bottom: -80px;
+		background: rgba(70, 176, 230, 0.5);
+	}
+
+	.kmae-browse-rotate__card {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 18px;
+		box-sizing: border-box;
+		width: min(560px, 100%);
+		max-height: 100%;
+		margin: 0;
+		padding: 16px 22px 16px 14px;
+		border: 1px solid rgba(0, 143, 189, 0.38);
+		border-radius: 28px;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(230, 244, 255, 0.94));
+		box-shadow:
+			0 18px 40px rgba(11, 58, 102, 0.14),
+			inset 0 1px 0 rgba(255, 255, 255, 0.98);
+	}
+
+	.kmae-browse-rotate__card::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 28px;
+		right: 28px;
+		height: 3px;
+		border-radius: 0 0 3px 3px;
+		background: linear-gradient(90deg, #0096c8, #ff8a1e);
+		box-shadow: 0 0 10px rgba(0, 150, 200, 0.45);
+		pointer-events: none;
+	}
+
+	.kmae-browse-rotate__art {
+		position: relative;
+		flex: 0 0 auto;
+		width: min(158px, 46vh);
+		height: min(158px, 46vh);
+	}
+
+	.kmae-browse-rotate__arrows,
+	.kmae-browse-rotate__phone {
+		display: block;
+	}
+
+	.kmae-browse-rotate__arrows {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		transform-origin: center;
+		animation: kmae-browse-rotate-spin 9s linear infinite;
+	}
+
+	.kmae-browse-rotate__phone {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 37.5%;
+		height: auto;
+		transform: translate(-50%, -50%);
+		animation: kmae-browse-rotate-tilt 2.6s ease-in-out infinite;
+	}
+
+	.kmae-browse-rotate__copy {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.kmae-browse-rotate__title {
+		margin: 0 0 6px;
+		color: #0b3a66;
+		font-size: 24px;
+		font-weight: 800;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+	}
+
+	.kmae-browse-rotate__lead {
+		margin: 0;
+		color: #0b3a66;
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 1.35;
+	}
+
+	@media (max-height: 340px) {
+		.kmae-browse-rotate {
+			padding:
+				calc(8px + env(safe-area-inset-top, 0px))
+				calc(12px + env(safe-area-inset-right, 0px))
+				calc(8px + env(safe-area-inset-bottom, 0px))
+				calc(12px + env(safe-area-inset-left, 0px));
+		}
+
+		.kmae-browse-rotate__card {
+			gap: 12px;
+			padding: 10px 16px 10px 10px;
+			border-radius: 22px;
+		}
+
+		.kmae-browse-rotate__art {
+			width: min(112px, 38vh);
+			height: min(112px, 38vh);
+		}
+
+		.kmae-browse-rotate__title {
+			margin-bottom: 4px;
+			font-size: 20px;
+		}
+
+		.kmae-browse-rotate__lead {
+			font-size: 14px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.kmae-browse-rotate__arrows,
+		.kmae-browse-rotate__phone {
+			animation: none;
+		}
+	}
+}
+
+@keyframes kmae-browse-rotate-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes kmae-browse-rotate-tilt {
+	0%,
+	100% {
+		transform: translate(-50%, -50%) rotate(-4deg);
+	}
+
+	50% {
+		transform: translate(-50%, -50%) rotate(4deg);
+	}
+}

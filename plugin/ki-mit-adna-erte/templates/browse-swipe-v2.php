@@ -177,16 +177,7 @@ if ( $sw2_first ) {
 }
 
 $sw2_data = array(
-	'cfg'      => array(
-		'feedUrl'       => rest_url( KMAE_Browse_Feed::REST_NS . '/feed' ),
-		'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
-		'loggedIn'      => is_user_logged_in(),
-		'nonce'         => is_user_logged_in() ? wp_create_nonce( 'kmae_browse_pass' ) : '',
-		'favoriteNonce' => is_user_logged_in() ? wp_create_nonce( 'kmae_favorite_add' ) : '',
-		'reportNonce'   => is_user_logged_in() ? wp_create_nonce( 'kmae_report_nonce' ) : '',
-		'loginUrl'      => KMAE_Auth::login_url( KMAE_Pages::browse_page_url() ),
-		't'             => $sw2_text,
-	),
+	'cfg'      => KMAE_Browse_Feed::client_cfg() + array( 't' => $sw2_text ),
 	'feed'     => $sw2['feed'],
 	'pages'    => (object) $sw2['pages'],
 	'me'       => $sw2['me'],

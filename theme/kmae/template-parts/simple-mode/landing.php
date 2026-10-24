@@ -7,7 +7,7 @@
  * Telefonon (≤ 1024 px) saját nézet: hős + élő hirdetés-kártya
  * (.kmae-lpm-live), majd .kmae-lpm (eladási módok leírással, „Így működik”
  * eladó / vevő váltóval, biztonság); a PC-s szekciók ott rejtve vannak.
- * Alsó menüsor: Kezdő / Autók / Eladás / Kapcsolat / Belépés.
+ * Alsó menüsor: Kezdő / Böngészés / Eladás / GYIK / Kapcsolat.
  *
  * @package KMAE
  */
@@ -461,28 +461,6 @@ $browse_cars = array(
 		</div>
 	</section>
 
-	<?php /* Telefonos alsó menüsor (csak ≤ 1024 px-en látszik, landing-home.css). */ ?>
-	<nav class="kmae-lp-tabbar" aria-label="<?php esc_attr_e( 'Gyors menü', 'kmae' ); ?>">
-		<a class="kmae-lp-tabbar__item is-active" href="#kmae-lp-hero-title">
-			<?php echo wp_kses( $icon( 'home', 22 ), $kses_svg ); ?>
-			<span><?php esc_html_e( 'Kezdő', 'kmae' ); ?></span>
-		</a>
-		<a class="kmae-lp-tabbar__item" href="<?php echo esc_url( $browse_url ); ?>">
-			<?php echo wp_kses( $icon( 'search', 22 ), $kses_svg ); ?>
-			<span><?php esc_html_e( 'Autók', 'kmae' ); ?></span>
-		</a>
-		<a class="kmae-lp-tabbar__fab" href="<?php echo esc_url( $create_url ); ?>">
-			<span class="kmae-lp-tabbar__fab-btn"><?php echo wp_kses( $icon( 'plus', 26 ), $kses_svg ); ?></span>
-			<span><?php esc_html_e( 'Eladás', 'kmae' ); ?></span>
-		</a>
-		<a class="kmae-lp-tabbar__item" href="<?php echo esc_url( kmae_page_url( 'kapcsolat' ) ); ?>">
-			<?php echo wp_kses( $icon( 'mail', 22 ), $kses_svg ); ?>
-			<span><?php esc_html_e( 'Kapcsolat', 'kmae' ); ?></span>
-		</a>
-		<a class="kmae-lp-tabbar__item" href="<?php echo esc_url( $create_url ); ?>">
-			<?php echo wp_kses( $icon( 'user', 22 ), $kses_svg ); ?>
-			<span><?php esc_html_e( 'Belépés', 'kmae' ); ?></span>
-		</a>
-	</nav>
+	<?php /* Alsó menüsor: footer.php → template-parts/guest-tabbar.php */ ?>
 
 </div>

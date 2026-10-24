@@ -34,6 +34,7 @@ class KMAE_Plugin {
 		KMAE_Browse_Index::init();
 		KMAE_Browse_Feed::init();
 		KMAE_Dashboard::init();
+		KMAE_Dealer_Leads::init();
 
 		new KMAE_Post_Types();
 		new KMAE_Taxonomies();

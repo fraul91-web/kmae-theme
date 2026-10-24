@@ -98,6 +98,27 @@ class KMAE_Live_Page {
 				}
 				break;
 
+			case 'notifications':
+				/* Értesítések (kereskedői megkeresések): csak a megjelenített ADATOK
+				   állapota — cég: megkeresésenként (id, állapot, chat); eladó: hirdetésenként
+				   a nyers állapot-darabszámok + a kereskedői ár. Szándékosan NINCS benne
+				   olvasottság és „hátralévő idő” (óránként változna → minden körben újratölt);
+				   a lejárat a cron állapotváltásával (néma jelzés) frissít. */
+				if ( ! class_exists( 'KMAE_Dealer_Leads' ) ) {
+					break;
+				}
+				foreach ( KMAE_Dealer_Leads::list_for_dealer( $user_id, 200 ) as $lead ) {
+					$parts[] = 'd:' . (int) $lead['id'] . ':' . $lead['status'] . ':' . (int) $lead['conversation_id'];
+				}
+				foreach ( KMAE_Dealer_Leads::list_for_seller( $user_id ) as $group ) {
+					$counts = array();
+					foreach ( array( 'pending', 'interested', 'declined', 'expired', 'cancelled', 'total' ) as $key ) {
+						$counts[] = (int) ( $group['counts'][ $key ] ?? 0 );
+					}
+					$parts[] = 's:' . (int) $group['listing_id'] . ':' . implode( ',', $counts ) . ':' . (int) $group['dealer_price'];
+				}
+				break;
+
 			case 'email_verify':
 				/* Megerősítésre váró oldal (letiltó képernyő, profil): a levélben
 				   kapott linkre kattintva — akár másik eszközön — magától frissül. */

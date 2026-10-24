@@ -353,8 +353,12 @@ class KMAE_Auth {
 			$company_address = isset( $data['address'] ) ? sanitize_text_field( (string) $data['address'] ) : '';
 			$company_county  = isset( $data['county'] ) ? sanitize_key( (string) $data['county'] ) : '';
 			$company_city    = isset( $data['city'] ) ? sanitize_text_field( (string) $data['city'] ) : '';
-			if ( '' === $company_address || ! KMAE_Counties::validate_listing_location( $company_county, $company_city ) ) {
+			$location_problem = KMAE_Counties::location_error( $company_county, $company_city );
+			if ( '' === $company_address || 'required' === $location_problem ) {
 				return new WP_Error( 'company_location_required', __( 'Add meg a céges telephelyet.', 'ki-mit-adna-erte' ) );
+			}
+			if ( 'mismatch' === $location_problem ) {
+				return new WP_Error( 'company_location_mismatch', KMAE_Company::location_mismatch_message() );
 			}
 			$display_name = $company_name;
 		} elseif ( empty( $display_name ) ) {
@@ -397,15 +401,20 @@ class KMAE_Auth {
 		update_user_meta( $user_id, 'kmae_account_type', $account_type );
 
 		if ( self::ACCOUNT_COMPANY === $account_type ) {
-			KMAE_Company::save_profile_fields(
-				$user_id,
-				array(
-					'company_name' => $display_name,
-					'address'      => isset( $data['address'] ) ? $data['address'] : '',
-					'county'       => isset( $data['county'] ) ? $data['county'] : '',
-					'city'         => isset( $data['city'] ) ? $data['city'] : '',
-				)
+			$company_fields = array(
+				'company_name' => $display_name,
+				'address'      => isset( $data['address'] ) ? $data['address'] : '',
+				'county'       => isset( $data['county'] ) ? $data['county'] : '',
+				'city'         => isset( $data['city'] ) ? $data['city'] : '',
 			);
+			/* Autóátvétel: csak akkor kerül át, ha az űrlapon ott volt a blokk (jelölő mező). */
+			if ( array_key_exists( 'buys', $data ) ) {
+				$company_fields['buys'] = ! empty( $data['buys'] );
+			}
+			if ( array_key_exists( 'tradein', $data ) ) {
+				$company_fields['tradein'] = ! empty( $data['tradein'] );
+			}
+			KMAE_Company::save_profile_fields( $user_id, $company_fields );
 		}
 
 		$wpdb->replace(
@@ -926,6 +935,11 @@ class KMAE_Auth {
 			$wpdb->delete( $messages_table, array( 'conversation_id' => (int) $conversation->id ), array( '%d' ) );
 			$wpdb->delete( KMAE_Database::table( 'chat_offers' ), array( 'conversation_id' => (int) $conversation->id ), array( '%d' ) );
 			$wpdb->delete( $conversations_table, array( 'id' => (int) $conversation->id ), array( '%d' ) );
+		}
+
+		/* 2b. Cégként kapott kereskedői megkeresések: a nyitottak 'cancelled' (a sorok maradnak, előzmény). */
+		if ( class_exists( 'KMAE_Dealer_Leads' ) ) {
+			KMAE_Dealer_Leads::cancel_for_dealer( $user_id );
 		}
 
 		/* 3. Profil-sor, majd a felhasználó (a usermeta — kedvencek, push, tiltólista — vele törlődik). */

@@ -43,6 +43,16 @@ $saved = isset( $_GET['settings-updated'] ); // phpcs:ignore WordPress.Security.
 				</td>
 			</tr>
 			<tr>
+				<th scope="row"><?php esc_html_e( 'Csoportos kereskedői megkeresés', 'ki-mit-adna-erte' ); ?></th>
+				<td>
+					<label>
+						<input type="checkbox" name="<?php echo esc_attr( KMAE_Dealer_Leads::OPTION ); ?>" value="1" <?php checked( (bool) get_option( KMAE_Dealer_Leads::OPTION ) ); ?> />
+						<?php esc_html_e( 'Bekapcsolva — a magánszemély eladók egy gombbal megkereshetik a környékbeli felvásárló / beszámító cégeket.', 'ki-mit-adna-erte' ); ?>
+					</label>
+					<p class="description"><?php esc_html_e( 'Kikapcsolva csak az adminisztrátorok látják (élőben kipróbálható), a többi felhasználónak rejtve marad.', 'ki-mit-adna-erte' ); ?></p>
+				</td>
+			</tr>
+			<tr>
 				<th scope="row"><label for="kmae_seller_video_url"><?php esc_html_e( 'Eladóknak — YouTube videó', 'ki-mit-adna-erte' ); ?></label></th>
 				<td>
 					<input type="url" id="kmae_seller_video_url" name="kmae_seller_video_url" value="<?php echo esc_attr( KMAE_Settings::seller_video_url() ); ?>" class="regular-text" placeholder="https://www.youtube.com/watch?v=..." />

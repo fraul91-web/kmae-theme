@@ -51,6 +51,11 @@ Changes user identity/profile and may invalidate sessions on logout-everywhere.
 ## CHANGE RISKS
 Company location is reused by listing creation/edit; profile changes therefore affect future listing location.
 
+## KERESKEDŐI JELZŐK + TELEPHELY-ELLENŐRZÉS
+- Cég jelzők: user meta `kmae_company_buys` (felvásárló) / `kmae_company_tradein` (beszámító), `KMAE_Company::buys_cars/accepts_tradein` (csak céges fióknál igaz). A profilban, a regisztrációban és a Google-kiegészítésben is megjelennek, ha `KMAE_Dealer_Leads::is_enabled()`.
+- Telephely megye+település csak érvényes településpár lehet (`KMAE_Settlements`); `KMAE_Company::save_profile_fields` `company_location_mismatch` hibát ad, CSAK ha a megye vagy település megváltozott (a régi, már tárolt érvénytelen helyszín mentését nem blokkolja).
+- Település-választó: `settlement-picker.js` (irányítószám → megye+város). Térkép: `FEATURES/DEALER-LEADS.md` (megkeresés-egyezés a telephely koordinátáját használja).
+
 
 ## SOURCE-DETECTED EXTERNAL CLASS FILE DEPENDENCIES
 

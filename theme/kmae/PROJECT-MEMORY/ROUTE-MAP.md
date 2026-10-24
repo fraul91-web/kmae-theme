@@ -10,7 +10,7 @@ This file maps only routes that are explicitly known by theme source. It does no
 | singular `kmae_listing` | yes | n/a | `kmae-single-listing-page`; logged-in `single-listing.css` | not `page.php` | Browse or My Listings active depending on author ownership |
 | `sajat-hirdetesek` | yes | `kmae_my_listings` | `kmae-my-listings-page` + `my-listings.css` | raw `do_shortcode()` (no wpautop) | logged-in header/drawer |
 | `uzenetek` | yes | `kmae_messages` | `kmae-messages-page` + `messages.css` / `offer-thread.css` (thread) / `sale-contract.css` (thread + `kmae_contract=1`) | raw shortcode path | PC nav + drawer „Üzenetek” with unread badge |
-| `ertesitesek` | no dedicated detector | not known here | no dedicated theme feature CSS | generic page | logged-in mobile header notification link |
+| `ertesitesek` | `kmae_is_notifications_page` | `kmae_notifications` | `kmae-notifications-page` + `notifications.css` | raw shortcode path (`page.php` `$is_raw_shortcode`) | PC header bell (only when `KMAE_Dealer_Leads::is_enabled()`) + logged-in mobile header notification link |
 | `profil` | yes | `kmae_profile` | `kmae-profile-page` + `profile.css` | direct `do_shortcode(raw content)` | profile dropdown, mobile avatar, drawer |
 | `beallitasok` | yes | `kmae_settings` | `kmae-settings-page` + `settings.css` | direct `do_shortcode(raw content)` | profile dropdown + drawer |
 | `gyik` | yes | `kmae_faq` | `kmae-faq-page` + `faq.css` | generic | drawer/info + footer |

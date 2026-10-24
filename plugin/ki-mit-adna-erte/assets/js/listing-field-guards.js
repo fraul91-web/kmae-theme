@@ -358,11 +358,6 @@
 				if ( summary ) {
 					pv.thumbs.parentNode.insertBefore( summary, pv.source );
 				}
-				/* Az álló fotókhoz tartozó tipp (photo-motor) az összegzés alatt. */
-				var tip = pv.source.querySelector( '.kmae-shots__tip' );
-				if ( tip ) {
-					pv.thumbs.parentNode.insertBefore( tip, pv.source );
-				}
 			};
 
 			var pvStep = function ( delta ) {

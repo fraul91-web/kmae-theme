@@ -27,7 +27,7 @@ $kmae_first_icon = static function ( $name, $size = 20 ) {
 			<span class="kmae-first__confetti"></span>
 			<span class="kmae-first__confetti"></span>
 			<span class="kmae-first__confetti"></span>
-			<img class="kmae-first__mascot" src="https://albira.hu/wp-content/uploads/2026/10/ugyesvoltal-3.webp" alt="" width="200" height="406" decoding="async" />
+			<img class="kmae-first__mascot" src="https://albira.hu/wp-content/uploads/2026/10/ugyesvoltal7.webp" alt="" width="200" height="406" decoding="async" />
 		</div>
 
 		<div class="kmae-first__intro">

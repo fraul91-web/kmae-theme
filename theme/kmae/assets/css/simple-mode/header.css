@@ -683,3 +683,165 @@ body .kmae-sheet__icon svg.kmae-icon-heart,
 body .kmae-bt__icon svg.kmae-icon-heart {
 	color: #e11d48;
 }
+
+/* Fejléc ikon-csoport (PC): Kedvencek, Üzenetek, Értesítések — kerek, csak ikon,
+   a profilnév bal oldalán; a jelvény kis piros számláló az ikon jobb felső sarkán. */
+.kmae-header__icons {
+	display: none;
+}
+
+@media (min-width: 1025px) {
+	body.kmae-app .kmae-header__icons {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		margin-right: 4px;
+	}
+
+	body.kmae-app .kmae-header__icon-link {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		flex: 0 0 auto;
+		width: 42px;
+		height: 42px;
+		padding: 0;
+		border: 1px solid rgba(0, 199, 247, 0.45);
+		border-radius: 50%;
+		background: linear-gradient(135deg, rgba(224, 248, 255, 0.86), rgba(255, 255, 255, 0.7));
+		backdrop-filter: blur(14px) saturate(130%);
+		-webkit-backdrop-filter: blur(14px) saturate(130%);
+		box-shadow:
+			inset 0 1px 0 #ffffff,
+			0 0 16px rgba(0, 199, 247, 0.12),
+			0 6px 16px rgba(38, 68, 90, 0.12);
+		color: #008fbd;
+		text-decoration: none;
+		transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+	}
+
+	body.kmae-app .kmae-header__icon-link .kmae-header__nav-icon {
+		color: #008fbd;
+	}
+
+	body.kmae-app .kmae-header__icon-link.kmae-header__icon-link--heart .kmae-header__nav-icon {
+		color: #e11d48;
+	}
+
+	body.kmae-app .kmae-header__icon-link:hover,
+	body.kmae-app .kmae-header__icon-link:focus-visible {
+		border-color: rgba(0, 199, 247, 0.85);
+		background: linear-gradient(135deg, rgba(224, 248, 255, 0.96), rgba(255, 255, 255, 0.86));
+		box-shadow:
+			inset 0 1px 0 #ffffff,
+			0 0 20px rgba(0, 199, 247, 0.28),
+			0 8px 20px rgba(38, 68, 90, 0.14);
+		outline: none;
+		transform: translateY(-2px);
+	}
+
+	/* Aktív oldal: megfordul, mint a főmenü aktív kapszulája (tömör sötétkék, fehér ikon). */
+	body.kmae-app .kmae-header__icon-link.is-active {
+		border-color: rgba(46, 203, 255, 0.92);
+		background: linear-gradient(145deg, rgba(12, 73, 125, 0.92) 0%, rgba(5, 37, 77, 0.9) 48%, rgba(4, 21, 45, 0.94) 100%);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.16),
+			0 0 0 1px rgba(0, 196, 255, 0.12),
+			0 0 18px rgba(0, 174, 255, 0.24);
+	}
+
+	body.kmae-app .kmae-header__icon-link.is-active .kmae-header__nav-icon,
+	body.kmae-app .kmae-header__icon-link.is-active.kmae-header__icon-link--heart .kmae-header__nav-icon {
+		color: #ffffff;
+	}
+
+	body.kmae-app .kmae-header__icon-link.is-active.kmae-header__icon-link--heart .kmae-header__nav-icon svg {
+		color: #ff6b8a;
+	}
+
+	body.kmae-app .kmae-header__icon-link .kmae-pc-badge {
+		position: absolute;
+		top: -6px;
+		right: -6px;
+		min-width: 20px;
+		height: 20px;
+		margin: 0;
+		padding: 0 5px;
+		box-sizing: border-box;
+		border: 2px solid #ffffff;
+		border-radius: 999px;
+		background: linear-gradient(145deg, #ff6b6b, #d91f1f);
+		filter: none;
+		font-size: 11px;
+		line-height: 1;
+		text-shadow: none;
+	}
+
+	body.kmae-app .kmae-header__icon-link .kmae-pc-badge[hidden] {
+		display: none;
+	}
+}
+
+/* Az ikon-csoport miatt a jobb oszlop szélesebb: szűkebb képernyőn a menü a
+   logó és a jobb oldal közötti szabad sávban középre ül (nem ütközik); nagyon
+   széles képernyőn marad az eredeti, szimmetrikus elrendezés. */
+@media (min-width: 1025px) {
+	body.kmae-app .kmae-header__inner:has(.kmae-header__icons) {
+		grid-template-columns: auto minmax(0, 1fr) auto;
+	}
+
+	body.kmae-app .kmae-header__inner:has(.kmae-header__icons) .kmae-pc-topnav {
+		gap: 14px;
+	}
+}
+
+@media (min-width: 1500px) {
+	body.kmae-app .kmae-header__inner:has(.kmae-header__icons) .kmae-pc-topnav {
+		gap: 22px;
+	}
+}
+
+@media (min-width: 1700px) {
+	body.kmae-app .kmae-header__inner:has(.kmae-header__icons) {
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	}
+
+	body.kmae-app .kmae-header__inner:has(.kmae-header__icons) .kmae-pc-topnav {
+		gap: 30px;
+	}
+}
+
+/* Telefon: a csengő kis piros jelvénye (kereskedői megkeresések) — a JS ugyanazt a
+   [data-kmae-notif-badge] elemet frissíti, mint a PC-s jelvényt; a PC-n a mobil-sáv rejtett. */
+@media (max-width: 1024px) {
+	body.kmae-app .kmae-header__mobile-top .kmae-phone-header__bell {
+		position: relative;
+	}
+
+	body.kmae-app .kmae-header__mobile-top .kmae-phone-header__badge {
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		min-width: 18px;
+		height: 18px;
+		padding: 0 5px;
+		border: 2px solid #ffffff;
+		border-radius: 999px;
+		background: linear-gradient(145deg, #ff6b6b, #d91f1f);
+		color: #ffffff;
+		font-size: 10px;
+		font-weight: 800;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	body.kmae-app .kmae-header__mobile-top .kmae-phone-header__badge[hidden] {
+		display: none;
+	}
+}

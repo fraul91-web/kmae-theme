@@ -22,6 +22,9 @@
 ### `${prefix}kmae_reports` (`KMAE_Reports`, 4.64.0)
 - Bejelentés: `context` (`listing`/`chat`), `listing_id`, `conversation_id` (0 = nincs chat), `reporter_id`, `reported_user_id`, `listing_title` (snapshot), `reason` (key of `KMAE_Reports::reasons`), `details`, `status` (`new`/`valid`/`invalid`), `admin_note`, `resolved_by`, `resolved_at`. Nem törlődik hirdetés-/chat-törléskor. Admin menu badge = COUNT `new`.
 
+### `${prefix}kmae_dealer_leads` (`KMAE_Dealer_Leads`, saját séma `kmae_dealer_leads_schema`)
+- Csoportos kereskedői megkeresés: `listing_id`, `seller_id`, `dealer_id`, `purpose` (`sell`/`tradein`), `status` (`pending`/`interested`/`declined`/`expired`/`cancelled`), `token` (32 hex, unique; UI-ban ID helyett), `batch_id` (egy küldés), `distance_km`, `conversation_id` (`interested`-nél), `listing_title` (snapshot), `created_at`/`expires_at` (+7 nap)/`responded_at`/`updated_at` (UTC). UNIQUE (listing_id, dealer_id) = egy cég egy hirdetést soha kétszer. Sorok nem törlődnek.
+
 **Foreign keys are logical, not DB-enforced**: the source creates indexes/unique keys but no SQL `FOREIGN KEY` constraints.
 
 ## Literal WordPress data keys found in executable PHP

@@ -618,3 +618,8 @@ body.kmae-delete-confirm-open { overflow: hidden; }
 	.kmae-my-listings__empty-steps li { align-items: center; padding: 12px 14px; }
 	.kmae-my-listings__empty-cta { display: flex; justify-content: center; width: 100%; margin-top: 20px; padding: 0 18px; box-sizing: border-box; }
 }
+
+/* Hirdetéseim kártya, TELEFON: a „Kereskedők megkeresése” gomb érintési magassága. */
+@media (max-width: 1024px) {
+	.kmae-my-listing-card__button--dealers { min-height: 44px; touch-action: manipulation; }
+}

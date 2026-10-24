@@ -192,11 +192,11 @@ class KMAE_Listing_Wizard {
 		return array(
 			1 => array(
 				'text'  => __( 'Ez az!', 'ki-mit-adna-erte' ),
-				'image' => $base . 'ezaz2.webp',
+				'image' => $base . 'ezaz7.webp',
 			),
 			2 => array(
 				'text'  => __( 'Csak így tovább!', 'ki-mit-adna-erte' ),
-				'image' => $base . 'csakigytovabb3.webp',
+				'image' => $base . 'csakigytovabb7.webp',
 			),
 		);
 	}
@@ -211,7 +211,7 @@ class KMAE_Listing_Wizard {
 	public static function assistant_publish() {
 		return array(
 			'text'  => __( 'Nagyszerű! Kész a hirdetésed!', 'ki-mit-adna-erte' ),
-			'image' => 'https://albira.hu/wp-content/uploads/2026/10/csakigytovabb3.webp',
+			'image' => 'https://albira.hu/wp-content/uploads/2026/10/csakigytovabb7.webp',
 		);
 	}
 

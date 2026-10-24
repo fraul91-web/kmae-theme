@@ -491,9 +491,22 @@ class KMAE_Shortcodes {
 		return ob_get_clean();
 	}
 
-	/** Értesítések page: intentionally empty. */
+	/**
+	 * Értesítések page: kereskedői megkeresések (cég: beérkezett, eladó: elküldött).
+	 * A kapcsoló (KMAE_Dealer_Leads::is_enabled) nélkül az oldal szándékosan üres marad.
+	 */
 	public function notifications() {
-		return '';
+		if ( ! class_exists( 'KMAE_Dealer_Leads' ) || ! KMAE_Dealer_Leads::is_enabled() ) {
+			return '';
+		}
+		$login_msg = $this->require_login( __( 'Az értesítések megtekintéséhez be kell jelentkezned.', 'ki-mit-adna-erte' ) );
+		if ( $login_msg ) {
+			return $login_msg;
+		}
+
+		ob_start();
+		include KMAE_PLUGIN_DIR . 'templates/notifications.php';
+		return ob_get_clean();
 	}
 
 	public function messages() {

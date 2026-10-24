@@ -31,6 +31,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</td>
 	</tr>
 	<tr>
+		<th><label for="kmae_zip"><?php esc_html_e( 'Irányítószám', 'ki-mit-adna-erte' ); ?></label></th>
+		<td>
+			<input type="text" id="kmae_zip" class="small-text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="<?php esc_attr_e( 'pl. 6720', 'ki-mit-adna-erte' ); ?>" data-kmae-zip data-county="#kmae_county" data-city="#kmae_city" />
+			<div class="kmae-sp-zip-result" data-kmae-zip-result role="status" aria-live="polite"></div>
+			<p class="description"><?php esc_html_e( 'Nem kötelező, és nem mentődik: csak kitölti a megyét és a települést.', 'ki-mit-adna-erte' ); ?></p>
+		</td>
+	</tr>
+	<tr>
 		<th><label for="kmae_county"><?php esc_html_e( 'Megye', 'ki-mit-adna-erte' ); ?></label></th>
 		<td>
 			<select name="kmae_county" id="kmae_county">
@@ -43,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</tr>
 	<tr>
 		<th><label for="kmae_city"><?php esc_html_e( 'Város', 'ki-mit-adna-erte' ); ?></label></th>
-		<td><input type="text" name="kmae_city" id="kmae_city" value="<?php echo esc_attr( $city ?? '' ); ?>" class="regular-text" /></td>
+		<td><input type="text" name="kmae_city" id="kmae_city" value="<?php echo esc_attr( $city ?? '' ); ?>" class="regular-text" autocomplete="off" data-kmae-city-picker="#kmae_county" /></td>
 	</tr>
 	<tr>
 		<th><label for="kmae_location"><?php esc_html_e( 'Helyszín (megjelenítés)', 'ki-mit-adna-erte' ); ?></label></th>

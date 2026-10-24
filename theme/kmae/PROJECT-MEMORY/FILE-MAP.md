@@ -34,6 +34,7 @@ kmae/
         ├── my-listings.css
         ├── listing-unavailable.css
         ├── messages.css
+        ├── notifications.css
         ├── offer-thread.css
         ├── sale-contract.css
         ├── profile.css
@@ -211,6 +212,14 @@ Single `kmae_listing` presentation: gallery, vehicle metadata, price/offer area,
 ### `assets/css/messages.css`
 
 Üzenetek conversation list (`.kmae-inbox*`), loaded on the `uzenetek` page without `?kmae_conversation`. Törölt hirdetés sora: `.kmae-inbox__gone` címke.
+
+### `assets/css/notifications.css`
+
+Értesítések oldal (`.kmae-notif*`, kereskedői megkeresések: cég-kártyák `.kmae-notif-card*`, eladói összesítő `.kmae-notif-sent*`), body `kmae-notifications-page` (`kmae_is_notifications_page`), csak belépve töltődik (`kmae_enqueue_app_shell`). PC = `@media (min-width:1025px)`; telefon = a fájl végi `max-width:1024px` blokk (kész). Fejléc ikon-csoport (PC, a profilnév mellett): `header.php` `$kmae_header_icons` (Kedvencek/Üzenetek/Értesítések-csengő) → `.kmae-header__icons` / `.kmae-header__icon-link`, `header.css` vége (jelvény `data-kmae-notif-badge`).
+
+### `assets/css/dealer-leads.css`
+
+Eladói „Kereskedők megkeresése” ablak (`dialog.kmae-dl*`), csak Hirdetéseim + Értesítések (belépve, `functions.php`). PC = `@media (min-width:1025px)`; telefon = a fájl végi `max-width:1024px` blokk (kész).
 
 ### `assets/css/listing-unavailable.css`
 

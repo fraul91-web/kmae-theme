@@ -33,6 +33,11 @@ $kmae_unseen    = ( $kmae_logged_in && class_exists( 'KMAE_Database' ) )
 $kmae_fav_unseen = ( $kmae_logged_in && class_exists( 'KMAE_Browse' ) )
 	? (int) KMAE_Browse::count_unseen_favorites( get_current_user_id() )
 	: 0;
+/* Értesítések (csengő): csak ha a kereskedői megkeresés be van kapcsolva; a jelvény a cég válaszra váró megkeresései. */
+$kmae_notif_on      = $kmae_logged_in && class_exists( 'KMAE_Dealer_Leads' ) && KMAE_Dealer_Leads::is_enabled();
+$kmae_notif_pending = ( $kmae_notif_on && method_exists( 'KMAE_Dealer_Leads', 'bell_count' ) )
+	? (int) KMAE_Dealer_Leads::bell_count( get_current_user_id() )
+	: 0;
 $kmae_nav_active = static function ( $slug ) use ( $kmae_path ) {
 	return false !== strpos( $kmae_path, '/' . $slug );
 };
@@ -82,13 +87,16 @@ $kmae_guest_nav_active = static function ( $item ) use ( $kmae_nav_active ) {
 
 				<div class="kmae-phone-header__tools">
 					<a
-						class="kmae-header__icon-btn"
+						class="kmae-header__icon-btn kmae-phone-header__bell"
 						href="<?php echo esc_url( kmae_page_url( 'ertesitesek' ) ); ?>"
 						aria-label="<?php echo esc_attr__( 'Értesítések', 'kmae' ); ?>"
 					>
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
 							<path d="M18 10a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 22h4"/>
 						</svg>
+						<?php if ( $kmae_notif_on ) : ?>
+							<span class="kmae-phone-header__badge" data-kmae-notif-badge="<?php echo esc_attr( $kmae_notif_pending ); ?>" aria-hidden="true"<?php echo $kmae_notif_pending > 0 ? '' : ' hidden'; ?>><?php echo esc_html( $kmae_notif_pending ); ?></span>
+						<?php endif; ?>
 					</a>
 					<a
 						class="kmae-header__icon-btn"
@@ -183,11 +191,20 @@ $kmae_guest_nav_active = static function ( $item ) use ( $kmae_nav_active ) {
 						'icon'   => 'search',
 					),
 					array(
-						'label'  => __( 'Kedvencek', 'kmae' ),
-						'url'    => kmae_page_url( 'kedvencek' ),
-						'active' => $kmae_nav_active( 'kedvencek' ),
-						'icon'   => 'heart',
-						'badge'  => (int) $kmae_fav_unseen,
+						'label'  => __( 'Hirdetéseim', 'kmae' ),
+						'url'    => kmae_page_url( 'sajat-hirdetesek' ),
+						'active' => $kmae_nav_active( 'sajat-hirdetesek' ) || $kmae_own_listing || $kmae_edit_listing_nav,
+						'icon'   => 'clipboard-list',
+					),
+				);
+				/* Ikon-csoport (a profilnév mellett): Kedvencek, Üzenetek, Értesítések. */
+				$kmae_header_icons = array(
+					array(
+						'label'      => __( 'Kedvencek', 'kmae' ),
+						'url'        => kmae_page_url( 'kedvencek' ),
+						'active'     => $kmae_nav_active( 'kedvencek' ),
+						'icon'       => 'heart',
+						'badge'      => (int) $kmae_fav_unseen,
 						'badge_attr' => 'data-kmae-favorites-unseen',
 					),
 					array(
@@ -197,13 +214,18 @@ $kmae_guest_nav_active = static function ( $item ) use ( $kmae_nav_active ) {
 						'icon'   => 'message-square',
 						'badge'  => (int) $kmae_unseen,
 					),
-					array(
-						'label'  => __( 'Hirdetéseim', 'kmae' ),
-						'url'    => kmae_page_url( 'sajat-hirdetesek' ),
-						'active' => $kmae_nav_active( 'sajat-hirdetesek' ) || $kmae_own_listing || $kmae_edit_listing_nav,
-						'icon'   => 'clipboard-list',
-					),
 				);
+				/* Értesítések (csengő): csak ha a kereskedői megkeresés be van kapcsolva; a jelvény a cég válaszra váró megkereséseit mutatja. */
+				if ( $kmae_notif_on ) {
+					$kmae_header_icons[] = array(
+						'label'      => __( 'Értesítések', 'kmae' ),
+						'url'        => kmae_page_url( 'ertesitesek' ),
+						'active'     => $kmae_nav_active( 'ertesitesek' ),
+						'icon'       => 'bell',
+						'badge'      => $kmae_notif_pending,
+						'badge_attr' => 'data-kmae-notif-badge',
+					);
+				}
 				foreach ( $kmae_header_nav as $kmae_nav_item ) :
 					?>
 					<a
@@ -233,6 +255,29 @@ $kmae_guest_nav_active = static function ( $item ) use ( $kmae_nav_active ) {
 			<span class="kmae-header__sep" aria-hidden="true"></span>
 
 			<div class="kmae-header__tools kmae-header__tools--desktop kmae-pc-topbar-right">
+				<div class="kmae-header__icons">
+					<?php foreach ( $kmae_header_icons as $kmae_icon_item ) : ?>
+						<a
+							class="kmae-header__icon-link kmae-header__icon-link--<?php echo esc_attr( $kmae_icon_item['icon'] ); ?><?php echo $kmae_icon_item['active'] ? ' is-active' : ''; ?>"
+							href="<?php echo esc_url( $kmae_icon_item['url'] ); ?>"
+							aria-label="<?php echo esc_attr( $kmae_icon_item['label'] ); ?>"
+							title="<?php echo esc_attr( $kmae_icon_item['label'] ); ?>"
+						>
+							<span class="kmae-header__nav-icon" aria-hidden="true">
+								<?php
+								if ( class_exists( 'KMAE_Icons' ) ) {
+									echo KMAE_Icons::render( $kmae_icon_item['icon'], array( 'size' => 20 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								}
+								?>
+							</span>
+							<span
+								class="kmae-pc-badge"
+								<?php echo esc_attr( ! empty( $kmae_icon_item['badge_attr'] ) ? $kmae_icon_item['badge_attr'] : 'data-kmae-unseen' ); ?>="<?php echo esc_attr( (int) $kmae_icon_item['badge'] ); ?>"
+								<?php echo (int) $kmae_icon_item['badge'] > 0 ? '' : 'hidden'; ?>
+							><?php echo esc_html( (int) $kmae_icon_item['badge'] ); ?></span>
+						</a>
+					<?php endforeach; ?>
+				</div>
 				<div class="kmae-header__dropdown kmae-header__dropdown--profile" data-kmae-dropdown>
 					<button type="button" class="kmae-header__profile-btn" aria-expanded="false" aria-haspopup="true" aria-controls="kmae-panel-profile" aria-label="<?php echo esc_attr( $kmae_greeting ); ?>">
 						<span class="kmae-header__profile-greeting"><?php echo esc_html( $kmae_greeting ); ?></span>

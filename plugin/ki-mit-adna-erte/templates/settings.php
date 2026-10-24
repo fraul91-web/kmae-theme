@@ -33,7 +33,7 @@ foreach ( array_slice( preg_split( '/\s+/u', $display_name ), 0, 2 ) as $name_pa
 	$initials .= function_exists( 'mb_substr' ) ? mb_strtoupper( mb_substr( $name_part, 0, 1 ) ) : strtoupper( substr( $name_part, 0, 1 ) );
 }
 
-$kmae_mail_catalog = class_exists( 'KMAE_Notifications' ) ? KMAE_Notifications::mail_catalog() : array();
+$kmae_mail_catalog = class_exists( 'KMAE_Notifications' ) ? KMAE_Notifications::mail_catalog( $user->ID ) : array();
 $kmae_mail_prefs   = class_exists( 'KMAE_Notifications' ) ? KMAE_Notifications::mail_prefs( $user->ID ) : array();
 $kmae_mail_locked  = array(
 	__( 'E-mail cím megerősítése', 'ki-mit-adna-erte' ),

@@ -267,6 +267,20 @@ if ( $list_idx ) {
 		</div>
 	<?php elseif ( $list_view ) : ?>
 		<?php include KMAE_PLUGIN_DIR . 'templates/partials/browse-list.php'; ?>
+		<?php
+		/* Lapozó (telefon): a kártya nézettel azonos alakú adat a lista fölé; csak v2 lista nézetben, nem üres találatnál. */
+		if ( $list_idx && ! $sw2 && ! empty( $listings ) ) :
+			$lpz_state = KMAE_Browse_Feed::client_state( wp_unslash( $_GET ), get_current_user_id() ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$lpz_data  = array(
+				'cfg'      => KMAE_Browse_Feed::client_cfg() + array( 't' => array() ),
+				'feed'     => $lpz_state['feed'],
+				'pages'    => (object) $lpz_state['pages'],
+				'me'       => $lpz_state['me'],
+				'base_ids' => $lpz_state['base_ids'],
+			);
+			?>
+		<script type="application/json" id="kmae-lpz-data"><?php echo wp_json_encode( $lpz_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></script>
+		<?php endif; ?>
 	<?php elseif ( $sw2 ) : ?>
 		<?php include KMAE_PLUGIN_DIR . 'templates/browse-swipe-v2.php'; ?>
 	<?php else : ?>

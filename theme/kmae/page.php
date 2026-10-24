@@ -43,6 +43,9 @@ if ( have_posts() ) {
 			|| has_shortcode( $content, 'kmae_messages' )
 			|| false !== strpos( $content, '[kmae_messages' )
 			|| 'uzenetek' === $slug
+			|| has_shortcode( $content, 'kmae_notifications' )
+			|| false !== strpos( $content, '[kmae_notifications' )
+			|| 'ertesitesek' === $slug
 			|| has_shortcode( $content, 'kmae_login' )
 			|| false !== strpos( $content, '[kmae_login' )
 			|| 'belepes' === $slug

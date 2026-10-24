@@ -1,0 +1,134 @@
+/* =========================================================
+   Vendég alsó menüsor (telefon). Markup: template-parts/guest-tabbar.php
+   Oldalak: főoldal, GYIK, Biztonság, Kapcsolat, ÁSZF, Adatvédelem.
+   PC-n rejtve. Betöltés: functions.php kmae_enqueue_guest_tabbar().
+   ========================================================= */
+
+.kmae-lp-tabbar {
+	display: none;
+}
+
+@media (max-width: 1024px) {
+	body.kmae-guest-tabbar {
+		--kmae-guest-tabbar-h: calc(46px + env(safe-area-inset-bottom, 0px));
+		--gt-blue: #00c7f7;
+		--gt-blue-rgb: 0, 199, 247;
+		--gt-blue-strong: #008fbd;
+		--gt-ink-3: #465463;
+	}
+
+	.kmae-lp-tabbar {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 900;
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		align-items: center;
+		max-width: none;
+		height: var(--kmae-guest-tabbar-h);
+		margin: 0;
+		padding: 0 2px env(safe-area-inset-bottom, 0px);
+		border: 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.95);
+		border-radius: 16px 16px 0 0;
+		background: rgba(255, 255, 255, 0.92);
+		backdrop-filter: blur(24px) saturate(180%);
+		-webkit-backdrop-filter: blur(24px) saturate(180%);
+		box-shadow: 0 -6px 18px rgba(38, 68, 90, 0.14);
+		transition: transform 0.35s ease, opacity 0.35s ease;
+		animation: kmae-guest-tabbar-dock 0.75s 0.4s cubic-bezier(0.2, 0.9, 0.25, 1.08) backwards;
+	}
+
+	.kmae-lp-tabbar a {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1px;
+		min-width: 0;
+		color: var(--gt-ink-3);
+		font-size: 9.5px;
+		font-weight: 800;
+		letter-spacing: 0.01em;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: color 0.2s ease, transform 0.15s ease;
+	}
+
+	.kmae-lp-tabbar a:active {
+		transform: scale(0.92);
+	}
+
+	.kmae-lp-tabbar__item svg {
+		padding: 2px 8px;
+		width: 34px;
+		height: 22px;
+		border-radius: 999px;
+		transition: background 0.25s ease, color 0.25s ease;
+	}
+
+	.kmae-lp-tabbar__item.is-active {
+		color: var(--gt-blue-strong);
+	}
+
+	.kmae-lp-tabbar__item.is-active svg {
+		background: rgba(var(--gt-blue-rgb), 0.16);
+		box-shadow: inset 0 0 0 1px rgba(var(--gt-blue-rgb), 0.35);
+	}
+
+	.kmae-lp-tabbar__fab {
+		color: var(--gt-blue-strong);
+	}
+
+	.kmae-lp-tabbar__fab-btn {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		margin-top: 0;
+		border-radius: 50%;
+		background: linear-gradient(145deg, #3fdcff, #00c7f7 45%, #007fb8);
+		border: 2px solid rgba(255, 255, 255, 0.95);
+		color: #fff;
+		box-shadow: 0 10px 24px rgba(var(--gt-blue-rgb), 0.5), 0 0 0 1px rgba(var(--gt-blue-rgb), 0.35);
+	}
+
+	.kmae-lp-tabbar__fab-btn::after {
+		content: none;
+	}
+
+	.kmae-lp-tabbar__fab-btn svg {
+		width: 18px;
+		height: 18px;
+		stroke-width: 2.6;
+	}
+
+	body.kmae-at-bottom .kmae-lp-tabbar {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(140%);
+	}
+
+	/* Tartalom helyet hagy az alsó sávnak */
+	body.kmae-guest-tabbar.home .kmae-lp {
+		--lp-tabbar-h: var(--kmae-guest-tabbar-h);
+		padding-bottom: calc(var(--kmae-guest-tabbar-h) + 8px);
+	}
+
+	body.kmae-guest-tabbar.kmae-faq-page .kmae-page,
+	body.kmae-guest-tabbar.kmae-security-page .kmae-page,
+	body.kmae-guest-tabbar.kmae-contact-page-view .kmae-page,
+	body.kmae-guest-tabbar.kmae-terms-page .kmae-page,
+	body.kmae-guest-tabbar.kmae-privacy-page .kmae-page,
+	body.kmae-guest-tabbar:has(.kmae-legal) .kmae-page {
+		padding-bottom: calc(var(--kmae-guest-tabbar-h) + 28px + env(safe-area-inset-bottom, 0px));
+	}
+}
+
+@keyframes kmae-guest-tabbar-dock {
+	from { opacity: 0; transform: translateY(130%); }
+	to { opacity: 1; transform: none; }
+}

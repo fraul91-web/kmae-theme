@@ -70,6 +70,8 @@ $listing_error_messages = array(
 	'photo_desktop_blocked' => __( 'Az autófotókat csak telefonról vagy tabletről, közvetlenül a kamerával lehet feltölteni. Kérjük, nyisd meg ezt az oldalt mobilon.', 'ki-mit-adna-erte' ),
 	'device_required'       => __( 'Válaszd ki, milyen eszközön készíted a hirdetést.', 'ki-mit-adna-erte' ),
 	'company_location_required' => __( 'A céges telephely hiányzik. A profilodban add meg a megyét és a várost.', 'ki-mit-adna-erte' ),
+	'company_location_mismatch' => __( 'A céges telephely települése nem ebben a megyében van. Javítsd a profilodban: válaszd ki a listából vagy írd be az irányítószámot.', 'ki-mit-adna-erte' ),
+	'location_mismatch'     => __( 'Ez a település nem ebben a megyében van — válaszd ki a listából vagy írd be az irányítószámot.', 'ki-mit-adna-erte' ),
 	'missing_fields'        => __( 'Tölts ki minden kötelező mezőt.', 'ki-mit-adna-erte' ),
 );
 

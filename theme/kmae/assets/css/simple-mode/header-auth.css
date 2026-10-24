@@ -101,6 +101,131 @@ body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--regis
 	transform: none !important;
 }
 
+/* Telefon: fejléc = landing (üvegsáv + logó + tömör gombok). PC érintetlen. */
+@media (max-width: 1024px) {
+	body.kmae-marketing {
+		--kmae-header-h: 52px;
+	}
+
+	body.kmae-marketing .kmae-header,
+	body.kmae-marketing .kmae-header.is-scrolled,
+	body.kmae-guest-app .kmae-header,
+	body.kmae-guest-app .kmae-header.kmae-pc-topbar,
+	body.kmae-guest-app .kmae-header.is-scrolled {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 1100;
+		height: var(--kmae-header-h, 52px);
+		background: rgba(244, 251, 255, 0.72) !important;
+		backdrop-filter: blur(20px) saturate(170%) !important;
+		-webkit-backdrop-filter: blur(20px) saturate(170%) !important;
+		border-bottom: 1px solid rgba(0, 199, 247, 0.28) !important;
+		box-shadow: 0 8px 24px rgba(38, 68, 90, 0.1) !important;
+	}
+
+	body.kmae-marketing .kmae-header__inner {
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 8px;
+		height: 100%;
+		padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+		padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
+	}
+
+	body.kmae-marketing .kmae-logo--desktop {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	body.kmae-marketing .kmae-logo--desktop img,
+	body.kmae-marketing .kmae-logo--desktop .kmae-logo__img,
+	body.kmae-guest-app .kmae-header .kmae-logo--mobile img,
+	body.kmae-guest-app .kmae-header .kmae-logo--header img,
+	body.kmae-guest-app .kmae-header .kmae-logo__img {
+		height: 22px !important;
+		width: auto !important;
+		max-width: 98px !important;
+		border-radius: 0;
+		filter: drop-shadow(0 1px 1px rgba(11, 58, 102, 0.14)) !important;
+	}
+
+	body.kmae-marketing .kmae-header__actions--desktop {
+		grid-column: 2;
+		justify-self: end;
+		gap: 8px;
+	}
+
+	/* Méret = landing főoldal. Oldalankénti felülírás tilos (!important). */
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login:hover,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login:focus-visible,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login:active,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register:hover,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register:focus-visible,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register:active {
+		min-height: 34px !important;
+		height: 34px !important;
+		padding: 0 14px !important;
+		font-size: 12.5px !important;
+		font-weight: 700 !important;
+		letter-spacing: 0.01em;
+		line-height: 1 !important;
+		border-radius: 999px;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		transform: none !important;
+	}
+
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login:hover,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login:focus-visible,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--login:active {
+		background-image: linear-gradient(110deg, #007fb8, #00c7f7, #3fdcff) !important;
+		background-color: #008fbd !important;
+		border: 0 !important;
+		color: #fff !important;
+		box-shadow: 0 6px 14px rgba(0, 199, 247, 0.34) !important;
+	}
+
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register:hover,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register:focus-visible,
+	body:is(.kmae-marketing, .kmae-guest-app) .kmae-header__actions .kmae-btn--register:active {
+		background-image: linear-gradient(110deg, #ffad41, #ff6e25) !important;
+		background-color: #ff6e25 !important;
+		border: 0 !important;
+		color: #fff !important;
+		box-shadow: 0 6px 14px rgba(255, 110, 37, 0.26) !important;
+	}
+
+	/* Vendég app-héj: Belépés ikon = landing cián gomb */
+	body.kmae-guest-app .kmae-header__mobile-top > a.kmae-header__login-icon {
+		gap: 0;
+		height: 34px;
+		min-height: 34px;
+		padding: 0 14px;
+		border: 0 !important;
+		border-radius: 999px;
+		background-image: linear-gradient(110deg, #007fb8, #00c7f7, #3fdcff) !important;
+		background-color: #008fbd !important;
+		box-shadow: 0 6px 14px rgba(0, 199, 247, 0.34) !important;
+		color: #fff !important;
+		font-size: 12.5px;
+		font-weight: 700;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+
+	body.kmae-guest-app .kmae-header__mobile-top > a.kmae-header__login-icon svg {
+		display: none;
+	}
+}
+
 /* Vendég logó: a halo fehér (nem kék). A belépett app-héj kék halóját
    (header.css, `body.kmae-app.kmae-theme-dark`) csak vendégnél írjuk felül,
    nagyobb specificitással. */

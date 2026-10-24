@@ -101,7 +101,7 @@ if ( $kmae_home_live || $kmae_home_first ) {
 	<header class="kmae-home-greeting">
 		<?php /* Belépés utáni első köszönéskor a integető manó, visszatéréskor
 			a „közben vártalak" változat. */ ?>
-		<img class="kmae-home-greeting__mascot" data-kmae-home-mascot data-kmae-mascot-return="https://albira.hu/wp-content/uploads/2026/09/idokozben1.webp" src="<?php echo esc_url( $kmae_home_greet ? 'https://albira.hu/wp-content/uploads/2026/10/szia3.webp' : 'https://albira.hu/wp-content/uploads/2026/09/idokozben1.webp' ); ?>" alt="" aria-hidden="true" width="200" height="200" decoding="async" />
+		<img class="kmae-home-greeting__mascot" data-kmae-home-mascot data-kmae-mascot-return="https://albira.hu/wp-content/uploads/2026/09/idokozben1.webp" src="<?php echo esc_url( $kmae_home_greet ? 'https://albira.hu/wp-content/uploads/2026/10/szia7.webp' : 'https://albira.hu/wp-content/uploads/2026/09/idokozben1.webp' ); ?>" alt="" aria-hidden="true" width="200" height="200" decoding="async" />
 		<div class="kmae-home-greeting__bubble">
 			<h1 class="kmae-home-greeting__message">
 				<?php if ( $kmae_home_greet ) : ?>
@@ -136,7 +136,7 @@ if ( $kmae_home_live || $kmae_home_first ) {
 					<p class="kmae-home-start__text"><?php echo esc_html( $kmae_home_start['text'] ); ?></p>
 				</div>
 				<div class="kmae-home-start__hello">
-					<img class="kmae-home-start__mascot" src="https://albira.hu/wp-content/uploads/2026/10/szia3.webp" alt="" aria-hidden="true" width="200" height="200" decoding="async" />
+					<img class="kmae-home-start__mascot" src="https://albira.hu/wp-content/uploads/2026/10/szia7.webp" alt="" aria-hidden="true" width="200" height="200" decoding="async" />
 					<p class="kmae-home-start__bubble"><?php printf( esc_html__( 'Üdv az oldalon, %s!', 'ki-mit-adna-erte' ), esc_html( trim( (string) ( $dash['first_name'] ?? $dash['name'] ?? '' ) ) ) ); ?></p>
 				</div>
 			</div>

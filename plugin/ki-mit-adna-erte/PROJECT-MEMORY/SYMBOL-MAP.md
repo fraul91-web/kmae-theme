@@ -1027,7 +1027,7 @@ Format per symbol: FILE / SYMBOL / PURPOSE / CALLED BY / CALLS / READS / WRITES 
 ## `KMAE_Counties::validate_listing_location`
 - FILE: `includes/class-kmae-counties.php:123-127`
 - SYMBOL: `KMAE_Counties::validate_listing_location`
-- PURPOSE: No dedicated source docblock; inspect the referenced implementation range.
+- PURPOSE: County valid AND city is an official settlement of that county (`KMAE_Counties::location_error` → ''/'required'/'mismatch', via `KMAE_Settlements::find`). Callers map 'mismatch' to `kmae_error=location_mismatch` (listing) / `company_location_mismatch` (company: register, profile, google-complete, listing of a company).
 - CALLED BY: `KMAE_Google_Auth::handle_complete`, `KMAE_Listings::save_meta_from_post`, `KMAE_Auth::register`, `KMAE_Company::has_listing_location`, `KMAE_Company::save_profile_fields`, `KMAE_Meta::save_listing_meta`, `KMAE_Public::admin_update_listing`, `KMAE_Public::process_create_listing`
 - CALLS: `KMAE_Counties::is_listing_county`
 - READS: —
@@ -2274,7 +2274,7 @@ Format per symbol: FILE / SYMBOL / PURPOSE / CALLED BY / CALLS / READS / WRITES 
 - FILE: `includes/class-kmae-notifications.php:674-691`
 - SYMBOL: `KMAE_Notifications::send_offer_email`
 - PURPOSE: Buyer bought another car — notify seller on withdrawn talks.
-- CALLED BY: `KMAE_Notifications::on_buyer_revision`, `KMAE_Notifications::notify_buyer_other_sellers_hold`, `KMAE_Notifications::notify_buyer_other_sellers_resume`, `KMAE_Notifications::on_listing_deleted`, `KMAE_Notifications::listing_closed`, `KMAE_Notifications::buyer_found_other_car`
+- CALLED BY: `KMAE_Notifications::notify_dealer_lead` (mail key `dealer_lead`), `KMAE_Notifications::on_buyer_revision`, `KMAE_Notifications::notify_buyer_other_sellers_hold`, `KMAE_Notifications::notify_buyer_other_sellers_resume`, `KMAE_Notifications::on_listing_deleted`, `KMAE_Notifications::listing_closed`, `KMAE_Notifications::buyer_found_other_car`
 - CALLS: `KMAE_Auth::first_name`, `KMAE_Brand::send_mail`
 - READS: —
 - WRITES: —
@@ -4419,7 +4419,7 @@ Format per symbol: FILE / SYMBOL / PURPOSE / CALLED BY / CALLS / READS / WRITES 
 
 ## `KMAE_Chat_Offers::accept` / `KMAE_Chat_Offers::cancel_sale`
 - FILE: `includes/class-kmae-chat-offers.php`
-- SYMBOL: `KMAE_Chat_Offers::accept`, `KMAE_Chat_Offers::cancel_sale`, `KMAE_Chat_Offers::post_system_message` (private), `KMAE_Chat_Offers::other_conversation_ids` (private)
+- SYMBOL: `KMAE_Chat_Offers::accept`, `KMAE_Chat_Offers::cancel_sale`, `KMAE_Chat_Offers::post_system_message` (public: a `KMAE_Dealer_Leads::answer` is hívja), `KMAE_Chat_Offers::other_conversation_ids` (private)
 - PURPOSE: Seller [Elfogadom]: `live` → `accepted` (+`accepted_at`, GET_LOCK per listing), other `live` rows → `closed`, every other open chat of the listing → system message (`listing_reserved`); [Mégse kelt el]: `accepted` → `withdrawn` + system message, other open chats → „A hirdetés újra elérhető.” (`listing_reopened`).
 - CALLED BY: `KMAE_Public::process_chat_offer_decision` (`accept_chat_offer`, `cancel_chat_sale`)
 - CALLS: `KMAE_Chat_Offers::get`, `KMAE_Chat_Offers::can_offer`, `KMAE_Chat_Offers::get_accepted_for_listing`, `KMAE_Conversations::save_message`, `do_action('kmae_conversation_message_created')`
@@ -4515,3 +4515,21 @@ Format per symbol: FILE / SYMBOL / PURPOSE / CALLED BY / CALLS / READS / WRITES 
 - CALLED BY: `add_submenu_page` callback, WP action `admin_post_kmae_report_update`
 - CALLS: `KMAE_Reports::get`, `get_list`, `count_by_status`, `update_decision`, `admin_url`
 - RELATED FEATURE: `REPORTS`, `ADMIN`
+
+## `KMAE_Settlements`
+- FILE: `includes/class-kmae-settlements.php`
+- SYMBOL: `KMAE_Settlements::find`, `canonical_name`, `coords`, `by_zip`, `find_anywhere`, `for_county`, `lower_key`, `ascii_key`, `enqueue_picker`
+- PURPOSE: Official HU settlement list from `assets/data/settlements.json` (JSON once per request, per-county index lazily). Case/space-insensitive; accent-insensitive only when unambiguous; county must match in `find`. Budapest: zip prefix `1`, „Budapest XI. ker.”/„Bp.” → Budapest.
+- CALLED BY: `KMAE_Counties::location_error`, `KMAE_Counties::canonical_city`, `KMAE_Counties::ajax_locate` (locate_official), `KMAE_Geo::dataset_coords` (listing_coords, location_changed, geocode_listing, user_coords)
+- READS: `assets/data/settlements.json`
+- WRITES: —
+- RELATED FEATURE: `BROWSE-SEARCH`, `PROFILE-COMPANY-SETTINGS`
+
+## `KMAE_Dealer_Leads`
+- FILE: `includes/class-kmae-dealer-leads.php`
+- SYMBOL: `KMAE_Dealer_Leads::is_enabled`, `maybe_create`, `create_table`, `insert_batch`, `parse_price`, `on_listing_ended`, `cancel_for_dealer`, `delete_for_listing`, `run_expire_cron`, const `PRICE_MIN`/`PRICE_MAX`/`CRON_EXPIRE`, `mark_interested`, `mark_declined`, `set_conversation`, `expire_due`, `cancel_for_listing`, `get`, `get_by_token`, `contacted_dealer_ids`, `counts_for_listing`, `list_for_dealer`, `list_for_seller`, `count_pending_for_dealer`, `new_token`, `is_token`, `can_start`, `match`, `init`, `nonce`, `client_config`, `preview`, `send`, `ajax_preview`, `ajax_send`, `send_queued_notifications`, `notifications_url`, `lead_url`, `radius_options`, `purpose_options`, `answer_form_action`, `answer_form_fields`, `handle_answer`, `handle_answer_nopriv`, `answer`, `answer_error_url`, `can_answer_interested`, `interest_text`
+- PURPOSE: Csoportos kereskedői megkeresés adatrétege (1. fázis) + jogosultság/találat-számolás (3. fázis: `can_start`, `match`) + AJAX előnézet/küldés és cég-értesítés (4. fázis: `wp_ajax_kmae_dealer_leads_preview|send`, nonce `kmae_dealer_leads`, GET_LOCK `kmae_dealer_leads_<listing>`; levél `KMAE_Notifications::notify_dealer_lead` shutdown 90-en, egy `KMAE_Live_Signal::bump`) + a cég válasza (5. fázis: `admin_post[_nopriv]_kmae_dealer_lead_answer` → `answer()`: „Érdekel” = `KMAE_Conversations::create` (cég = vevő) + rendszerüzenet `system:dealer_lead:<lead id>` a cég nevében (`KMAE_Chat_Offers::post_system_message`), „nem” = csak állapot + néma `bump`; GET_LOCK `kmae_dealer_lead_<id>`). Nincs UI. Átmenet csak `pending`-ből (`WHERE status='pending'`), időpontok UTC.
+- CALLED BY: `KMAE_Plugin::run` (`init`); `KMAE_Activator::maybe_upgrade` (`maybe_create`), `KMAE_Activator::create_tables` (`create_table`); életciklus (6. fázis): `KMAE_Listings::force_delete_listing` + `expire_listings` + `reset_listing` (`delete_for_listing`), `KMAE_Chat_Offers::close_listing` (`on_listing_ended`), `KMAE_Auth::delete_account` (`cancel_for_dealer`), cron `kmae_expire_dealer_leads` (`KMAE_Activator::schedule_cron` / `KMAE_Deactivator`, kezelő `run_expire_cron`); `KMAE_Settings::register_settings` / `admin/views/settings.php` (`OPTION`); `KMAE_Notifications::notify_dealer_lead` (`lead_url`, `MAIL_KEY`); Értesítések sablon (7. fázis: `answer_form_action`, `answer_form_fields`)
+- READS: `{prefix}kmae_dealer_leads`, `table:conversation_messages` (`has_interest_message`), option `kmae_dealer_leads_enabled`, `kmae_dealer_leads_schema`
+- WRITES: `{prefix}kmae_dealer_leads`, `table:conversations` + `table:conversation_messages` (válasz, a `KMAE_Conversations`/`KMAE_Chat_Offers` API-n át), option `kmae_dealer_leads_schema`, transient `kmae_dealer_leads_retry`
+- RELATED FEATURE: `DEALER-LEADS`, `CHAT`

@@ -9,6 +9,8 @@
   const SIZES = '100vw'; /* = browse-swipe-v2.php $sw2_sizes (PC-n a fotó kitölti a színpadot) */
   /* PC: a teljes színpados kártya nem fordul el, csak elúszik és elhalványul. */
   const PC = window.matchMedia('(min-width: 1025px)');
+  /* Álló telefon: a fotó nem nyit adatlapot, a „Részletek” a hirdetés oldalára visz (mint PC-n). */
+  const PORTRAIT = window.matchMedia('(max-width: 1024px) and (orientation: portrait)');
 
   const root = document.getElementById('kmae-sw2');
   const dataEl = document.getElementById('kmae-sw2-data');
@@ -479,10 +481,10 @@
     return fetch(cfg.ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' });
   }
 
-  /* Adatlap a színpad alatt (2026-10-18, Raul): a fotó / „Részletes adatlap” / Enter nem visz új oldalra —
-     a hirdetés oldalának .kmae-single-listing része (és a stílusa, theme single-listing.css) a
-     [data-kmae-sw2-sheet] panelbe töltődik, az oldal odagörget. Alul a „felfelé” gomb zárja; lapozáskor
-     bezárul (layout()). Ha nem tölthető be (pl. lejárt hirdetés), a régi módon az oldalára visz. */
+  /* Adatlap a színpad alatt: fekvő telefonon a fotó / „Részletek” / Enter ide tölt.
+     Álló telefonon és PC-n nincs (2026-10-24): a fotó nem csinál semmit, a „Részletek” / Enter
+     a hirdetés oldalára visz. A panel a hirdetés .kmae-single-listing részét tölti be, odagörget.
+     Alul a „felfelé” gomb zárja; lapozáskor bezárul (layout()). Ha nem tölthető be, az oldalára visz. */
   function openSheet() {
     const node = slotAt(cur);
     const it = node && byId[node.getAttribute('data-id')];
@@ -563,11 +565,14 @@
     if (id == null) return;
     if (!cfg.loggedIn) { if (cfg.loginUrl) window.location.href = cfg.loginUrl; return; }
     const was = !!fav[id];
+    /* A telefonos Lapozó (browse-lapozo.js) is tudjon róla. */
+    const tell = (on) => document.dispatchEvent(new CustomEvent('kmae:favorite', { detail: { id: id, on: on, source: 'sw2' } }));
     setFav(id, !was);
+    tell(!was);
     post({ action: was ? 'kmae_favorite_remove' : 'kmae_favorite_add', nonce: cfg.favoriteNonce, listing_id: id })
       .then((r) => r.json())
       .then((d) => {
-        if (!d || !d.success) return setFav(id, was);
+        if (!d || !d.success) { setFav(id, was); tell(was); return; }
         const badge = document.querySelector('[data-kmae-favorites-unseen]');
         if (badge && d.data && typeof d.data.unseen !== 'undefined') {
           const count = parseInt(d.data.unseen, 10) || 0;
@@ -575,7 +580,7 @@
           badge.toggleAttribute('hidden', count <= 0);
         }
       })
-      .catch(() => setFav(id, was));
+      .catch(() => { setFav(id, was); tell(was); });
   }
 
   /* Képváltás: a számláló / bélyegkép azonnal vált, a nagy kép akkor cserélődik, amikor
@@ -624,12 +629,13 @@
     if (mute) { e.preventDefault(); e.stopPropagation(); return; }
     const node = e.target.closest('[data-kmae-sw2-card]');
     if (!node || node._pos !== cur) return;
-    /* Fotó / adatlap link: telefonon lenyíló adatlap; PC-n a fotóra kattintás nem csinál semmit (Raul, 2026-10-20;
-       nagyítás csak a jobb alsó gombbal, az adatlapra CSAK a „Hirdetés megtekintése” gomb visz). Új lapon nyitás
-       (Ctrl/középső gomb) marad a link. */
-    if (e.target.closest('.kmae-sw2-open, .kmae-sw2-cta') && !e.target.closest('button') && !(e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0)) {
+    /* Fotó: PC-n és álló telefonon a kattintás nem nyit adatlapot. A „Részletek” állóban a hirdetés
+       oldalára visz (a link megy), fekvő telefonon a lenyíló adatlapot nyitja. Új lapon nyitás marad. */
+    const sheetLink = e.target.closest('.kmae-sw2-open, .kmae-sw2-cta');
+    if (sheetLink && !e.target.closest('button') && !(e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0)) {
+      if (PORTRAIT.matches && sheetLink.closest('.kmae-sw2-cta')) return;
       e.preventDefault();
-      if (!PC.matches) openSheet();
+      if (!PC.matches && !PORTRAIT.matches) openSheet();
       return;
     }
     const nav = e.target.closest('[data-kmae-sw2-photo]');
@@ -683,7 +689,7 @@
   stack.addEventListener('pointerdown', (e) => {
     if (busy || drag || !e.isPrimary || e.button > 0 || document.fullscreenElement || document.webkitFullscreenElement) return;
     const node = e.target.closest('[data-kmae-sw2-card]');
-    if (!node || node._pos !== cur || e.target.closest('[data-kmae-sw2-like], [data-kmae-sw2-photo], [data-kmae-sw2-thumbs], [data-kmae-sw2-full], .kmae-sw2-msg')) return;
+    if (!node || node._pos !== cur || e.target.closest('[data-kmae-sw2-like], [data-kmae-sw2-photo], [data-kmae-sw2-thumbs], [data-kmae-sw2-full], .kmae-sw2-msg, .kmae-sw2-cta')) return;
     if (e.pointerType === 'mouse') e.preventDefault();
     drag = { node: node, id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, on: false, under: '' };
   });
@@ -730,8 +736,9 @@
   peeks.forEach((b) => b.addEventListener('click', () => (Number(b.getAttribute('data-kmae-sw2-peek')) < 0 ? stepPrev() : stepNext())));
   if (passBtn) passBtn.addEventListener('click', pass);
 
-  /* Billentyűk (= a régi swipe.js): ← / → hirdetés, Enter = adatlap (PC: oldalbetöltés, onnan a
-     Backspace visz vissza — public.js), Space = kedvenc. Teljes képernyőn a nyilak a képet váltják. */
+  /* Billentyűk (= a régi swipe.js): ← / → hirdetés, Enter = adatlap (PC és álló telefon: oldalbetöltés,
+     onnan a Backspace visz vissza — public.js; fekvő telefon: lenyíló adatlap), Space = kedvenc.
+     Teljes képernyőn a nyilak a képet váltják. */
   document.addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || !root.isConnected) return;
     /* Nyitott ablakban, szövegmezőben, a rendezés / km menüben és a kártyán kívüli gombon/linken a billentyű az övék;
@@ -753,7 +760,7 @@
       const it = node && byId[node.getAttribute('data-id')];
       if (!it || e.repeat) return;
       e.preventDefault();
-      if (PC.matches) { remember(); window.location.href = it.card.url; } else openSheet();
+      if (PC.matches || PORTRAIT.matches) { remember(); window.location.href = it.card.url; } else openSheet();
     } else if (k === ' ' || e.code === 'Space') {
       e.preventDefault();
       if (!e.repeat) saveCurrent();
@@ -858,6 +865,18 @@
   };
   window.addEventListener('resize', refit);
   if (PC.addEventListener) PC.addEventListener('change', refit);
+
+  /* Telefonos Lapozó (browse-lapozo.js): kedvenc-szinkron, és kilépéskor a kártya arra az autóra áll,
+     ahol ott abbahagyta. Ezeket csak a Lapozó küldi (PC-n nem fut). */
+  document.addEventListener('kmae:favorite', (e) => {
+    const d = e.detail || {};
+    if (d.source !== 'sw2' && d.id != null) setFav(d.id, !!d.on);
+  });
+  document.addEventListener('kmae:lpz-goto', (e) => {
+    const id = e.detail && e.detail.id;
+    const i = order.findIndex((x) => String(x) === String(id));
+    if (i >= 0) { cur = i; layout(); }
+  });
 
   /* BROWSE-V2.md „Személyes adat a kliensen” (= KMAE_Browse_Feed::personalize). */
   function personalize(S, R, D, me) {

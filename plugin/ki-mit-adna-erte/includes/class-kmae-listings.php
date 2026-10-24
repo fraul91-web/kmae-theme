@@ -134,6 +134,10 @@ class KMAE_Listings {
 		foreach ( self::due_for_expiry() as $listing_id ) {
 			update_post_meta( $listing_id, '_kmae_status', KMAE_Meta::STATUS_EXPIRED );
 			update_post_meta( $listing_id, '_kmae_expired_at', current_time( 'mysql' ) );
+			/* A kereskedői megkeresések nyitott sorai megszűnnek (néma jelzés a cégeknek, levél nincs). */
+			if ( class_exists( 'KMAE_Dealer_Leads' ) ) {
+				KMAE_Dealer_Leads::on_listing_ended( $listing_id );
+			}
 			KMAE_Notifications::notify_listing_expired( $listing_id );
 		}
 	}
@@ -266,6 +270,10 @@ class KMAE_Listings {
 		$wpdb->delete( $conversations_table, array( 'listing_id' => $listing_id ), array( '%d' ) );
 		$wpdb->delete( KMAE_Database::table( 'chat_offers' ), array( 'listing_id' => $listing_id ), array( '%d' ) );
 		$wpdb->delete( KMAE_Database::table( 'reports' ), array( 'listing_id' => $listing_id ), array( '%d' ) );
+		/* Kereskedői megkeresések: admin tiszta lap = előzmény sincs; az érintett cégek az alábbi (néma) bump-ba kerülnek. */
+		if ( class_exists( 'KMAE_Dealer_Leads' ) ) {
+			$parties = array_merge( $parties, KMAE_Dealer_Leads::delete_for_listing( $listing_id ) );
+		}
 
 		/* Kedvencek, friss-kedvenc jelvény, „továbblapozott” és „már megkeresett” lista minden felhasználónál. */
 		$list_keys = array( KMAE_Browse::FAVORITE_META, '_kmae_favorite_unseen', KMAE_Browse::PASSED_META, KMAE_Browse::CONTACTED_META );
@@ -789,6 +797,10 @@ class KMAE_Listings {
 		}
 		if ( class_exists( 'KMAE_Conversations' ) ) {
 			KMAE_Conversations::withdraw_alerts_for_listing( (int) $listing_id, $keep_unread );
+		}
+		/* Kereskedői megkeresések: a nyitottak 'cancelled' (előzmény marad, a cím-pillanatkép a soron). */
+		if ( class_exists( 'KMAE_Dealer_Leads' ) ) {
+			KMAE_Dealer_Leads::on_listing_ended( (int) $listing_id );
 		}
 		self::delete_listing_attachments( $listing_id );
 

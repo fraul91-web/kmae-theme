@@ -14,6 +14,7 @@
 | Automated listing moderation | [`MODERATION.md`](FEATURES/MODERATION.md) | Kódalapú publish-gate: kötelező mezők, minimum leírás, fotók, kontaktadat tiltás és hiba-visszaadás. |
 | Browse, search wizard and personalization | [`BROWSE-SEARCH.md`](FEATURES/BROWSE-SEARCH.md) | Hirdetéslekérdezés, megye/kivitel/mód/ár szűrés, pass kezelés és resurfacing. |
 | Chat (conversation, messages, attachments) | [`CHAT.md`](FEATURES/CHAT.md) | Hirdetésből indított vevő–eladó chat: szöveg, emoji, 48 órás csatolmány, Üzenetek lista, olvasatlan badge. Az ajánlat/deal/értékelés rendszer törölve (2026-10-10); új chat-ajánlat: ajánlat → elfogadás (Foglalt) → Mégse kelt el (`KMAE_Chat_Offers`). |
+| Csoportos kereskedői megkeresés + Értesítések oldal | [`DEALER-LEADS.md`](FEATURES/DEALER-LEADS.md) | Eladó sugáron belüli kereskedőknek küld megkeresést (ár + cél), cég „Érdekel” → chat / „Köszönöm, nem”, 7 napos lejárat, kapcsoló `kmae_dealer_leads_enabled`. |
 | Bejelentések | [`REPORTS.md`](FEATURES/REPORTS.md) | Hirdetés és chat bejelentése okkal + indoklással; admin Albira → Jelentések (piros számláló, Web Push), beszélgetés és előzmények megtekintése, döntés Igaz / Nem igaz. |
 | Event notifications and email | [`NOTIFICATIONS.md`](FEATURES/NOTIFICATIONS.md) | Chatüzenet-, hirdetés- és biztonsági e-mailek, mail catalog/prefs és brandelt HTML mail. |
 | Dashboard, hubs and statistics | [`DASHBOARD-HUBS.md`](FEATURES/DASHBOARD-HUBS.md) | Dashboard/hub aggregáció, listing view tracking, listing activity rows és kezdőoldali user summary. |

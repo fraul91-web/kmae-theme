@@ -69,10 +69,16 @@ $kmae_app_shell = function_exists( 'kmae_uses_app_shell' ) ? kmae_uses_app_shell
 <?php endif; ?>
 
 <?php
+if ( function_exists( 'kmae_show_guest_tabbar' ) && kmae_show_guest_tabbar() ) {
+	get_template_part( 'template-parts/guest-tabbar' );
+}
+
 if ( function_exists( 'kmae_is_browse_page' ) && kmae_is_browse_page() ) {
 	get_template_part( 'template-parts/browse-tabbar' );
 }
 ?>
+
+<?php get_template_part( 'template-parts/browse-rotate' ); ?>
 
 <?php wp_footer(); ?>
 </body>

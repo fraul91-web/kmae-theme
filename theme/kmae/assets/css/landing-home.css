@@ -1172,8 +1172,7 @@
 	}
 }
 
-/* Telefonos nézet elemei: PC-n nincsenek. */
-.kmae-lp-tabbar,
+/* Telefonos nézet elemei: PC-n nincsenek. (Alsó menüsor: guest-tabbar.css) */
 .kmae-lpm,
 .kmae-lpm-pill,
 .kmae-lpm-live {
@@ -1196,9 +1195,9 @@
 	.kmae-lp {
 		--lp-gutter: 16px;
 		--lp-max: 560px;
-		--lp-tabbar-h: 70px;
+		--lp-tabbar-h: calc(46px + env(safe-area-inset-bottom, 0px));
 		--lpm-card-bg: linear-gradient(160deg, rgba(232, 250, 255, 0.9), rgba(255, 255, 255, 0.8));
-		padding-bottom: calc(var(--lp-tabbar-h) + 30px + env(safe-area-inset-bottom, 0px));
+		padding-bottom: calc(var(--lp-tabbar-h) + 8px);
 		-webkit-tap-highlight-color: transparent;
 	}
 
@@ -1223,19 +1222,43 @@
 		background-image: linear-gradient(100deg, #007fb8 0%, #00c7f7 50%, #007fb8 100%);
 	}
 
-	/* ---- Fejléc: lebegő üveg app-sáv ---- */
+	/* ---- Fejléc: arculat üveges kék + tömör gombok ---- */
+	body.home.kmae-marketing {
+		--kmae-header-h: 52px;
+	}
+
 	body.home.kmae-marketing .kmae-header {
 		position: fixed;
+		height: var(--kmae-header-h);
 		background: rgba(244, 251, 255, 0.72);
 		backdrop-filter: blur(20px) saturate(170%);
 		-webkit-backdrop-filter: blur(20px) saturate(170%);
-		border-bottom: 1px solid rgba(var(--lp-blue-rgb, 0, 199, 247), 0.28);
+		border-bottom: 1px solid rgba(0, 199, 247, 0.28);
 		box-shadow: 0 8px 24px rgba(38, 68, 90, 0.1);
 	}
 
 	body.home.kmae-marketing .kmae-header__inner {
 		grid-template-columns: auto minmax(0, 1fr);
-		gap: 10px;
+		align-items: center;
+		gap: 8px;
+		height: 100%;
+		padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+		padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
+	}
+
+	body.home.kmae-marketing .kmae-logo--desktop {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	body.home.kmae-marketing .kmae-logo--desktop img,
+	body.home.kmae-marketing .kmae-logo--desktop .kmae-logo__img {
+		height: 22px;
+		width: auto;
+		max-width: 98px;
+		border-radius: 0;
+		filter: drop-shadow(0 1px 1px rgba(11, 58, 102, 0.14));
 	}
 
 	body.home.kmae-marketing .kmae-header__actions--desktop {
@@ -1243,17 +1266,54 @@
 		gap: 8px;
 	}
 
-	body.home.kmae-marketing .kmae-header__actions .kmae-btn {
-		min-height: 38px;
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login:hover,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login:focus-visible,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login:active,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register:hover,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register:focus-visible,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register:active {
+		min-height: 34px;
 		padding: 0 14px;
-		font-size: 13.5px;
+		font-size: 12.5px;
+		font-weight: 700;
+		letter-spacing: 0.01em;
+		border-radius: 999px;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		transform: none !important;
+	}
+
+	/* Belépés: landing cián (ugyanaz a kék, mint a hero CTA) */
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login:hover,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login:focus-visible,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--login:active {
+		background-image: linear-gradient(110deg, #007fb8, #00c7f7, #3fdcff) !important;
+		background-color: #008fbd !important;
+		border: 0 !important;
+		color: #fff !important;
+		box-shadow: 0 6px 14px rgba(0, 199, 247, 0.34) !important;
+	}
+
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register:hover,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register:focus-visible,
+	body.home.kmae-marketing .kmae-header__actions .kmae-btn--register:active {
+		background-image: linear-gradient(110deg, #ffad41, #ff6e25) !important;
+		background-color: #ff6e25 !important;
+		border: 0 !important;
+		color: #fff !important;
+		box-shadow: 0 6px 14px rgba(255, 110, 37, 0.26) !important;
 	}
 
 	/* =====================================================
 	   1. Hős — cím + élő hirdetés-kártya
 	   ===================================================== */
 	.kmae-lp-hero {
-		padding: 86px 0 0;
+		padding: calc(var(--kmae-header-h, 52px) + 16px) 0 0;
 		min-height: 0;
 	}
 
@@ -1840,110 +1900,7 @@
 		color: var(--lp-ink-3);
 	}
 
-	/* =====================================================
-	   6. Alsó app-menüsor
-	   ===================================================== */
-	.kmae-lp-tabbar {
-		position: fixed;
-		left: 12px;
-		right: 12px;
-		bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-		z-index: 900;
-		display: grid;
-		grid-template-columns: repeat(5, minmax(0, 1fr));
-		align-items: end;
-		max-width: 520px;
-		height: var(--lp-tabbar-h);
-		margin-inline: auto;
-		padding: 0 6px 9px;
-		border-radius: 26px;
-		background: rgba(255, 255, 255, 0.78);
-		border: 1px solid rgba(255, 255, 255, 0.95);
-		backdrop-filter: blur(24px) saturate(180%);
-		-webkit-backdrop-filter: blur(24px) saturate(180%);
-		box-shadow:
-			0 18px 44px rgba(38, 68, 90, 0.28),
-			0 0 0 1px rgba(var(--lp-blue-rgb), 0.22),
-			inset 0 1px 0 #fff;
-		transition: transform 0.35s ease, opacity 0.35s ease;
-		animation: kmae-lp-dock 0.75s 0.4s cubic-bezier(0.2, 0.9, 0.25, 1.08) backwards;
-	}
-
-	.kmae-lp-tabbar a {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		min-width: 0;
-		color: var(--lp-ink-3);
-		font-size: 10.5px;
-		font-weight: 800;
-		letter-spacing: 0.01em;
-		text-decoration: none;
-		white-space: nowrap;
-		transition: color 0.2s ease, transform 0.15s ease;
-	}
-
-	.kmae-lp-tabbar a:active {
-		transform: scale(0.92);
-	}
-
-	.kmae-lp-tabbar__item svg {
-		padding: 4px 10px;
-		width: 42px;
-		height: 30px;
-		border-radius: 999px;
-		transition: background 0.25s ease, color 0.25s ease;
-	}
-
-	.kmae-lp-tabbar__item.is-active {
-		color: var(--lp-blue-strong);
-	}
-
-	.kmae-lp-tabbar__item.is-active svg {
-		background: rgba(var(--lp-blue-rgb), 0.16);
-		box-shadow: inset 0 0 0 1px rgba(var(--lp-blue-rgb), 0.35);
-	}
-
-	/* Középső, kiemelt „Eladás” gomb (eladó = kék). */
-	.kmae-lp-tabbar__fab {
-		color: var(--lp-blue-strong);
-	}
-
-	.kmae-lp-tabbar__fab-btn {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 58px;
-		height: 58px;
-		margin-top: -26px;
-		border-radius: 50%;
-		background: linear-gradient(145deg, #3fdcff, #00c7f7 45%, #007fb8);
-		border: 4px solid rgba(255, 255, 255, 0.95);
-		color: #fff;
-		box-shadow: 0 10px 24px rgba(var(--lp-blue-rgb), 0.5), 0 0 0 1px rgba(var(--lp-blue-rgb), 0.35);
-	}
-
-	.kmae-lp-tabbar__fab-btn::after {
-		content: "";
-		position: absolute;
-		inset: -4px;
-		border-radius: 50%;
-		border: 2px solid rgba(var(--lp-blue-rgb), 0.6);
-		animation: kmae-lp-pulse 2.4s ease-out infinite;
-		pointer-events: none;
-	}
-
-	.kmae-lp-tabbar__fab-btn svg {
-		stroke-width: 2.6;
-	}
-
-	body.kmae-at-bottom .kmae-lp-tabbar {
-		opacity: 0;
-		pointer-events: none;
-		transform: translateY(140%);
-	}
+	/* Alsó menüsor: guest-tabbar.css (közös vendég-oldalakkal). */
 
 }
 
@@ -2000,11 +1957,6 @@
 	30%, 57% { transform: translateY(-22px); }
 	63%, 90% { transform: translateY(-44px); }
 	96%, 100% { transform: translateY(-66px); }
-}
-
-@keyframes kmae-lp-dock {
-	from { opacity: 0; transform: translateY(130%); }
-	to { opacity: 1; transform: none; }
 }
 
 @keyframes kmae-lp-pulse {
